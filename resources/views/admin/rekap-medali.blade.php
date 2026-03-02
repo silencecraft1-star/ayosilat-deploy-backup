@@ -160,10 +160,18 @@
             <tbody>
               @php
                 $juaraUmum = collect($totalMedali)->sort(function ($a, $b) {
-                  if ($a['emas'] !== $b['emas'])
-                    return $b['emas'] <=> $a['emas'];
-                  if ($a['perak'] !== $b['perak'])
-                    return $b['perak'] <=> $a['perak'];
+                  $pointA = ($a['emas'] * 5) + ($a['perak'] * 3) + ($a['perunggu'] * 2);
+                  $pointB = ($b['emas'] * 5) + ($b['perak'] * 3) + ($b['perunggu'] * 2);
+
+                  // Prioritas 1: Total Poin
+                  if ($pointA !== $pointB) return $pointB <=> $pointA;
+                  
+                  // Prioritas 2: Jumlah Emas (Tie Breaker)
+                  if ($a['emas'] !== $b['emas']) return $b['emas'] <=> $a['emas'];
+                  
+                  // Prioritas 3: Jumlah Perak (Tie Breaker)
+                  if ($a['perak'] !== $b['perak']) return $b['perak'] <=> $a['perak'];
+                  
                   return $b['perunggu'] <=> $a['perunggu'];
                 })->take(3)->values();
               @endphp
