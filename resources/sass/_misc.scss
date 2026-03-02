@@ -1,0 +1,22 @@
+// Miscellaneous
+$gray-lighter: #f8f8f8; // Kamu bisa menggunakan kode hex, nama warna CSS, atau nilai RGB/HSL lainnya
+*:-moz-full-screen,
+*:-webkit-full-screen,
+*:fullscreen *:-ms-full-screen {
+  overflow: auto;
+}
+
+
+pre {
+  background-color: $gray-lighter;
+  padding: 15px;
+  font-size: 14px;
+}
+
+code {
+  padding: 5px;
+  font-family: $font-family-sans-serif;
+  font-weight: 400;
+  font-size: $font-size-base;
+  border-radius: 4px;
+}

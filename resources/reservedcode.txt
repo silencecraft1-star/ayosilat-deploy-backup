@@ -1,0 +1,99 @@
+$max = 100;
+                        if($scs->babak < 1){
+                            $name_jurus= "$jurus[0]";
+                        }
+                        elseif($scs->babak <= 2){
+                            $scs= $scs->babak-7;
+                            $name_jurus= "$jurus[1]";
+                        }
+                        elseif($scs->babak <= 3){
+                            $scs= $scs->babak-13;
+                            $name_jurus= "$jurus[2]";
+                        }
+                        elseif($scs->babak <= 4){
+                            $scs= $scs->babak-18;
+                            $name_jurus= "$jurus[3]";
+                        }
+                        elseif($scs->babak <= 5){
+                            $scs= $scs->babak-25;
+                            $name_jurus= "$jurus[4]";
+                        }
+                        elseif($scs->babak <= 6){
+                            $scs= $scs->babak-31;
+                            $name_jurus= "$jurus[5]";
+                        }
+                        elseif($scs->babak <= 7){
+                            $scs= $scs->babak-39;
+                            $name_jurus= "$jurus[6]";
+                        }
+                        elseif($scs->babak <= 8){
+                            $scs= $scs->babak-50;
+                            $name_jurus= "$jurus[7]";
+                        }
+                        elseif($scs->babak <= 9){
+                            $scs= $scs->babak-57;
+                            $name_jurus= "$jurus[8]";
+                        }
+                        elseif($scs->babak <= 10){
+                            $scs= $scs->babak-63;
+                            $name_jurus= "$jurus[9]";
+                        }
+                        elseif($scs->babak <= 11){
+                            $scs= $scs->babak-75;
+                            $name_jurus= "$jurus[10]";
+                        }
+                        elseif($scs->babak <= 12){
+                            $scs= $scs->babak-81;
+                            $name_jurus= "$jurus[11]";
+                        }
+                        elseif($scs->babak <= 13){
+                            $scs= $scs->babak-86;
+                            $name_jurus= "$jurus[12]";
+                        }
+                        elseif($scs->babak <= 14){
+                            $scs= $scs->babak-91;
+                            $name_jurus= "$jurus[13]";
+                        }
+
+                        if($scs->babak <= 1){
+                            $name_jurus= "$jurus[0]";
+                        }
+                        elseif($scs->babak <= 2){
+                            $scs= $scs->babak-7;
+                            $name_jurus= "$jurus[1]";
+                        }
+                        elseif($scs->babak <= 3){
+                            $scs= $scs->babak-13;
+                            $name_jurus= "$jurus[2]";
+                        }
+                        elseif($scs->babak <= 4){
+                            $scs= $scs->babak-18;
+                            $name_jurus= "$jurus[3]";
+                        }
+                        elseif($scs->babak <= 5){
+                            $scs= $scs->babak-25;
+                            $name_jurus= "$jurus[4]";
+                        }
+                        elseif($scs->babak <= 6){
+                            $scs= $scs->babak-31;
+                            $name_jurus= "$jurus[5]";
+                        }
+                        elseif($scs->babak <= 7){
+                            $scs= $scs->babak-39;
+                            $name_jurus= "$jurus[6]";
+                        }
+                        elseif($scs->babak <= 8){
+                            $scs= $scs->babak-50;
+                            $name_jurus= "$jurus[7]";
+                        }
+                        elseif($scs->babak <= 9){
+                            $scs= $scs->babak-57;
+                            $name_jurus= "$jurus[8]";
+                        }
+                        elseif($scs->babak <= 10){
+                            $scs= $scs->babak-63;
+                            $name_jurus= "$jurus[9]";
+                        }
+                        else{
+                            $name_jurus = "$jurus[9](Jurus Terakhir)";
+                        }

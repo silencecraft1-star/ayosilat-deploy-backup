@@ -1,0 +1,214 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    margin-top: 10px;
+}
+
+.btn1 {
+    padding:5px 20px;
+    background-color: #D9D9D9;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.btn1:hover {
+    background-color: #c6c6c6;
+}
+
+.juri h1 {
+    margin-bottom: -3px;
+}
+
+.peserta {
+    font-weight: 500;
+}
+.redScore, .blueScore{
+    width: 100%;
+}
+
+.blueScore th {
+    background-color: #0853D2;
+    color: white;
+}
+
+.redScore th {
+    background-color: #F86C6C;
+    color: white;
+}
+
+
+.babak {
+    width: 50%;
+}
+
+.babak .tabelBabak thead tr td{
+    border-bottom:1px solid black ;
+}
+.babak .tabelBabak thead tr:nth-child(2) th,
+.babak .tabelBabak tbody tr td{
+    border: 1px solid black;
+}
+
+.refersh {
+    /* padding: 10px 40px;
+    border-radius: 5px;
+    color: white;
+    background-color: #2ED22E;
+    margin-top: -13px;
+    cursor: pointer;
+    transition: .3s; */
+    display: block;
+}
+
+
+
+.refersh span {
+    font-size: 20px;
+}
+
+.refersh img {
+    width: 25%;
+    margin-right: 10px;
+}
+
+.point {
+    margin-top: 30px;
+}
+
+.btnSkill1 img {
+   
+    display: block;
+}
+
+
+.btnSkill2 img {
+    /* width: 30%;
+    margin-right: 10px; */
+    display: block;
+
+}
+.btnSkill1 {
+    display: block;
+}
+
+.btnSkill2 {
+    display: block;
+}
+
+.hapus {
+    margin-top: 10px;
+}
+
+.btnHapus {
+    /* padding: 5px 30px; */
+    /* width: 200px; */
+    /* width: 10vw; */
+    /* background-color: #9D9D9D;
+    margin-left: 5px;
+    border-radius: 5px;
+    color: #ffff;
+    cursor: pointer;
+    transition: .3s;
+    margin: 0px 20px;
+    font-size: 1vw; */
+    display: block;
+}
+
+
+.btn-jatuhan {
+    /* background-color: rgb(150, 150, 150);
+    padding: 10px 3vw;
+    width: 13vw;
+    height: 5vw;
+    border-radius: 5px;
+    color: #f5f5f5;
+    margin-top: 10px;
+    transition: .3s;
+    font-size: 1vw; */
+    display: block ;
+}
+
+.btn-jatuhan:hover {
+    background-color: rgb(97, 97, 97);
+}
+
+.black-overlay {
+    display: none;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.596);
+    z-index: 1001;
+    transition: .3s;
+}
+
+.white-content {
+    display: none;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 30%;
+    padding: 16px;
+    border-radius: 5px;
+    border: 3px solid orange;
+    background-color: white;
+    z-index: 1002;
+    overflow: auto;
+}
+
+.white-content-2 {
+    display: none;
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    width: 30%;
+    height: 30%;
+    padding: 16px;
+    border-radius: 5px;
+    border: 3px solid rgb(255, 0, 0);
+    background-color: white;
+    z-index: 1002;
+    overflow: auto;
+}
+
+.pop-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pop-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-juri {
+    margin-top: 10px;
+}
+
+.table-juri td {
+    padding: 0px 4vw;
+}
+
+.pop-button {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}   
+
+.btn-wrap {
+    gap: 5vw;
+}
+
+.font-xs {
+    font-size: 10px;
+}

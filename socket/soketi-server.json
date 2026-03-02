@@ -1,0 +1,13 @@
+{
+    "apps": [
+      {
+        "name": "soketi",
+        "script": "soketi",
+        "args": "start --config='C:\\UssageVS-Code-Projects\\33-Project-Laravel\\Silat-New\\socket\\config-local.json'",
+        "interpreter": "none",
+        "exec_mode": "fork",
+        "autorestart": true,
+        "watch": false
+      }
+    ]
+  }
