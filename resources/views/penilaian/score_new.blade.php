@@ -147,7 +147,7 @@
             <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600 bg-white">
                 <div id="idpartai" name="{{ $partai }}" class="grid grid-cols-3 " style="padding: 0px 8vh;">
                     <!-- Judul Turnamen -->
-                    <div class="text-neutral-200 font-semibold text-start w-full h-full flex justify-start items-center"
+                    <div class="text-neutral-200 text-black font-semibold text-start w-full h-full flex justify-start items-center"
                         style="font-size: 1.5vh;">
                         {{ $settingData->judul ?? '' }}
                     </div>
