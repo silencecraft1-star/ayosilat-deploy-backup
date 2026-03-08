@@ -21,8 +21,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                window.history.back();
-                                                                                                            </script>';
+                                                                                                                                window.history.back();
+                                                                                                                            </script>';
             exit();
         }
 
@@ -85,8 +85,9 @@
             </div>
             <div class="col h100">
                 <div class="container position-relative h100 d-flex justify-content-center fs-3" style="height: 70%;">
-                    <img src="../../../assets/Assets/header2.png" alt="" style="width: 20em; height: 2em;">
-                    <div class="text-on-image h100 w100 d-flex justify-content-center ">
+                    <img src="../../../assets/Assets/header_ayosilat_black.png" alt=""
+                        style="width: 20em; height: 2em;">
+                    <div class="text-on-image h100 w100 d-flex justify-content-center text-white">
                         {{ $dataArena->name }}
                     </div>
                     <!-- PENCAK SILAT -->
