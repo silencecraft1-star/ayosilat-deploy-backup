@@ -144,8 +144,7 @@
     </header>
     <section>
         <section>
-            <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600"
-                style="background: linear-gradient(to right, #000000, #727272ff, #000000);">
+            <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600 bg-white">
                 <div id="idpartai" name="{{ $partai }}" class="grid grid-cols-3 " style="padding: 0px 8vh;">
                     <!-- Judul Turnamen -->
                     <div class="text-neutral-200 font-semibold text-start w-full h-full flex justify-start items-center"
@@ -249,8 +248,7 @@
             </div>
             <div class="col-span-4">
                 <div id="scorebiru"
-                    class="border-blue poppins-regular text-blue-500 rounded flex items-center justify-center bg-blue-50 transition-all h-full"
-                    style="background: linear-gradient(to top, #0853D2, #04245c);">
+                    class="border-blue poppins-regular text-blue-500 rounded flex items-center justify-center bg-blue-50 transition-all h-full">
                     <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 20vh;">
                         40
                     </div>
@@ -299,8 +297,7 @@
             </div>
             <div class="col-span-4">
                 <div id="scoremerah"
-                    class="border-red poppins-regular text-red-500  rounded flex items-center justify-center h-full bg-red-50 transition-all"
-                    style="background: linear-gradient(to top, #ff2727, #520a0a);">
+                    class="border-red poppins-regular text-red-500  rounded flex items-center justify-center h-full bg-red-50 transition-all">
                     <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 20vh;">
                         -40
                     </div>
