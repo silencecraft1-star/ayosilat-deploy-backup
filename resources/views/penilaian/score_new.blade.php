@@ -175,7 +175,7 @@
             </nav>
         </section>
         <section>
-            <div class="grid grid-cols-3" style="padding: 0.2vh 8vh;">
+            <div class="grid grid-cols-3" style="padding: 0.2vh 0vh;">
                 <!-- Detail Player Biru -->
                 <div class="flex flex-row items-center">
                     <div class="border-blue-600 rounded-full flex items-center justify-center"
@@ -229,7 +229,7 @@
         </section>
         <hr class="w-full mt-0 mb-2" style="background-color: black; height: 0.5vh; ">
         <!-- Mid Section -->
-        <div class="md:grid md:grid-cols-12 mb-[2vw]" style="padding: 0vh 8vh;">
+        <div class="md:grid md:grid-cols-12 mb-[2vw]" style="padding: 0vh 0vh;">
             <div class="col-span-1 flex flex-wrap justify-center w-full" style="gap: 0px 1vh;">
                 <img id="binaan1" src="../assets/Assets/pointing_hand.png" class="brightness-75"
                     style="width: auto; height: 3vw;" alt="">
@@ -321,7 +321,7 @@
             </div>
         </div>
 
-        <div class="md:grid md:grid-cols-12" style="margin: 2vh 8vh; gap: 1vh;">
+        <div class="md:grid md:grid-cols-12" style="margin: 1vh 0vh; gap: 1vh;">
             <div class="col-span-1 md:mb-0 h-full border-blue rounded-xl overflow-hidden">
                 <div class="flex flex-col h-full">
                     <div class="text-center flex-none flex bg-gradient-to-r from-blue-700 to-blue-500 text-neutral-100 justify-center py-1"
@@ -339,34 +339,34 @@
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3 " style="gap: 1vh;">
                         <div id="juri3bp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                         <div id="juri2bp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                     </div>
                     <div class="grid grid-cols-3" style="gap: 1vh;">
                         <div id="juri3bt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                         <div id="juri2bt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
