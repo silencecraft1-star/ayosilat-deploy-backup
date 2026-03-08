@@ -144,10 +144,11 @@
     </header>
     <section>
         <section>
-            <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600 bg-white">
+            <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600 bg-white"
+                style="color: #F5F5F5; background: linear-gradient(to right, #a7a7a7ff, #000000, #a7a7a7ff);">
                 <div id="idpartai" name="{{ $partai }}" class="grid grid-cols-3 " style="padding: 0px 8vh;">
                     <!-- Judul Turnamen -->
-                    <div class="text-neutral-200 text-black font-semibold text-start w-full h-full flex justify-start items-center"
+                    <div class="text-neutral-200 text-white font-semibold text-start w-full h-full flex justify-start items-center"
                         style="font-size: 1.5vh;">
                         {{ $settingData->judul ?? '' }}
                     </div>
@@ -175,7 +176,7 @@
             </nav>
         </section>
         <section>
-            <div class="grid grid-cols-3" style="padding: 0.2vh 8vh;">
+            <div class="grid grid-cols-3" style="padding: 0.2vh 2vh;">
                 <!-- Detail Player Biru -->
                 <div class="flex flex-row items-center">
                     <div class="border-blue-600 rounded-full flex items-center justify-center"
