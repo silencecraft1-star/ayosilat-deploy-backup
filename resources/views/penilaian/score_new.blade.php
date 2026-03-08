@@ -175,7 +175,7 @@
             </nav>
         </section>
         <section>
-            <div class="grid grid-cols-3" style="padding: 0.2vh 0vh;">
+            <div class="grid grid-cols-3" style="padding: 0.2vh 8vh;">
                 <!-- Detail Player Biru -->
                 <div class="flex flex-row items-center">
                     <div class="border-blue-600 rounded-full flex items-center justify-center"
@@ -322,7 +322,7 @@
         </div>
 
         <div class="md:grid md:grid-cols-12" style="margin: 1vh 0vh; gap: 1vh;">
-            <div class="col-span-1 md:mb-0 h-full border-blue rounded-xl overflow-hidden">
+            <div class="col-span-1 md:mb-0 h-full border-blue overflow-hidden">
                 <div class="flex flex-col h-full">
                     <div class="text-center flex-none flex bg-gradient-to-r from-blue-700 to-blue-500 text-neutral-100 justify-center py-1"
                         style="font-size: 2vh;">
@@ -424,7 +424,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-1 md:mb-0 border-red rounded-xl overflow-hidden h-full">
+            <div class="col-span-1 md:mb-0 border-red overflow-hidden h-full">
                 <div class="flex flex-col h-full">
                     <div class="text-center flex-none flex bg-gradient-to-l from-red-700 to-red-500 text-neutral-100 justify-center py-1"
                         style="font-size: 2vh;">
