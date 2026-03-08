@@ -90,6 +90,7 @@ class GlobalScoreHelper
                 $teguran2 += ($teguran > 1) ? 1 : 0;
             }
         }
+
         //count Binaan 1
         $totalBinaan1 = score::where('keterangan', 'binaan')->where('partai', $partai)->where('arena', $arena)->where('id_perserta', $setting->biru)->where('babak', $babak)->when($sesi ?? null, function ($query, $sesi) {
             $query->where('id_sesi', $sesi);

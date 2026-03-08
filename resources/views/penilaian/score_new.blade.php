@@ -154,7 +154,8 @@
                     </div>
                     <div class="h-full my-0 relative hidden w-full lg:flex items-start justify-center">
                         <div class="justify-center items-start flex ">
-                            <img src="../assets/Assets/header_ayosilat.png" style="height: 8vh; width: 32vh;" alt="">
+                            <img src="../assets/Assets/header_ayosilat_black.png" style="height: 8vh; width: 32vh;"
+                                alt="">
                         </div>
                         <!-- Text Header -->
                         <div class="absolute top-1 text-center w-full text-white font-bold uppercase"
@@ -200,7 +201,7 @@
                             <div class="bg-white w-full h-full rounded flex items-center justify-center">
                                 <span
                                     class="relative transition-all ease-in duration-75 bg-gradient-to-tr from-neutral-900 to-neutral-900 inline-block text-transparent bg-clip-text w-full h-full font-bold rounded-md group-hover:bg-opacity-0">
-                                    <div class="text-center" id="timer1" style="font-size: 5vh;">
+                                    <div class="text-center" id="timer1" style="font-size: 8vh;">
                                         03:00
                                     </div>
                                 </span>
@@ -227,7 +228,7 @@
                 </div>
             </div>
         </section>
-        <hr class="w-full" style="background-color: black; height: 0.5vh; margin-bottom: 1vh;">
+        <hr class="w-full mt-0 mb-2" style="background-color: black; height: 0.5vh; ">
         <!-- Mid Section -->
         <div class="md:grid md:grid-cols-12 mb-[2vw]" style="padding: 0vh 8vh;">
             <div class="col-span-1 flex flex-wrap justify-center w-full" style="gap: 0px 1vh;">
@@ -250,7 +251,7 @@
                 <div id="scorebiru"
                     class="border-blue poppins-regular text-blue-500 rounded flex items-center justify-center bg-blue-50 transition-all h-full"
                     style="background: linear-gradient(to top, #0853D2, #04245c);">
-                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 30vh;">
+                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 20vh;">
                         40
                     </div>
                 </div>
@@ -300,8 +301,8 @@
                 <div id="scoremerah"
                     class="border-red poppins-regular text-red-500  rounded flex items-center justify-center h-full bg-red-50 transition-all"
                     style="background: linear-gradient(to top, #ff2727, #520a0a);">
-                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 30vh;">
-                        40
+                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 20vh;">
+                        -40
                     </div>
                 </div>
             </div>
