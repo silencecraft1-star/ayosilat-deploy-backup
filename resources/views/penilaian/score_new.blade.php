@@ -145,7 +145,7 @@
     <section>
         <section>
             <nav class=" w-full z-20 top-0 px-0 start-0 border-b border-gray-200 dark:border-gray-600 bg-white"
-                style="color: #F5F5F5; background: linear-gradient(to right, #a7a7a7ff, #000000, #a7a7a7ff);">
+                style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
                 <div id="idpartai" name="{{ $partai }}" class="grid grid-cols-3 " style="padding: 0px 8vh;">
                     <!-- Judul Turnamen -->
                     <div class="text-neutral-200 text-white font-semibold text-start w-full h-full flex justify-start items-center"
