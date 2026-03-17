@@ -96,6 +96,10 @@
             background-color: red;
         }
 
+        .bg-white-1 {
+            background-color: #f5f5f5;
+        }
+
         .bg-blue-2 {
             background-color: blue;
         }
@@ -183,8 +187,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -315,7 +319,10 @@
                         @php
                             $juri = $setting->{'juri_' . $i};
                         @endphp
-                        <td class="text-white bg-green-2" name="{{ $juri }}" id="total{{ $i }}" style="font-size: 8em;">
+                        <td name="{{ $juri }}" class="bg-white-1" name="changetext">
+                            <div id="total{{ $i }}" style="font-size: 8em;">
+
+                            </div>
                         </td>
                     @endfor
                 </tr>
