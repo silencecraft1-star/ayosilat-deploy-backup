@@ -100,7 +100,7 @@
     @endphp
 </head>
 
-<body style="background: linear-gradient(to right, #3232ffff, rgba(255,255,255,0.5), #ff4747ff); min-height: 100vh;">
+<body style="background: linear-gradient(to right, #6e6effff, rgba(255,255,255,0.5), #ff8383ff); min-height: 100vh;">
 
     <!-- <body> -->
     @php
@@ -262,7 +262,7 @@
             <div class="col-span-4">
                 <div id="scorebiru"
                     class="border-blue poppins-regular text-blue-500 rounded flex items-center justify-center bg-blue-50 transition-all h-full">
-                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 40vh;">
+                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 30vh;">
                         -40
                     </div>
                 </div>
@@ -311,7 +311,7 @@
             <div class="col-span-4">
                 <div id="scoremerah"
                     class="border-red poppins-regular text-red-500  rounded flex items-center justify-center h-full bg-red-50 transition-all">
-                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 40vh;">
+                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 30vh;">
                         -40
                     </div>
                 </div>
