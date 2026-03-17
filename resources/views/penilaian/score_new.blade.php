@@ -197,7 +197,7 @@
                     </div>
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen -->
-                        <div class="text-white uppercase font-bold w-full" id="kontigenBiru" style="font-size: 1.5vh;">
+                        <div class="text-black uppercase font-bold w-full" id="kontigenBiru" style="font-size: 1.5vh;">
                             {{ $kontigen1->kontigen }}
                         </div>
                         <!-- Nama Peserta -->
@@ -223,7 +223,7 @@
                 <div class="flex flex-row justify-end items-center">
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen Merah -->
-                        <div class="text-white uppercase font-bold text-end w-full uppercase " id="kontigenMerah"
+                        <div class="text-black uppercase font-bold text-end w-full uppercase " id="kontigenMerah"
                             style="font-size: 1.5vh;">
                             {{ $kontigen2->kontigen }}
                         </div>
