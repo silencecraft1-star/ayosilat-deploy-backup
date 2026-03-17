@@ -105,8 +105,28 @@
             color: #f5f5f5;
         }
 
+        table thead th.bg-red-2 {
+            background-color: red;
+            color: #f5f5f5;
+        }
+
+        table thead th.bg-blue-2 {
+            background-color: blue;
+            color: #f5f5f5;
+        }
+
         table tbody tr td.bg-green-2 {
             background-color: rgb(3, 161, 0);
+            color: #f5f5f5;
+        }
+
+        table tbody tr td.bg-red-2 {
+            background-color: red;
+            color: #f5f5f5;
+        }
+
+        table tbody tr td.bg-blue-2 {
+            background-color: blue;
             color: #f5f5f5;
         }
 
@@ -163,8 +183,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -200,8 +220,8 @@
 
 <body>
     <!-- Header Section -->
-    <div class="container-fluid pb-2" name="change"
-        style="color: #F5F5F5; background: linear-gradient(to right, #a7a7a7ff, #000000, #a7a7a7ff);">
+    <div class="container-fluid pb-2"
+        style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
             <div class="col d-flex justify-content-end align-items-center fs-3">
                 <span class="me-3 uppercase"> Partai {{ $setting->partai }}</span>
@@ -295,7 +315,7 @@
                         @php
                             $juri = $setting->{'juri_' . $i};
                         @endphp
-                        <td class="text-white bg-success" name="{{ $juri }}" id="total{{ $i }}" style="font-size: 8em;">
+                        <td class="text-white bg-green-2" name="{{ $juri }}" id="total{{ $i }}" style="font-size: 8em;">
                         </td>
                     @endfor
                 </tr>
@@ -309,8 +329,8 @@
                 <table class="table table-responsive table-bordered border-black">
                     <thead class="text-center align-middle ">
                         <tr>
-                            <th class="bg-green-2 text-light py-2 fs-2">Median</th>
-                            <th class="bg-green-2 text-light py-2 fs-2">Penalty</th>
+                            <th name="change" class="bg-green-2 text-light py-2 fs-2">Median</th>
+                            <th name="change" class="bg-green-2 text-light py-2 fs-2">Penalty</th>
                             {{-- <th class="bg-green-2 text-light py-5 fs-1">Total</th> --}}
                         </tr>
                     </thead>
@@ -322,7 +342,8 @@
                             {{-- <td class="py-5 fw-bold fs-2 text-primary" id="total"></td> --}}
                         </tr>
                         <tr>
-                            <td colspan="3" class="bg-green-2 text-light py-2 fs-2">Standard Deviation</td>
+                            <td colspan="3" name="change" class="bg-green-2 text-light py-2 fs-2">Standard Deviation
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="3" class="fs-2" style="padding: 1em 0px;" id="deviation"></td>
@@ -333,7 +354,7 @@
             <div class="col-8 ">
                 <div class="row justify-content-center items-center ">
                     <div class="col">
-                        <div
+                        <div name="change"
                             class="border border-black shadow-lg bg-green-2 h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Time Performance
                         </div>
@@ -343,7 +364,7 @@
                         </div>
                     </div>
                     <div class="col">
-                        <div
+                        <div name="change"
                             class="border border-black container shadow-lg bg-green-2 text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Total Score
                         </div>

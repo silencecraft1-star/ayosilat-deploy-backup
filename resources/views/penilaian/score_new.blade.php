@@ -73,6 +73,18 @@
             width: auto;
             height: 15vh;
         }
+
+        .img-stroke {
+            filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.8)) drop-shadow(-1px -1px 0px rgba(0, 0, 0, 0.8)) drop-shadow(1px -1px 0px rgba(0, 0, 0, 0.8)) drop-shadow(-1px 1px 0px rgba(0, 0, 0, 0.8));
+        }
+
+        .text-stroke-white {
+            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+
+        .text-stroke-black {
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
     </style>
     @php
         // use Alert;
@@ -88,9 +100,9 @@
     @endphp
 </head>
 
-<!-- <body style="background: linear-gradient(to right, #7575ffff, rgba(255,255,255,0.5), #ff7575ff); min-height: 100vh;"> -->
+<body style="background: linear-gradient(to right, #3232ffff, rgba(255,255,255,0.5), #ff4747ff); min-height: 100vh;">
 
-<body>
+    <!-- <body> -->
     @php
         $plus1 = score::where('status', 'plus')->where('id_perserta', '4')->sum('score');
         $minus1 = score::where('status', 'minus')->where('id_perserta', '4')->sum('score');
@@ -176,16 +188,16 @@
             </nav>
         </section>
         <section>
-            <div class="grid grid-cols-3" style="padding: 0.2vh 2vh;">
+            <div class="grid grid-cols-3" style="padding: 0.2vh 2vh; ">
                 <!-- Detail Player Biru -->
                 <div class="flex flex-row items-center">
-                    <div class="border-blue-600 rounded-full flex items-center justify-center"
+                    <div class="border-blue-600 bg-white rounded-full flex items-center justify-center"
                         style="padding: 1.5vh; width: 6vh; height: 6vh; border-width: 0.5vh;">
                         <img src="../assets/Assets/karate.png" style="width: 4.5vh; height: 3vh;" alt="">
                     </div>
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen -->
-                        <div class="text-blue-600 uppercase font-bold w-full" id="kontigenBiru"
+                        <div class="text-blue-600 uppercase font-bold w-full text-stroke-white" id="kontigenBiru"
                             style="font-size: 1.5vh;">
                             {{ $kontigen1->kontigen }}
                         </div>
@@ -197,10 +209,10 @@
                 </div>
                 <div class="flex justify-center">
                     <div class="h-100 content-center lg:my-0 text-center">
-                        <div class="h-[12vh] w-full rounded-md bg-gradient-to-r from-blue-400 to-blue-600 ">
-                            <div class="bg-white w-full h-full rounded flex items-center justify-center">
+                        <div class="h-[12vh] w-full rounded-md  ">
+                            <div class=" w-full h-full rounded flex items-center justify-center">
                                 <span
-                                    class="relative transition-all ease-in duration-75 bg-gradient-to-tr from-neutral-900 to-neutral-900 inline-block text-transparent bg-clip-text w-full h-full font-bold rounded-md group-hover:bg-opacity-0">
+                                    class="relative transition-all ease-in duration-75 inline-block text-black w-full h-full font-bold rounded-md group-hover:bg-opacity-0">
                                     <div class="text-center" id="timer1" style="font-size: 8vh;">
                                         03:00
                                     </div>
@@ -212,8 +224,8 @@
                 <div class="flex flex-row justify-end items-center">
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen Merah -->
-                        <div class="text-red-600 font-bold text-end w-full uppercase" id="kontigenMerah"
-                            style="font-size: 1.5vh;">
+                        <div class="text-red-600 font-bold text-end w-full uppercase text-stroke-white"
+                            id="kontigenMerah" style="font-size: 1.5vh;">
                             {{ $kontigen2->kontigen }}
                         </div>
                         <!-- Nama Peserta Merah -->
@@ -221,7 +233,7 @@
                             {{ $pesertamerah->name }}
                         </div>
                     </div>
-                    <div class="border-red-600 rounded-full flex items-center justify-center "
+                    <div class="border-red-600  bg-white rounded-full flex items-center justify-center "
                         style="padding: 1.5vh; width: 6vh; height: 6vh; border-width: 0.5vh;">
                         <img src="../assets/Assets/karate (1).png" style="width: 4.5vh; height: 3vh;" alt="">
                     </div>
@@ -231,43 +243,43 @@
         <hr class="w-full mt-0 mb-2" style="background-color: black; height: 0.5vh; ">
         <!-- Mid Section -->
         <div class="md:grid md:grid-cols-12 mb-[2vw]" style="padding: 0vh 0vh;">
-            <div class="col-span-1 flex flex-wrap justify-center w-full" style="gap: 0px 1vh;">
-                <img id="binaan1" src="../assets/Assets/pointing_hand.png" class="brightness-75"
+            <div class="col-span-1 flex flex-wrap justify-center items-center w-full" style="gap: 0px 1vh;">
+                <img id="binaan1" src="../assets/Assets/pointing_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="binaan2" src="../assets/Assets/peace_hand.png" class="rotate-90 brightness-75"
+                <img id="binaan2" src="../assets/Assets/peace_hand.png" class="rotate-90 brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="teguran1" src="../assets/Assets/pointing_hand.png" class="-rotate-90 brightness-75"
+                <img id="teguran1" src="../assets/Assets/pointing_hand.png" class="-rotate-90 brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="teguran2" src="../assets/Assets/peace_hand.png" class="brightness-75"
+                <img id="teguran2" src="../assets/Assets/peace_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="peringatan1" src="../assets/Assets/raising_hand.png" class="brightness-75"
+                <img id="peringatan1" src="../assets/Assets/raising_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="peringatan2" src="../assets/Assets/raising_hand.png" class="brightness-75 "
+                <img id="peringatan2" src="../assets/Assets/raising_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="peringatan3" src="../assets/Assets/raising_hand.png" class="brightness-75"
+                <img id="peringatan3" src="../assets/Assets/raising_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
             </div>
             <div class="col-span-4">
                 <div id="scorebiru"
                     class="border-blue poppins-regular text-blue-500 rounded flex items-center justify-center bg-blue-50 transition-all h-full">
-                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 20vh;">
-                        40
+                    <div id="score2" name="{{ $id_perserta_1 }}" style="font-size: 40vh;">
+                        -40
                     </div>
                 </div>
             </div>
-            <div class="col-span-2 px-3 flex flex-col justify-center items-center h-full">
-                <div class="flex flex-col justify-center items-center">
-                    <div style="font-size: 2vh"
+            <div class="col-span-2 px-3 flex flex-col h-full">
+                <div class="flex flex-col justify-center items-center" style="margin: 2vh 0vh">
+                    <div style="font-size: 4vh;"
                         class=" font-semibold uppercase text-center  bg-gradient-to-r from-amber-500 to-amber-700 text-transparent bg-clip-text"
                         id="partai">
 
                     </div>
-                    <div style="font-size: 1.8vh" class=" font-bold uppercase text-center">
-                        Kelas C | Putra
+                    <div style="font-size: 2vh" class=" font-bold uppercase text-center" id="infoKelas">
+
                     </div>
                     <!-- <img src="{{ asset('/assets/Assets/IPSI.png') }}" class="icon-size-2" alt=""> -->
                 </div>
-                <div class="mt-5">
+                <div style="margin-top: 3vh;">
                     <div class="text-center text-red-800 fw-bold" style="font-size: 2.5vh;">
                         ROUND
                     </div>
@@ -299,25 +311,25 @@
             <div class="col-span-4">
                 <div id="scoremerah"
                     class="border-red poppins-regular text-red-500  rounded flex items-center justify-center h-full bg-red-50 transition-all">
-                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 20vh;">
+                    <div id="score1" name="{{ $id_perserta_2 }}" style="font-size: 40vh;">
                         -40
                     </div>
                 </div>
             </div>
-            <div class="col-span-1 flex flex-wrap justify-center w-full " style="gap: 0px 1vh;">
-                <img id="mbinaan2" src="../assets/Assets/peace_hand.png" class="-rotate-90 scale-x-[-1] brightness-75"
+            <div class="col-span-1 flex flex-wrap justify-center items-center w-full " style="gap: 0px 1vh;">
+                <img id="mbinaan2" src="../assets/Assets/peace_hand.png"
+                    class="-rotate-90 scale-x-[-1] brightness-150 img-stroke" style="width: auto; height: 3vw;" alt="">
+                <img id="mbinaan1" src="../assets/Assets/pointing_hand.png"
+                    class="scale-x-[-1] brightness-150 img-stroke" style="width: auto; height: 3vw;" alt="">
+                <img id="mteguran2" src="../assets/Assets/peace_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="mbinaan1" src="../assets/Assets/pointing_hand.png" class="scale-x-[-1] brightness-75"
+                <img id="mteguran1" src="../assets/Assets/pointing_hand.png"
+                    class="-rotate-90 brightness-150 img-stroke" style="width: auto; height: 3vw;" alt="">
+                <img id="mperingatan2" src="../assets/Assets/raising_hand.png " class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="mteguran2" src="../assets/Assets/peace_hand.png" class=" brightness-75"
+                <img id="mperingatan1" src="../assets/Assets/raising_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
-                <img id="mteguran1" src="../assets/Assets/pointing_hand.png" class="-rotate-90 brightness-75"
-                    style="width: auto; height: 3vw;" alt="">
-                <img id="mperingatan2" src="../assets/Assets/raising_hand.png" class="brightness-75"
-                    style="width: auto; height: 3vw;" alt="">
-                <img id="mperingatan1" src="../assets/Assets/raising_hand.png" class=" brightness-75"
-                    style="width: auto; height: 3vw;" alt="">
-                <img id="mperingatan3" src="../assets/Assets/raising_hand.png" class="brightness-75"
+                <img id="mperingatan3" src="../assets/Assets/raising_hand.png" class="brightness-150 img-stroke"
                     style="width: auto; height: 3vw;" alt="">
             </div>
         </div>
@@ -329,7 +341,7 @@
                         style="font-size: 2vh;">
                         Jatuhan
                     </div>
-                    <div class="flex-grow flex justify-center items-center text-blue-500">
+                    <div class="flex-grow flex justify-center items-center bg-white text-blue-500">
                         <div id="jatuh2" name="{{ $id_perserta_1 }}" style="font-size: 4vh;">
 
                         </div>
@@ -340,34 +352,34 @@
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3 " style="gap: 1vh;">
                         <div id="juri3bp"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                         <div id="juri2bp"
-                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bp"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                     </div>
                     <div class="grid grid-cols-3" style="gap: 1vh;">
                         <div id="juri3bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                         <div id="juri2bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
@@ -391,34 +403,34 @@
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3" style="gap: 1vh;">
                         <div id="juri1mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                         <div id="juri2mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri3mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                     </div>
                     <div class="grid grid-cols-3" style="gap: 1vh;">
                         <div id="juri1mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                         <div id="juri2mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri3mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold"
+                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
@@ -431,7 +443,7 @@
                         style="font-size: 2vh;">
                         Jatuhan
                     </div>
-                    <div class="flex flex-grow justify-center items-center text-red-500">
+                    <div class="flex flex-grow justify-center items-center bg-white text-red-500">
                         <div id="jatuh1" name="{{ $id_perserta_2 }}" style="font-size: 4vh;">
 
                         </div>
@@ -521,9 +533,10 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="3">
-                                                    <div class="container py-5 bn text-center font-bold"
-                                                        style="color: red; font-size: 2.5vh;">
-                                                        Sudut Merah
+                                                    <div id="hasil-jatuhan"
+                                                        class="container py-5 bn text-center font-bold"
+                                                        style="font-size: 2.5vh;">
+                                                        -
                                                     </div>
                                                 </td>
                                             </tr>
@@ -596,6 +609,22 @@
                                                 <td>
                                                     <div id="juri3-hukuman" class="container py-5 bn">
 
+                                                    </div>
+                                                </td>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div class="container border fw-bold uppercase text-center border-black py-3 "
+                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 2.5vh;">
+                                                        Hasil Keputusan Juri
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div id="hasil-hukuman"
+                                                        class="container py-5 bn text-center font-bold"
+                                                        style="font-size: 2.5vh;">
+                                                        -
                                                     </div>
                                                 </td>
                                             </tr>

@@ -19,6 +19,8 @@
             use App\KontigenModel;
             use App\juri;
             use App\jadwal_group;
+            use App\kelas;
+            use App\category;
 
             // peraturan
             $setting = Setting::where('arena', $arena)->first();
@@ -26,6 +28,8 @@
 
             $partai = $setting->partai;
             $perserta = PersertaModel::where('id', $setting->biru)->first();
+            $kelas = kelas::where('id', $perserta->kelas)->first()->name;
+            $category = category::where('id', $perserta->category)->first()->name;
 
             if ($jadwal->keterangan == "prestasi") {
                 $pesertaBiru = PersertaModel::where('id', $jadwal->biru)->first();
@@ -43,10 +47,16 @@
             $arenaNama = explode('||', $setting->judul);
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
-        <div>
-            {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}}
+        <div class="flex flex-col">
+            <div>
+                {{$arenaNama[0]}} <br />
+            </div>
+
+            <div class="flex">
+                PARTAI {{ $partai }} | {{ $category }}
+            </div>
         </div>
+
         <!-- Player Info Section -->
         <div class="container-fluid px-4">
             <div class="row">

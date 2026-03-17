@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\category;
 use App\Events\VerificationEvent;
 use Illuminate\Http\Request;
 use App\score;
@@ -514,6 +515,7 @@ class JuriController extends Controller
                 $query->whereNull('id_sesi');
             })->first()->status ?? "pending";
             $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
+            $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
 
             //  check pause
             // if($setting->status === "pause"){
@@ -564,7 +566,7 @@ class JuriController extends Controller
                         'pukulanm' => $pukulanm,
                         'tendanganb' => $tendanganb,
                         'tendanganm' => $tendanganm,
-                        'infoKelas' => $infoKelas,
+                        'infoKelas' => "Kelas $infoKelas | $infoKategori",
                         'jatuh1' => 0,
                         'binaan1' => 0,
                         'teguran1' => 0,

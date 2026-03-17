@@ -21,8 +21,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                        window.history.back();
-                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                        window.history.back();
+                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -69,8 +69,28 @@
             color: #f5f5f5;
         }
 
+        table thead th.bg-red-2 {
+            background-color: red;
+            color: #f5f5f5;
+        }
+
+        table thead th.bg-blue-2 {
+            background-color: blue;
+            color: #f5f5f5;
+        }
+
         table tbody tr td.bg-green-2 {
             background-color: rgb(3, 161, 0);
+            color: #f5f5f5;
+        }
+
+        table tbody tr td.bg-red-2 {
+            background-color: red;
+            color: #f5f5f5;
+        }
+
+        table tbody tr td.bg-blue-2 {
+            background-color: blue;
             color: #f5f5f5;
         }
     </style>
@@ -78,7 +98,8 @@
 
 <body>
     <!-- Header Section -->
-    <div class="container-fluid bg-green-2 " name="change" style="color: #F5F5F5;">
+    <div class="container-fluid"
+        style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
             <div class="col d-flex justify-content-end align-items-center fs-3">
                 <span class="me-3">{{ $kelas->name }}</span>
@@ -169,80 +190,77 @@
                             @php
                                 $juri = $setting->{'juri_' . $i};
                             @endphp
-                            <td class="fw-semibold bg-success text-white" style="font-size: 5em;" name="{{ $juri }}"
+                            <td class="fw-semibold bg-green-2 text-white" style="font-size: 5em;" name="{{ $juri }}"
                                 id="total{{ $i }}"></td>
                         @endfor
                     </tr>
                 </tbody>
             </table>
             <!-- Time and Score info -->
-            <div class="container-fluid h100 mb-5 ">
-                <div class="row">
+            <div class="container-fluid">
+                <div class="row flex-grow-1 h-full">
                     <!-- Time Section  -->
-                    <div class="col d-flex justify-content-center w-100 flex-wrap gap-0  px-0">
-                        <div class="w-100 ">
+                    <div class="col h-full px-0">
+                        <div class="w-100">
                             <div class="w-100">
-                                <table class="table table-bordered rounded border-dark w-100">
-                                    <thead>
+                                <table class="table table-responsive table-bordered border-black">
+                                    <thead class="text-center align-middle">
                                         <tr class="text-center">
-                                            <th class=" text-light bg-green-2 fs-2 ">
+                                            <th name="change" class="bg-green-2 text-light py-2 fs-2">
                                                 Median
                                             </th>
-                                            <th class=" text-light bg-green-2 fs-2 ">
+                                            <th name="change" class="bg-green-2 text-light py-2 fs-2">
                                                 Penalty
                                             </th>
-                                            {{-- <th class="text-light bg-green-2 fs-2">
-                                                Score
-                                            </th> --}}
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center align-middle">
                                         <tr class="text-center">
-                                            <td id="medianscore" name="changetext" class="fw-bold"
-                                                style="font-size: 4em;" id="dewan_median">
+                                            <td id="medianscore" name="changetext" class="py-3 fw-bold"
+                                                style="font-size: 4em; overflow:hidden; max-width: 7em;">
                                                 0
                                             </td>
-                                            <td class="text-danger fw-bold" style="font-size: 4em;" id="dewan_pinalti">
-
-                                            </td>
-                                            {{-- <td class="fs-2 text-success fw-bold" id="total_score">
-
-                                            </td> --}}
-                                        </tr>
-                                        <tr class="text-center">
-                                            <td class="bg-green-2 text-light fs-2" colspan="3">Standard Deviation
+                                            <td class="text-danger py-3 fw-bold" style="font-size: 4em;"
+                                                id="dewan_pinalti">
+                                                0
                                             </td>
                                         </tr>
-                                        <tr class="text-center">
-                                            <td id="deviationscore" class="fs-2" colspan="3">0</td>
+                                        <tr>
+                                            <td colspan="3" name="change" class="bg-green-2 text-light py-2 fs-2">
+                                                Standard Deviation
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="fs-2" style="padding: 1em 0px;" id="deviationscore">0
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    <!-- mid section -->
                     <!-- Point Section -->
-                    <div class="col-8 pe-0 ps-5">
-                        <div class="row px-0">
-                            <div class="col px-0">
-                                <div
-                                    class="container border-3 border-black shadow-lg bg-green-2 text-light border-3 rounded text-center p-5 fs-1">
+                    <div class="col-8">
+                        <div class="row justify-content-center items-center">
+                            <div class="col">
+                                <div name="change"
+                                    class="border border-black shadow-lg bg-green-2 h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                                     Time Performance
                                 </div>
-                                <div id="timer1" class="container text-green fw-bold text-center align-middle mt-2"
-                                    style="font-size: 10em;">
+                                <div id="timer1" name="changetext"
+                                    class="container text-green fw-bold text-center align-middle"
+                                    style="font-size: 14em;">
                                     03:00
                                 </div>
                             </div>
                             <div class="col">
-                                <div
-                                    class="container border-3 border-black shadow-lg bg-green-2 text-light border-3 rounded text-center p-5 fs-1">
+                                <div name="change"
+                                    class="border border-black container shadow-lg bg-green-2 text-light border-3 rounded text-center px-5 py-3 fs-2">
                                     Score
                                 </div>
                                 <div id="total_score" name="changetext"
-                                    class="container text-green fw-bold text-center align-middle mt-2"
-                                    style="font-size: 10em;">
+                                    class="container text-green fw-bold text-center align-middle"
+                                    style="font-size: 14em;">
                                     9.2
                                 </div>
                             </div>

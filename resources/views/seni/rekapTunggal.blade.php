@@ -15,13 +15,15 @@
         use App\KontigenModel;
         use App\jadwal_group;
         use App\score;
+        use App\Setting;
         if (empty($id_user && $arena)) {
             echo '<script>
-                                window.history.back();
-                            </script>';
+                                                                                        window.history.back();
+                                                                                    </script>';
             exit();
         }
 
+        $settingGlobal = Setting::where('keterangan', 'admin-setting')->first();
         $perserta = PersertaModel::where('id', $id_user)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen') ?? '';
         $group = jadwal_group::where('biru', $id_user)->where('arena', $arena)->first() ?? jadwal_group::where('merah', $id_user)->where('arena', $arena)->first();
@@ -97,7 +99,7 @@
         </div>
     </section>
     @php
-        $juriSeni = 6;
+        $juriSeni = $settingGlobal->jadwal ?? 4;
     @endphp
     <section class="px-4">
         <div class="rounded shadow-lg">

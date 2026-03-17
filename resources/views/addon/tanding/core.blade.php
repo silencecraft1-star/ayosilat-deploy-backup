@@ -49,6 +49,57 @@
         var Timers = formatTime(currentTime);
         $('#timer1').text(Timers);
     }
+    function updateScoreColors(scoreBiru, scoreMerah, p1, p2) {
+        let b = $('#scorebiru');
+        let m = $('#scoremerah');
+        let sb = $('#score2'); // Score number div Biru
+        let sm = $('#score1'); // Score number div Merah
+
+        // Reset classes
+        b.removeClass("bg-blue-50 text-blue-500 bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
+        m.removeClass("bg-red-50 text-red-500 bg-gradient-to-b from-red-800 to-red-500 text-red-50");
+
+        // Clear potential inline background styles
+        b.css("background", "");
+        m.css("background", "");
+
+        const biruOn = "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50";
+        const biruOff = "bg-blue-50 text-blue-500";
+        const merahOn = "bg-gradient-to-b from-red-800 to-red-500 text-red-50";
+        const merahOff = "bg-red-50 text-red-500";
+
+        if (parseFloat(scoreBiru) > parseFloat(scoreMerah)) {
+            b.addClass(biruOn);
+            sb.css("color", "white");
+            m.addClass(merahOff);
+            sm.css("color", "red");
+        } else if (parseFloat(scoreBiru) < parseFloat(scoreMerah)) {
+            b.addClass(biruOff);
+            sb.css("color", "blue");
+            m.addClass(merahOn);
+            sm.css("color", "white");
+        } else {
+            // Draw case - check technical points (p1 = Biru, p2 = Merah)
+            if (p1 > p2) {
+                b.addClass(biruOn);
+                sb.css("color", "white");
+                m.addClass(merahOff);
+                sm.css("color", "red");
+            } else if (p1 < p2) {
+                b.addClass(biruOff);
+                sb.css("color", "blue");
+                m.addClass(merahOn);
+                sm.css("color", "white");
+            } else {
+                // Completely tied
+                b.addClass(biruOn);
+                sb.css("color", "white");
+                m.addClass(merahOn);
+                sm.css("color", "white");
+            }
+        }
+    }
+
     let isModalLaunched = false;
     let lastmodal = "null";
 
@@ -57,85 +108,73 @@
 
     function socketVerifikasi(response) {
         if (response.notif != "not") {
-            // var name = "modal" + response.notif;
-            // let myModal = new bootstrap.Modal(document.getElementById(name));
-            // lastmodal = name;
-            let juri1 = document.getElementById('juri1-' + response.status);
-            let juri2 = document.getElementById('juri2-' + response.status);
-            let juri3 = document.getElementById('juri3-' + response.status);
+            let status = response.status; // 'jatuhan' or 'hukuman'
+            let juri1 = document.getElementById('juri1-' + status);
+            let juri2 = document.getElementById('juri2-' + status);
+            let juri3 = document.getElementById('juri3-' + status);
+            let hasilDiv = document.getElementById('hasil-' + status);
 
-            console.log(response.data);
+            let votes = { Juri_1: null, Juri_2: null, Juri_3: null };
+
             let master = response.data;
             master.forEach(data => {
-                if (juri1) {
-                    if (data.id_juri == "Juri_1") {
-                        if (data.score == "biru") {
-                            juri1.classList.remove('br', 'by',
-                                'bn');
-                            juri1.classList.add('bb');
-                        } else if (data.score == "merah") {
-                            juri1.classList.remove('bb', 'by',
-                                'bn');
-                            juri1.classList.add('br');
-                        } else if (data.score == "invalid") {
-                            juri1.classList.remove('bb', 'br',
-                                'bn');
-                            juri1.classList.add('by');
-                        } else {
-                            juri3.classList.remove('bb', 'br',
-                                'by');
-                            juri3.classList.add('bn');
-                        }
-                    }
+                let juriSuffix = data.id_juri.toLowerCase().replace('_', '');
+                let juriEl = document.getElementById(juriSuffix + '-' + status);
 
-                }
-                if (juri2) {
-                    if (data.id_juri == "Juri_2") {
-                        if (data.score == "biru") {
-                            juri2.classList.remove('br', 'by',
-                                'bn');
-                            juri2.classList.add('bb');
-                        } else if (data.score == "merah") {
-                            juri2.classList.remove('bb', 'by',
-                                'bn');
-                            juri2.classList.add('br');
-                        } else if (data.score == "invalid") {
-                            juri2.classList.remove('bb', 'br',
-                                'bn');
-                            juri2.classList.add('by');
-                        } else {
-                            juri3.classList.remove('bb', 'br',
-                                'by');
-                            juri3.classList.add('bn');
-                        }
+                if (juriEl) {
+                    juriEl.classList.remove('bb', 'br', 'by', 'bn');
+                    if (data.score == "biru") {
+                        juriEl.classList.add('bb');
+                    } else if (data.score == "merah") {
+                        juriEl.classList.add('br');
+                    } else if (data.score == "invalid") {
+                        juriEl.classList.add('by');
+                    } else {
+                        juriEl.classList.add('bn');
                     }
                 }
-                if (juri3) {
-                    if (data.id_juri == "Juri_3") {
-                        if (data.score == "biru") {
-                            juri3.classList.remove('br', 'by',
-                                'bn');
-                            juri3.classList.add('bb');
-                        } else if (data.score == "merah") {
-                            juri3.classList.remove('bb', 'by',
-                                'bn');
-                            juri3.classList.add('br');
-                        } else if (data.score == "invalid") {
-                            juri3.classList.remove('bb', 'br',
-                                'bn');
-                            juri3.classList.add('by');
-                        } else {
-                            juri3.classList.remove('bb', 'br',
-                                'by');
-                            juri3.classList.add('bn');
-                        }
-                    }
-
-                }
-                //console.log(response);
+                votes[data.id_juri] = data.score;
             });
 
-            // launchModal(myModal);
+            // Calculate Decision Logic
+            let voteList = Object.values(votes).filter(v => v !== null && v !== "");
+            if (voteList.length === 3) {
+                let counts = { biru: 0, merah: 0, invalid: 0 };
+                voteList.forEach(v => {
+                    if (counts[v] !== undefined) counts[v]++;
+                });
+
+                let decision = "-";
+                let bgClass = "bn";
+                let textColor = "black";
+
+                if (counts.biru >= 2) {
+                    decision = "SUDUT BIRU SAH";
+                    bgClass = "bb";
+                    textColor = "white";
+                } else if (counts.merah >= 2) {
+                    decision = "SUDUT MERAH SAH";
+                    bgClass = "br";
+                    textColor = "white";
+                } else {
+                    // Case (2 or more invalid) or (1-1-1 different votes)
+                    decision = "TIDAK SAH (INVALID)";
+                    bgClass = "by";
+                    textColor = "black";
+                }
+
+                if (hasilDiv) {
+                    hasilDiv.innerText = decision;
+                    hasilDiv.classList.remove('bb', 'br', 'by', 'bn');
+                    hasilDiv.classList.add(bgClass);
+                    hasilDiv.style.color = textColor;
+                }
+            } else if (hasilDiv) {
+                hasilDiv.innerText = "-";
+                hasilDiv.classList.remove('bb', 'br', 'by');
+                hasilDiv.classList.add('bn');
+                hasilDiv.style.color = "black";
+            }
         }
     }
 
@@ -249,49 +288,8 @@
         }
 
         //console.log(totalPoint1, totalPoint2, response.teguranTotal1, response.teguranTotal2);
-        //warna Score
-        // alert(` ${response.score1}, ${response.score2}, ${totalPoint1},${totalPoint2}`);
-        
-        if (response.score2 < response.score1) {
-            $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-            $('#scorebiru').css("background", "linear-gradient(to top, #0853D2, #04245c)");
-            $("#scoremerah").removeClass(
-                "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-            $("#scoremerah").addClass("bg-red-50 text-red-500");
-        } else if (response.score2 > response.score1) {
-            $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-            $('#scorebiru').removeClass(
-                "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-            $("#scoremerah").addClass("bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-            $("#scoremerah").removeClass("bg-red-50 text-red-500");
-        } else if (response.score1 == response.score2) {
-            if (totalPoint1 > totalPoint2) {
-                $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-                $('#scorebiru').addClass(
-                    "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                $("#scoremerah").removeClass(
-                    "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                $("#scoremerah").addClass("bg-red-50 text-red-500");
-            } else if (totalPoint1 < totalPoint2) {
-                $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-                $('#scorebiru').removeClass(
-                    "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                $("#scoremerah").addClass(
-                    "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                $("#scoremerah").removeClass("bg-red-50 text-red-500");
-            } else {
-                $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-                $("#scoremerah").removeClass("bg-red-50 text-red-500");
-                $('#scorebiru').css("background", "linear-gradient(to top, #0853D2, #04245c)");
-                $("#scoremerah").css("background", "linear-gradient(to top, #ff2727, #520a0a)");
-            }
-        } else {
-            $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-            $('#scorebiru').removeClass(
-                "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-            $('#scorebiru').css("background", "linear-gradient(to top, #0853D2, #04245c)");
-            $("#scoremerah").css("background", "linear-gradient(to top, #ff2727, #520a0a)");
-        }
+        // Update Score Colors using the unified helper
+        updateScoreColors(response.score1, response.score2, totalPoint1, totalPoint2);
 
         if (response.statusPertandingan == "finish") {
             window.location.href = `redirect?arena=${response.arena}&partai=${response.partai}&role=rekapTanding`;
@@ -361,13 +359,13 @@
                 .listen('.indicator.triggered', (e) => {
                     //alert('aa');
                     const data = e.message;
-                    if(data.arena == arena_id) {
+                    if (data.arena == arena_id) {
                         indicator(data);
                         var reload = data;
-    
+
                         try {
                             var parsedData = data;
-    
+
                             if (parsedData.arena === arena_id && parsedData.event === "reload") {
                                 window.location.reload();
                                 console.log("Reload dipicu.");
@@ -385,12 +383,12 @@
                     var data = datas.message;
 
                     console.log(data);
-                    if(data.arena == arena_id) {
+                    if (data.arena == arena_id) {
                         //Check If Modal Action
                         if (data.status == "modal") {
                             var name = "modal" + data.type;
                             //let myModal = new bootstrap.Modal(document.getElementById(name));
-    
+
                             if (data.command == "open") {
                                 launchModal(name);
                             }
@@ -408,7 +406,7 @@
                 .listen('ScoreEvent', (datas) => {
                     var data = datas.message;
 
-                    if(data.arena == arena_id) {
+                    if (data.arena == arena_id) {
                         console.log(data);
                         var idbabak = data.babak;
                         if (idbabak == 1) {
@@ -418,10 +416,10 @@
                         } else if (idbabak == 3) {
                             babak3();
                         }
-    
+
                         totalPoint1 = 0;
                         totalPoint2 = 0;
-    
+
                         socketScore(data);
                     }
 
@@ -526,6 +524,21 @@
             juri3hukuman.classList.remove('bb', 'br', 'by');
             juri3hukuman.classList.add('bn');
 
+            let hasilJatuhan = document.getElementById('hasil-jatuhan');
+            if (hasilJatuhan) {
+                hasilJatuhan.innerText = "-";
+                hasilJatuhan.classList.remove('bb', 'br', 'by');
+                hasilJatuhan.classList.add('bn');
+                hasilJatuhan.style.color = "black";
+            }
+            let hasilHukuman = document.getElementById('hasil-hukuman');
+            if (hasilHukuman) {
+                hasilHukuman.innerText = "-";
+                hasilHukuman.classList.remove('bb', 'br', 'by');
+                hasilHukuman.classList.add('bn');
+                hasilHukuman.style.color = "black";
+            }
+
             pauseTimer()
             $(`#${myModal}`).modal('show');
         }
@@ -566,6 +579,21 @@
 
             juri3hukuman.classList.remove('bb', 'br', 'by');
             juri3hukuman.classList.add('bn');
+
+            let hasilJatuhan = document.getElementById('hasil-jatuhan');
+            if (hasilJatuhan) {
+                hasilJatuhan.innerText = "-";
+                hasilJatuhan.classList.remove('bb', 'br', 'by');
+                hasilJatuhan.classList.add('bn');
+                hasilJatuhan.style.color = "black";
+            }
+            let hasilHukuman = document.getElementById('hasil-hukuman');
+            if (hasilHukuman) {
+                hasilHukuman.innerText = "-";
+                hasilHukuman.classList.remove('bb', 'br', 'by');
+                hasilHukuman.classList.add('bn');
+                hasilHukuman.style.color = "black";
+            }
 
             // Close modal using Bootstrap method
             $(`#${modalId}`).modal('hide');
@@ -765,49 +793,9 @@
                     }
 
                     //console.log(totalPoint1, totalPoint2, response.teguranTotal1, response.teguranTotal2);
-                    //warna Score
-                    if (response.score2 < response.score1) {
-                        $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-                        $('#scorebiru').addClass("bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                        $("#scoremerah").removeClass(
-                            "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                        $("#scoremerah").addClass("bg-red-50 text-red-500");
-                    } else if (response.score2 > response.score1) {
-                        $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-                        $('#scorebiru').removeClass(
-                            "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                        $("#scoremerah").addClass("bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                        $("#scoremerah").removeClass("bg-red-50 text-red-500");
-                    } else if (response.score1 == response.score2) {
-                        if (totalPoint1 > totalPoint2) {
-                            $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-                            $('#scorebiru').addClass(
-                                "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                            $("#scoremerah").removeClass(
-                                "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                            $("#scoremerah").addClass("bg-red-50 text-red-500");
-                        } else if (totalPoint1 < totalPoint2) {
-                            $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-                            $('#scorebiru').removeClass(
-                                "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                            $("#scoremerah").addClass(
-                                "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                            $("#scoremerah").removeClass("bg-red-50 text-red-500");
-                        } else {
-                            $('#scorebiru').removeClass("bg-blue-50 text-blue-500");
-                            $("#scoremerah").removeClass("bg-red-50 text-red-500");
-                            $('#scorebiru').addClass(
-                                "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                            $("#scoremerah").addClass(
-                                "bg-gradient-to-b from-red-800 to-red-500 text-red-50");
-                        }
-                    } else {
-                        $('#scorebiru').addClass("bg-blue-50 text-blue-500");
-                        $('#scorebiru').removeClass(
-                            "bg-gradient-to-b from-blue-800 to-cyan-500 text-blue-50");
-                        $("#scoremerah").removeClass("bg-red-500 text-red-50");
-                        $("#scoremerah").addClass("bg-red-50 text-red-500");
-                    }
+                    // Update Score Colors using the unified helper
+                    updateScoreColors(response.score1, response.score2, totalPoint1, totalPoint2);
+
 
                     if (response.statusPertandingan == "finish") {
                         window.location.href = `redirect?arena=${arena}&partai=${partai}&role=rekapTanding`;

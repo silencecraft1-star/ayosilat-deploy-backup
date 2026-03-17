@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 
+use App\category;
 use App\Events\DewanEvent;
 use App\Events\JuriEvent;
 use App\Events\ScoreEvent;
@@ -142,6 +143,7 @@ class GlobalScoreHelper
             $query->whereNull('id_sesi');
         })->first()->status ?? "pending";
         $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
+        $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
 
 
         if (!empty($setting)) {
@@ -182,7 +184,7 @@ class GlobalScoreHelper
                     'pukulanm' => $pukulanm,
                     'tendanganb' => $tendanganb,
                     'tendanganm' => $tendanganm,
-                    'infoKelas' => $infoKelas,
+                    'infoKelas' => "Kelas $infoKelas | $infoKategori",
                     'jatuh1' => 0,
                     'binaan1' => 0,
                     'teguran1' => 0,
