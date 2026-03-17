@@ -187,8 +187,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -292,7 +292,7 @@
     @php
         $totaljuri = $settingGlobal->jadwal ?? 6;
     @endphp
-    <div class="container-fluid" style="margin-bottom: 100px; margin-top:100px;">
+    <div class="container-fluid" style="margin-bottom: 50px; margin-top:50px;">
         <table name="scoreTable" class="table table-bordered border-dark-subtle">
             <thead class="text-center align-middle">
                 <tr>
