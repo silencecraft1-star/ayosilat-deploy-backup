@@ -100,7 +100,7 @@
     @endphp
 </head>
 
-<body style="background: linear-gradient(to right, #acacffff, rgba(255,255,255,0.5), #fda7a7ff); min-height: 100vh;">
+<body style="background: linear-gradient(to right, #c7c7ffff, rgba(255,255,255,0.5), #ffc6c6ff); min-height: 100vh;">
 
     <!-- <body> -->
     @php
