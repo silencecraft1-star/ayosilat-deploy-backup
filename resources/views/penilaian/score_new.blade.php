@@ -100,7 +100,7 @@
     @endphp
 </head>
 
-<body style="background: linear-gradient(to right, #e5e5ffff, rgba(255,255,255,0.5), #ffd7d7ff); min-height: 100vh;">
+<body style="background: linear-gradient(to right, #afb0ffff, rgba(255,255,255,0.5), #ffd7d7ff); min-height: 100vh;">
 
     <!-- <body> -->
     @php
@@ -523,8 +523,8 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="3">
-                                                    <div class="container border fw-bold uppercase text-center border-black py-3 "
+                                                <td colspan="3" class="w-full">
+                                                    <div class="border fw-bold uppercase w-full text-center border-black py-3 "
                                                         style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 2.5vh;">
                                                         Hasil Keputusan Juri
                                                     </div>
@@ -612,7 +612,7 @@
                                                 </td>
                                             <tr>
                                                 <td colspan="3">
-                                                    <div class="container border fw-bold uppercase text-center border-black py-3 "
+                                                    <div class="border fw-bold uppercase text-center border-black py-3 "
                                                         style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 2.5vh;">
                                                         Hasil Keputusan Juri
                                                     </div>

@@ -23079,3 +23079,19 @@ Did you mean one of these?
 #52 C:\\laragon\\www\\ayosilat\\core\\public\\index.php(54): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #53 {main}
 "} 
+[2026-03-17 21:29:29] local.ERROR: The "--table" option does not exist. {"exception":"[object] (Symfony\\Component\\Console\\Exception\\RuntimeException(code: 0): The \"--table\" option does not exist. at C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Input\\ArgvInput.php:223)
+[stacktrace]
+#0 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Input\\ArgvInput.php(150): Symfony\\Component\\Console\\Input\\ArgvInput->addLongOption()
+#1 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Input\\ArgvInput.php(85): Symfony\\Component\\Console\\Input\\ArgvInput->parseLongOption()
+#2 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Input\\ArgvInput.php(74): Symfony\\Component\\Console\\Input\\ArgvInput->parseToken()
+#3 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Input\\Input.php(56): Symfony\\Component\\Console\\Input\\ArgvInput->parse()
+#4 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Command\\Command.php(285): Symfony\\Component\\Console\\Input\\Input->bind()
+#5 C:\\laragon\\www\\ayosilat\\core\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(152): Symfony\\Component\\Console\\Command\\Command->run()
+#6 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Application.php(1078): Illuminate\\Console\\Command->run()
+#7 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#8 C:\\laragon\\www\\ayosilat\\core\\vendor\\symfony\\console\\Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#9 C:\\laragon\\www\\ayosilat\\core\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php(102): Symfony\\Component\\Console\\Application->run()
+#10 C:\\laragon\\www\\ayosilat\\core\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(155): Illuminate\\Console\\Application->run()
+#11 C:\\laragon\\www\\ayosilat\\core\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#12 {main}
+"} 
