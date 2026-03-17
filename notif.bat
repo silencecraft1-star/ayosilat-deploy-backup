@@ -1,0 +1,1 @@
+soketi start --config="C:\laragon\www\socket\config.json"
