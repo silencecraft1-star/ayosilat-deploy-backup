@@ -100,7 +100,7 @@
     @endphp
 </head>
 
-<body style="background: linear-gradient(to right, #c7c7ffff, rgba(255,255,255,0.5), #ffc6c6ff); min-height: 100vh;">
+<body style="background: linear-gradient(to right, #e5e5ffff, rgba(255,255,255,0.5), #ffd7d7ff); min-height: 100vh;">
 
     <!-- <body> -->
     @php
@@ -197,8 +197,7 @@
                     </div>
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen -->
-                        <div class="text-blue-600 uppercase font-bold w-full text-stroke-white" id="kontigenBiru"
-                            style="font-size: 1.5vh;">
+                        <div class="text-white uppercase font-bold w-full" id="kontigenBiru" style="font-size: 1.5vh;">
                             {{ $kontigen1->kontigen }}
                         </div>
                         <!-- Nama Peserta -->
@@ -224,8 +223,8 @@
                 <div class="flex flex-row justify-end items-center">
                     <div class="flex items-center flex-col" style="padding: 1.5vh;">
                         <!-- Kontigen Merah -->
-                        <div class="text-red-600 font-bold text-end w-full uppercase text-stroke-white"
-                            id="kontigenMerah" style="font-size: 1.5vh;">
+                        <div class="text-white uppercase font-bold text-end w-full uppercase " id="kontigenMerah"
+                            style="font-size: 1.5vh;">
                             {{ $kontigen2->kontigen }}
                         </div>
                         <!-- Nama Peserta Merah -->
@@ -352,7 +351,7 @@
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3 " style="gap: 1vh;">
                         <div id="juri3bp"
-                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
