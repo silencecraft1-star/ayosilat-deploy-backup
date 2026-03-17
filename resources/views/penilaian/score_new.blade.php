@@ -100,7 +100,7 @@
     @endphp
 </head>
 
-<body style="background: linear-gradient(to right, #6e6effff, rgba(255,255,255,0.5), #ff8383ff); min-height: 100vh;">
+<body style="background: linear-gradient(to right, #acacffff, rgba(255,255,255,0.5), #fda7a7ff); min-height: 100vh;">
 
     <!-- <body> -->
     @php
@@ -357,29 +357,29 @@
                             J3
                         </div>
                         <div id="juri2bp"
-                            class="border-black border-3 flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bp"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                     </div>
                     <div class="grid grid-cols-3" style="gap: 1vh;">
                         <div id="juri3bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                         <div id="juri2bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri1bt"
-                            class="border-black border-3 flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-blue-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
@@ -403,34 +403,34 @@
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3" style="gap: 1vh;">
                         <div id="juri1mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                         <div id="juri2mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri3mp"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
                     </div>
                     <div class="grid grid-cols-3" style="gap: 1vh;">
                         <div id="juri1mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J1
                         </div>
                         <div id="juri2mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center  text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J2
                         </div>
                         <div id="juri3mt"
-                            class="border-black border-3 flex justify-center items-center rounded-xl text-center text-red-500 font-semibold text-stroke-white"
+                            class="border-black border-[2vh] flex justify-center items-center text-center text-red-500 font-semibold text-stroke-white"
                             style="font-size: 2.5vh;">
                             J3
                         </div>
