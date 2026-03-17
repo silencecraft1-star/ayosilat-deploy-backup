@@ -16,7 +16,6 @@
         use App\jadwal_group;
         $id_arena = $arena;
         $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
-        $id_juri = $id_juri;
         $tim_merahs = PersertaModel::where('id', $setting->merah)->first();
         $tim_birus = PersertaModel::where('id', $setting->biru)->first();
         $tim_biru = $tim_birus->id;
