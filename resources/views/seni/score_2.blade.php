@@ -319,8 +319,8 @@
                         @php
                             $juri = $setting->{'juri_' . $i};
                         @endphp
-                        <td name="{{ $juri }}" class="bg-white-1" name="changetext">
-                            <div id="total{{ $i }}" style="font-size: 8em;">
+                        <td name="{{ $juri }}" class="{{ $i <= 4 ? 'bg-white' : 'bg-white-1' }}">
+                            <div id="total{{ $i }}" name="changetext" style="font-size: 8em;">
 
                             </div>
                         </td>

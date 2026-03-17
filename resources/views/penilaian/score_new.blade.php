@@ -453,9 +453,9 @@
     </section>
     <!-- Footer Running Text -->
     <footer>
-        <div class="fixed w-full h-[6vh] bg-black bottom-0 flex items-center">
-            <marquee class="text-neutral-100" style="font-size: 2.5vh;">
-                {{ $settingData->arena }}
+        <div class="fixed left-0 bottom-0 w-full h-[6vh] bg-black flex items-center z-50">
+            <marquee class="text-neutral-100" style="font-size: 2.5vh;" scrollamount="8">
+                {{ $settingData->arena ?? 'Silahkan atur text di setting' }}
             </marquee>
         </div>
     </footer>
