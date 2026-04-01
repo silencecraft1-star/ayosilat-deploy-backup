@@ -58,7 +58,7 @@
     </div>
     <div class="grid md:grid-cols-12 border mb-32" id="loopContainer">
         <div class="col-span-6">
-            <div class="bg-neutral-50">
+            <div class="">
                 <div class="text-neutral-900 text-center text-3xl py-10">
                     32
                 </div>
@@ -215,15 +215,15 @@
                 listContoh.forEach((data) => {
                     cont.insertAdjacentHTML('beforeend', `
                 <div class="col-span-4 border border-blue-300">
-                    <div class="bg-neutral-50 h-full flex justify-center items-center">
-                        <div class="text-neutral-900 text-center text-6xl py-10" id="arena${data.arena}">
+                    <div class="h-full flex justify-center items-center">
+                        <div class="text-neutral-900 text-center text-6xl py-10 poppins-regular italic font-bold" id="arena${data.arena}">
                             ${parseArena(data.arena)}
                         </div>
                     </div>
                 </div>
                 <div class="col-span-4 border border-blue-300">
-                    <div class="bg-neutral-50 h-full flex justify-center items-center">
-                        <div class="text-neutral-900 text-center uppercase text-6xl py-10" id="partai${data.id_arena}">
+                    <div class="h-full flex justify-center items-center">
+                        <div class="text-neutral-900 poppins-regular italic font-bold text-center uppercase text-6xl py-10" id="partai${data.id_arena}">
                             Partai ${data.partai}
                         </div>
                     </div>
@@ -235,13 +235,13 @@
                             `
                                 <div class="col-span-6 flex justify-center items-center"
                                 style="background: linear-gradient(to top, #0853D2, #04245c);">
-                                    <div class="text-neutral-100 text-8xl my-5" id="biru${data.id_arena}">
+                                    <div class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="biru${data.id_arena}">
                                         ${data.biru ?? 0}
                                     </div>
                                 </div>
                                 <div class="col-span-6 flex justify-center items-center"
                                 style="background: linear-gradient(to top, #ff2727, #520a0a);">
-                                    <div class="text-neutral-100 text-8xl my-5" id="merah${data.id_arena}">
+                                    <div class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="merah${data.id_arena}">
                                         ${data.merah ?? 0}
                                     </div>
                                 </div>
