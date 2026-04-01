@@ -7,9 +7,24 @@
     <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-5.3.7/css/bootstrap.min.css') }}">
     <title>Entry</title>
     <link rel="stylesheet" href="{{asset('css/tailwind.css')}}">
+    <style>
+        @font-face {
+            font-family: 'Poppins Regular';
+            src: url("{{ asset('assets/fonts/poppins/Poppins-Regular.ttf') }}") format('truetype');
+        }
+
+        .poppins-regular {
+            font-family: 'Poppins Regular', sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+    </style>
 </head>
 
-<body>
+<body style="background: linear-gradient(to right, #afb0ffff, rgba(255,255,255,0.5), #ffd7d7ff); min-height: 100vh;"
+    class="poppins-regular">
+
+    <!-- <body> -->
     @php
         use App\Setting;
         use App\arena;
