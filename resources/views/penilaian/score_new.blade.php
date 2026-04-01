@@ -525,15 +525,14 @@
                                             <tr>
                                                 <td colspan="3" class="w-full">
                                                     <div class="border fw-bold uppercase w-full text-center border-black py-3 "
-                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 2.5vh;">
+                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 3.5vh;">
                                                         Hasil Keputusan Juri
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="3">
-                                                    <div id="hasil-jatuhan"
-                                                        class="container py-5 bn text-center font-bold"
+                                                    <div id="hasil-jatuhan" class="w-full py-5 bn text-center font-bold"
                                                         style="font-size: 2.5vh;">
                                                         -
                                                     </div>
@@ -613,15 +612,14 @@
                                             <tr>
                                                 <td colspan="3">
                                                     <div class="border fw-bold uppercase text-center border-black py-3 "
-                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 2.5vh;">
+                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 3vh;">
                                                         Hasil Keputusan Juri
                                                     </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="3">
-                                                    <div id="hasil-hukuman"
-                                                        class="container py-5 bn text-center font-bold"
+                                                    <div id="hasil-hukuman" class="w-full py-5 bn text-center font-bold"
                                                         style="font-size: 2.5vh;">
                                                         -
                                                     </div>
