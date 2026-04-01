@@ -214,21 +214,21 @@
                 // Iterate through the data and add each item to the container
                 listContoh.forEach((data) => {
                     cont.insertAdjacentHTML('beforeend', `
-                <div class="col-span-4 border border-blue-300">
+                <div class="col-span-4 border border-black">
                     <div class="h-full flex justify-center items-center">
                         <div class="text-neutral-900 text-center text-6xl py-10 poppins-regular italic font-bold" id="arena${data.arena}">
                             ${parseArena(data.arena)}
                         </div>
                     </div>
                 </div>
-                <div class="col-span-4 border border-blue-300">
+                <div class="col-span-4 border border-black">
                     <div class="h-full flex justify-center items-center">
                         <div class="text-neutral-900 poppins-regular italic font-bold text-center uppercase text-6xl py-10" id="partai${data.id_arena}">
                             Partai ${data.partai}
                         </div>
                     </div>
                 </div>
-                <div class="col-span-4 border border-blue-300">
+                <div class="col-span-4 border border-black">
                     <div class="px-5 py-1">
                         <div class="grid grid-cols-12 shadow-xl">
                             ${data.tipe == "tanding" ?
