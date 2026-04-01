@@ -533,7 +533,7 @@
                                             <tr>
                                                 <td colspan="3">
                                                     <div id="hasil-jatuhan" class="w-full py-5 bn text-center font-bold"
-                                                        style="font-size: 2.5vh;">
+                                                        style="font-size: 5vh;">
                                                         -
                                                     </div>
                                                 </td>
@@ -620,7 +620,7 @@
                                             <tr>
                                                 <td colspan="3">
                                                     <div id="hasil-hukuman" class="w-full py-5 bn text-center font-bold"
-                                                        style="font-size: 2.5vh;">
+                                                        style="font-size: 5vh;">
                                                         -
                                                     </div>
                                                 </td>
