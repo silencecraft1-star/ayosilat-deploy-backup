@@ -235,13 +235,13 @@
                             `
                                 <div class="col-span-6 flex justify-center items-center"
                                 style="background: linear-gradient(to top, #0853D2, #04245c);">
-                                    <div class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="biru${data.id_arena}">
+                                    <div style="font-style: italic;" class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="biru${data.id_arena}">
                                         ${data.biru ?? 0}
                                     </div>
                                 </div>
                                 <div class="col-span-6 flex justify-center items-center"
                                 style="background: linear-gradient(to top, #ff2727, #520a0a);">
-                                    <div class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="merah${data.id_arena}">
+                                    <div style="font-style: italic;" class="text-neutral-100 text-8xl my-5 poppins-regular italic font-bold" id="merah${data.id_arena}">
                                         ${data.merah ?? 0}
                                     </div>
                                 </div>
