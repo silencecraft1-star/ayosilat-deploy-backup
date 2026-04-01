@@ -216,14 +216,14 @@
                     cont.insertAdjacentHTML('beforeend', `
                 <div class="col-span-4 border border-black">
                     <div class="h-full flex justify-center items-center">
-                        <div  style="font-style: italic;" class="text-neutral-900 text-center text-6xl py-10 poppins-regular italic font-bold" id="arena${data.arena}">
+                        <div  style="font-style: italic;" class="text-neutral-900 text-center text-8xl py-10 poppins-regular italic font-extrabold" id="arena${data.arena}">
                             ${parseArena(data.arena)}
                         </div>
                     </div>
                 </div>
                 <div class="col-span-4 border border-black">
                     <div class="h-full flex justify-center items-center">
-                        <div style="font-style: italic;" class="text-neutral-900 poppins-regular italic font-bold text-center uppercase text-8xl py-10" id="partai${data.id_arena}">
+                        <div style="font-style: italic;" class="text-neutral-900 poppins-regular italic font-extrabold text-center uppercase text-7xl py-10" id="partai${data.id_arena}">
                             Partai ${data.partai}
                         </div>
                     </div>
