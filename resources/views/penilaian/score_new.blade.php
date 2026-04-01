@@ -525,7 +525,7 @@
                                             <tr>
                                                 <td colspan="3" class="w-full">
                                                     <div class="border fw-bold uppercase w-full text-center border-black py-3 "
-                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 3.5vh;">
+                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 5vh;">
                                                         Hasil Keputusan Juri
                                                     </div>
                                                 </td>
@@ -612,7 +612,7 @@
                                             <tr>
                                                 <td colspan="3">
                                                     <div class="border fw-bold uppercase text-center border-black py-3 "
-                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 3vh;">
+                                                        style="background-color:rgb(41, 41, 41); color: #f5f5f5; font-size: 5vh;">
                                                         Hasil Keputusan Juri
                                                     </div>
                                                 </td>
