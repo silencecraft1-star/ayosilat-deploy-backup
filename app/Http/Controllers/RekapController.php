@@ -78,10 +78,10 @@ class RekapController extends Controller
                 ]);
             }
 
-            $setting->update([
-                'status' => '',
-                'time' => ''
-            ]);
+            // $setting->update([
+            //     'status' => '',
+            //     'time' => ''
+            // ]);
 
             return response()->json([
                 'data' => $request->deviation,
@@ -242,7 +242,7 @@ class RekapController extends Controller
 
             Setting::where('arena', $arena)->update([
                 'time' => $timer,
-                'status' => 'finished'
+                'status' => 'finish'
             ]);
 
             return response()->json([
@@ -266,10 +266,20 @@ class RekapController extends Controller
 
         $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first();
 
-        if ($settingData->status != "finished") {
-            return response()->json(['isDone' => false, 'time' => '00:00'], 200);
+        if ($settingData->status != "finish") {
+            return response()->json([
+                'isDone' => false,
+                'time' => '00:00',
+                'status' => $settingData->status,
+                'jadwal_id' => $settingData->jadwal,
+                'partai' => $settingData->partai,
+                'active_id' => $settingData->biru
+            ], 200);
         } else {
             $time = $settingData->time ?? "00:00";
+            $jadwal_id = $settingData->jadwal;
+            $partai = $settingData->partai;
+            $active_id = $settingData->biru;
             $finalTime = [
                 'menit' => "00",
                 'detik' => "00",
@@ -286,7 +296,14 @@ class RekapController extends Controller
                 'time' => null,
             ]);
 
-            return response()->json(['isDone' => true, 'time' => $finalTime], 200);
+            return response()->json([
+                'isDone' => true,
+                'time' => $finalTime,
+                'status' => $settingData->status ?? "pending",
+                'jadwal_id' => $jadwal_id,
+                'partai' => $partai,
+                'active_id' => $active_id
+            ], 200);
         }
     }
 
@@ -294,7 +311,7 @@ class RekapController extends Controller
     {
         $data = Setting::where('arena', $request->arena)->whereNotNull('judul')->first();
 
-        if ($data->status != "finished") {
+        if ($data->status != "finish") {
 
             if ($request->status_pertandingan == "diskualifikasi") {
                 $data->update([
@@ -308,16 +325,11 @@ class RekapController extends Controller
         $jadwal = \App\jadwal_group::where('id', $data->jadwal)->first();
 
         if ($jadwal && $jadwal->keterangan == "prestasi") {
+            $juriNameStr = $request->has('id_juri') ? '&name=' . $request->id_juri : '';
             if ($request->kategori == "tunggal") {
-                return view('seni.rekapPrestasiTunggal', [
-                    'id_user' => $request->id_user,
-                    'arena' => $request->arena
-                ]);
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiTunggal&isDewan=true' . $juriNameStr);
             } else {
-                return view('seni.rekapPrestasiSolo', [
-                    'id_user' => $request->id_user,
-                    'arena' => $request->arena
-                ]);
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiSolo&isDewan=true' . $juriNameStr);
             }
         }
 

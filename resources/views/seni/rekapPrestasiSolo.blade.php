@@ -42,8 +42,6 @@
             $setting->juri_2,
             $setting->juri_3,
             $setting->juri_4,
-            $setting->juri_5,
-            $setting->juri_6,
         ];
         // Filter out null juris if any
         $juri_ids = array_filter($juri_ids);
@@ -71,6 +69,10 @@
         <header class="text-center mb-10">
             <h1 class="text-4xl font-bold uppercase text-purple-900">{{ $arenaNama[0] ?? 'REKAP SENI SOLO' }}</h1>
             <h2 class="text-2xl text-purple-700">{{ $arenaNama[1] ?? 'PRESTASI' }}</h2>
+            <div class="mt-3 flex justify-center gap-4 text-xl font-bold text-gray-700">
+                <span class="bg-gray-200 px-4 py-1 rounded shadow">Partai: {{ $setting->partai }}</span>
+                <span class="bg-gray-200 px-4 py-1 rounded shadow">Kelas: {{ $jadwal->kelas }}</span>
+            </div>
             <div class="flex justify-center gap-4 mt-2">
                 <img src="{{ asset('assets/Assets/IPSI.png') }}" class="w-16" alt="IPSI">
             </div>
@@ -304,36 +306,50 @@
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
     <script>
         let reloadCount = 0;
+        const currentJadwalId = "{{ $jadwal->id }}";
+        const currentPartai = "{{ $setting->partai }}";
+        const currentActiveId = "{{ $setting->biru }}";
+
         $(document).ready(function () {
-            taketimeData();
+            checkStatus();
         });
 
-        function taketimeData() {
+        function checkStatus() {
+            $('#splash').addClass('hidden');
             $.ajax({
                 url: `/take-timer-data/?arena={{ $arena }}`,
                 method: 'GET',
                 success: function (response) {
-                    console.log('Take Timer Data:', response);
-                    if (response.isDone || reloadCount > 10) {
-                        $('#splash').addClass('opacity-0');
-                        setTimeout(() => {
-                            $('#splash').addClass('hidden');
-                        }, 500);
+                    const params = new URLSearchParams(window.location.search);
+                    const isDewan = params.get('isDewan');
+                    const nameParam = params.has('name') ? `&name=${params.get('name')}` : '';
 
+                    // Detect if match has changed (New Jadwal, New Partai, or New Active Participant)
+                    if (response.jadwal_id && (response.jadwal_id != currentJadwalId || response.partai != currentPartai || response.active_id != currentActiveId)) {
+                         if (isDewan) {
+                            window.location.href = `redirect?arena={{ $arena }}&role=dewan-solo${nameParam}`;
+                        } else {
+                            window.location.href = `redirect?arena={{ $arena }}&role=score`;
+                        }
+                        return;
+                    }
+
+                    if (response.isDone === false) {
+                        if (response.status === 'pending' || response.status === 'proses') {
+                            if (isDewan) {
+                                window.location.href = `redirect?arena={{ $arena }}&role=dewan-solo${nameParam}`;
+                            } else {
+                                window.location.href = `redirect?arena={{ $arena }}&role=score`;
+                            }
+                        } else {
+                            setTimeout(checkStatus, 1000);
+                        }
                     } else {
-                        setTimeout(taketimeData, 1000);
-                        reloadCount++;
+                        setTimeout(checkStatus, 1000);
                     }
                 },
                 error: function() {
-                    // Fail gracefully after some attempts
-                    if (reloadCount > 10) {
-                         $('#splash').addClass('opacity-0');
-                         setTimeout(() => $('#splash').addClass('hidden'), 500);
-                    } else {
-                         setTimeout(taketimeData, 2000);
-                         reloadCount++;
-                    }
+                    setTimeout(checkStatus, 2000);
                 }
             });
         }

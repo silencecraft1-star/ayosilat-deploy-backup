@@ -42,8 +42,6 @@
             $setting->juri_2,
             $setting->juri_3,
             $setting->juri_4,
-            $setting->juri_5,
-            $setting->juri_6,
         ];
 
         function getSeniScore($id_peserta, $arena, $partai, $juri_id, $keterangan) {
@@ -65,10 +63,13 @@
     @endphp
 
     <div class="m-5">
-        <!-- Header -->
         <header class="text-center mb-10">
             <h1 class="text-4xl font-bold uppercase text-blue-900">{{ $arenaNama[0] ?? 'REKAP SENI TUNGGAL' }}</h1>
             <h2 class="text-2xl text-blue-700">{{ $arenaNama[1] ?? 'PRESTASI' }}</h2>
+            <div class="mt-3 flex justify-center gap-4 text-xl font-bold text-gray-700">
+                <span class="bg-gray-200 px-4 py-1 rounded shadow">Partai: {{ $setting->partai }}</span>
+                <span class="bg-gray-200 px-4 py-1 rounded shadow">Kelas: {{ $jadwal->kelas }}</span>
+            </div>
             <div class="flex justify-center gap-4 mt-2">
                 <img src="{{ asset('assets/Assets/IPSI.png') }}" class="w-16" alt="IPSI">
             </div>
@@ -87,7 +88,7 @@
                 </div>
                 <div class="col-span-5 px-5">
                     <div class="bg-blue-500 px-5 py-2 mb-2 shadow-lg">
-                        <div class="text-white text-end uppercase text-2xl font-bold">{{ $pesertabiru->name }}</div>
+                        <div class="text-white text-start uppercase text-2xl font-bold">{{ $pesertabiru->name }}</div>
                     </div>
                     <div class="bg-blue-700 px-5 py-1 inline-block shadow-lg rounded-r-lg">
                         <div class="text-white font-semibold">{{ $kontigenbiru }}</div>
@@ -132,14 +133,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="font-semibold">Next</td>
+                                <td class="font-semibold">Gerak Jurus</td>
                                 @foreach($juri_ids as $jid)
                                     @php $val = getSeniScore($pesertabiru->id, $arena, $setting->partai, $jid, 'next'); @endphp
-                                    <td class="text-center">{{ number_format($val, 2) }}</td>
+                                    <td class="text-center">{{ 9.9 - (number_format($val, 2) / 100)  }}</td>
                                 @endforeach
                             </tr>
                             <tr>
-                                <td class="font-semibold">Flwo</td>
+                                <td class="font-semibold">Stamina</td>
                                 @foreach($juri_ids as $jid)
                                     @php $val = getSeniScore($pesertabiru->id, $arena, $setting->partai, $jid, 'flwo'); @endphp
                                     <td class="text-center">{{ number_format($val, 2) }}</td>
@@ -175,9 +176,9 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl shadow-md">
-                    <h3 class="text-lg font-bold mb-2 text-red-600">Pengurangan Dewan (BIRU)</h3>
                     @php $minusB = getDewanMinus($pesertabiru->id, $arena, $setting->partai); @endphp
-                    @if($minusB->count() > 0)
+                    <h3 class="text-lg font-bold mb-2 text-red-600">Pengurangan Dewan : {{ number_format($minusB->sum('score') , 2) }} </h3>
+                    <!-- @if($minusB->count() > 0)
                         <ul class="list-disc pl-5 space-y-1">
                             @foreach($minusB as $m)
                                 <li class="text-gray-700">
@@ -188,7 +189,7 @@
                         </ul>
                     @else
                         <p class="text-gray-400 italic text-sm">Tidak ada pengurangan</p>
-                    @endif
+                    @endif -->
                 </div>
             </div>
 
@@ -207,14 +208,14 @@
                         </thead>
                         <tbody>
                             <tr class="text-center">
-                                <td class="font-semibold text-left">Next</td>
+                                <td class="font-semibold text-left">Gerak Jurus</td>
                                 @foreach($juri_ids as $jid)
                                     @php $val = getSeniScore($pesertamerah->id, $arena, $setting->partai, $jid, 'next'); @endphp
-                                    <td>{{ number_format($val, 2) }}</td>
+                                    <td>{{ 9.9 - (number_format($val, 2) / 100)  }}</td>
                                 @endforeach
                             </tr>
                             <tr class="text-center">
-                                <td class="font-semibold text-left">Flwo</td>
+                                <td class="font-semibold text-left">Stamina</td>
                                 @foreach($juri_ids as $jid)
                                     @php $val = getSeniScore($pesertamerah->id, $arena, $setting->partai, $jid, 'flwo'); @endphp
                                     <td>{{ number_format($val, 2) }}</td>
@@ -250,9 +251,9 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-xl shadow-md text-left">
-                    <h3 class="text-lg font-bold mb-2 text-red-600 text-right">Pengurangan Dewan (MERAH)</h3>
                     @php $minusM = getDewanMinus($pesertamerah->id, $arena, $setting->partai); @endphp
-                    @if($minusM->count() > 0)
+                    <h3 class="text-lg font-bold mb-2 text-red-600">Pengurangan Dewan : {{ number_format($minusM->sum('score') , 2) }} </h3>
+                    <!-- @if($minusM->count() > 0)
                         <ul class="list-none text-right space-y-1">
                             @foreach($minusM as $m)
                                 <li class="text-gray-700">
@@ -263,7 +264,7 @@
                         </ul>
                     @else
                         <p class="text-gray-400 italic text-sm text-right">Tidak ada pengurangan</p>
-                    @endif
+                    @endif -->
                 </div>
             </div>
         </div>
@@ -283,41 +284,51 @@
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
     <script>
         let reloadCount = 0;
+        const currentJadwalId = "{{ $jadwal->id }}";
+        const currentPartai = "{{ $setting->partai }}";
+        const currentActiveId = "{{ $setting->biru }}";
+
         $(document).ready(function () {
-            taketimeData();
+            checkStatus();
         });
 
-        function taketimeData() {
+        function checkStatus() {
+            $('#splash').addClass('hidden');
             $.ajax({
                 url: `/take-timer-data/?arena={{ $arena }}`,
                 method: 'GET',
                 success: function (response) {
-                    console.log('Take Timer Data:', response);
-                    if (response.isDone || reloadCount > 10) {
-                        $('#splash').addClass('opacity-0');
-                        setTimeout(() => {
-                            $('#splash').addClass('hidden');
-                        }, 500);
-                        
-                        window.location.reload();
-                        // We can reload if needed or just keep current data if already loaded via PHP
-                        // But since this is a rekap page loaded with PHP, 
-                        // this takeTimer is mostly to ensure we don't show the page 
-                        // until the match is officially 'finished' in settings.
+                    const params = new URLSearchParams(window.location.search);
+                    const isDewan = params.get('isDewan');
+                    const nameParam = params.has('name') ? `&name=${params.get('name')}` : '';
+
+                    // Detect if match has changed (New Jadwal, New Partai, or New Active Participant)
+                    if (response.jadwal_id && (response.jadwal_id != currentJadwalId || response.partai != currentPartai || response.active_id != currentActiveId)) {
+                         if (isDewan) {
+                            window.location.href = `redirect?arena={{ $arena }}&role=dewan-tunggal${nameParam}`;
+                        } else {
+                            window.location.href = `redirect?arena={{ $arena }}&role=score`;
+                        }
+                        return;
+                    }
+
+                    if (response.isDone === false) {
+                        // Only redirect back to score/dewan if the match status was reverted
+                        if (response.status === 'pending' || response.status === 'proses') {
+                            if (isDewan) {
+                                window.location.href = `redirect?arena={{ $arena }}&role=dewan-tunggal${nameParam}`;
+                            } else {
+                                window.location.href = `redirect?arena={{ $arena }}&role=score`;
+                            }
+                        } else {
+                            setTimeout(checkStatus, 1000);
+                        }
                     } else {
-                        setTimeout(taketimeData, 1000);
-                        reloadCount++;
+                        setTimeout(checkStatus, 1000);
                     }
                 },
                 error: function() {
-                    // Fail gracefully after some attempts
-                    if (reloadCount > 10) {
-                         $('#splash').addClass('opacity-0');
-                         setTimeout(() => $('#splash').addClass('hidden'), 500);
-                    } else {
-                         setTimeout(taketimeData, 2000);
-                         reloadCount++;
-                    }
+                    setTimeout(checkStatus, 2000);
                 }
             });
         }

@@ -437,31 +437,54 @@ class JuriController extends Controller
                 $query->whereNull('id_sesi');
             })->count();
 
-            $totalBinaan = [0, 0, 0, 0]; // [Binaan11, Binaan12, Binaan21, Binaan22]
-            $totalTeguran = [0, 0, 0, 0]; // [Teguran11, Teguran12, Teguran21, Teguran22]
-
-            $participants = [
-                'biru' => [$setting->biru, &$totalBinaan[0], &$totalBinaan[1], &$totalTeguran[2], &$totalTeguran[3]],
-                'merah' => [$setting->merah, &$totalBinaan[2], &$totalBinaan[3], &$totalTeguran[0], &$totalTeguran[1]]
+            $babakData = [
+                'biru' => [
+                    'binaan1' => [0, 0, 0, 0], 'binaan2' => [0, 0, 0, 0],
+                    'teguran1' => [0, 0, 0, 0], 'teguran2' => [0, 0, 0, 0]
+                ],
+                'merah' => [
+                    'binaan1' => [0, 0, 0, 0], 'binaan2' => [0, 0, 0, 0],
+                    'teguran1' => [0, 0, 0, 0], 'teguran2' => [0, 0, 0, 0]
+                ]
             ];
 
-            foreach ($participants as $key => [$id, &$binaan1, &$binaan2, &$teguran1, &$teguran2]) {
+            $participants = [
+                'biru' => [$setting->biru, 0, 0, 0, 0], 
+                'merah' => [$setting->merah, 0, 0, 0, 0]
+            ];
+            
+            // We need references if we want to keep the summation logic identical, but let's just use babakData for sums too.
+            $binaanSum = ['biru' => [0, 0], 'merah' => [0, 0]];
+            $teguranSum = ['biru' => [0, 0], 'merah' => [0, 0]];
+
+            foreach ($participants as $key => $pInfo) {
+                $id = $pInfo[0];
                 for ($babakLoop = 1; $babakLoop <= 3; $babakLoop++) {
                     $binaan = score::where('keterangan', 'binaan')->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
                         $query->where('id_sesi', $sesi);
                     }, function ($query) {
                         $query->whereNull('id_sesi');
                     })->where('arena', $arena)->where('id_perserta', $id)->where('babak', $babakLoop)->count();
-                    $binaan1 += ($binaan >= 1) ? 1 : 0;
-                    $binaan2 += ($binaan > 1) ? 1 : 0;
+                    
+                    $valB1 = ($binaan >= 1) ? 1 : 0;
+                    $valB2 = ($binaan > 1) ? 1 : 0;
+                    $binaanSum[$key][0] += $valB1;
+                    $binaanSum[$key][1] += $valB2;
+                    $babakData[$key]['binaan1'][$babakLoop] = $valB1;
+                    $babakData[$key]['binaan2'][$babakLoop] = $valB2;
 
                     $teguran = score::where('keterangan', 'teguran')->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
                         $query->where('id_sesi', $sesi);
                     }, function ($query) {
                         $query->whereNull('id_sesi');
                     })->where('arena', $arena)->where('id_perserta', $id)->where('babak', $babakLoop)->count();
-                    $teguran1 += ($teguran >= 1) ? 1 : 0;
-                    $teguran2 += ($teguran > 1) ? 1 : 0;
+                    
+                    $valT1 = ($teguran >= 1) ? 1 : 0;
+                    $valT2 = ($teguran > 1) ? 1 : 0;
+                    $teguranSum[$key][0] += $valT1;
+                    $teguranSum[$key][1] += $valT2;
+                    $babakData[$key]['teguran1'][$babakLoop] = $valT1;
+                    $babakData[$key]['teguran2'][$babakLoop] = $valT2;
                 }
             }
             //count Binaan 1
@@ -570,14 +593,26 @@ class JuriController extends Controller
                         'jatuh1' => 0,
                         'binaan1' => 0,
                         'teguran1' => 0,
-                        'totalBinaan1Biru' => $participants["biru"][1],
-                        'totalBinaan2Biru' => $participants["biru"][2],
-                        'totalTeguran1Biru' => $participants["biru"][3],
-                        'totalTeguran2Biru' => $participants["biru"][4],
-                        'totalBinaan1Merah' => $participants["merah"][1],
-                        'totalBinaan2Merah' => $participants["merah"][2],
-                        'totalTeguran1Merah' => $participants["merah"][3],
-                        'totalTeguran2Merah' => $participants["merah"][4],
+                        'totalBinaan1Biru' => $binaanSum['biru'][0],
+                        'totalBinaan2Biru' => $binaanSum['biru'][1],
+                        'totalTeguran1Biru' => $teguranSum['biru'][0],
+                        'totalTeguran2Biru' => $teguranSum['biru'][1],
+                        'totalBinaan1Merah' => $binaanSum['merah'][0],
+                        'totalBinaan2Merah' => $binaanSum['merah'][1],
+                        'totalTeguran1Merah' => $teguranSum['merah'][0],
+                        'totalTeguran2Merah' => $teguranSum['merah'][1],
+
+                        // Per-Babak Data
+                        'b1b_1' => $babakData['biru']['binaan1'][1], 'b1b_2' => $babakData['biru']['binaan1'][2], 'b1b_3' => $babakData['biru']['binaan1'][3],
+                        'b2b_1' => $babakData['biru']['binaan2'][1], 'b2b_2' => $babakData['biru']['binaan2'][2], 'b2b_3' => $babakData['biru']['binaan2'][3],
+                        't1b_1' => $babakData['biru']['teguran1'][1], 't1b_2' => $babakData['biru']['teguran1'][2], 't1b_3' => $babakData['biru']['teguran1'][3],
+                        't2b_1' => $babakData['biru']['teguran2'][1], 't2b_2' => $babakData['biru']['teguran2'][2], 't2b_3' => $babakData['biru']['teguran2'][3],
+
+                        'b1m_1' => $babakData['merah']['binaan1'][1], 'b1m_2' => $babakData['merah']['binaan1'][2], 'b1m_3' => $babakData['merah']['binaan1'][3],
+                        'b2m_1' => $babakData['merah']['binaan2'][1], 'b2m_2' => $babakData['merah']['binaan2'][2], 'b2m_3' => $babakData['merah']['binaan2'][3],
+                        't1m_1' => $babakData['merah']['teguran1'][1], 't1m_2' => $babakData['merah']['teguran1'][2], 't1m_3' => $babakData['merah']['teguran1'][3],
+                        't2m_1' => $babakData['merah']['teguran2'][1], 't2m_2' => $babakData['merah']['teguran2'][2], 't2m_3' => $babakData['merah']['teguran2'][3],
+
                         'totalJatuhan1' => $totalJatuhan1,
                         'totalJatuhan2' => $totalJatuhan2,
                         'peringatan1' => 0,

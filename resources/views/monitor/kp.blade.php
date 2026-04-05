@@ -1,277 +1,460 @@
 @extends('layout.master2')
 
 @section('content')
-@php
-    // --- Data Initialization (from controller) ---
-    // The $datakp variable holds the entire response array from sendTandingScore
-    use App\arena;
-    $data = $datakp; 
-    $arena = arena::where('id', $data["arena"])->first();
-    // Extracting key variables for PHP rendering
-    $currentRound = $data['babak'];
-@endphp
+    @php
+        use App\arena;
+        use App\PersertaModel;
+        use App\kelas;
 
-<style>
-    /* Custom styles for visibility and theme */
-    .poppins-regular {
-        font-family: "Poppins", serif;
-        font-weight: 400;
-        font-style: normal;
-    }
-    .center-info {
-        padding-top: 20px;
-        padding-bottom: 20px;
-    }
-    .detail-card {
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        height: 48px; 
-        transition: all 0.2s ease-in-out;
-    }
-    
-    /* --- Score Detail Colors (Retained custom background CSS) --- */
-    .bg-blue-score { background-color: #e0f2fe; } /* Equivalent to blue-50 */
-    .bg-red-score { background-color: #fee2e2; }  /* Equivalent to red-50 */
-    .text-blue-score { color: #0369a1; } /* Equivalent to blue-700/800 */
-    .text-red-score { color: #dc2626; }  /* Equivalent to red-700/800 */
+        $data = $datakp;
+        $arenaData = arena::where('id', $data['arena'] ?? '')->first();
+        $currentRound = $data['babak'];
 
-    /* Highlight class for visual feedback on update (for penalties/fouls) */
-    .highlight-flash {
-        box-shadow: 0 0 15px 3px rgba(255, 193, 7, 0.7); /* Yellow glow */
-        transform: scale(1.02);
-    }
+        // Get Category info (consistent with dewan)
+        $peserta = PersertaModel::where('id', $data['idBiru'] ?? '')->first();
+        $infoKategori = '';
+        if ($peserta) {
+            $kelasData = kelas::where('id', $peserta->kelas)->first();
+            $infoKategori = strtoupper(($peserta->gender ?? '') . ($kelasData ? "| Kelas  " . $kelasData->name : ""));
+        }
+    @endphp
 
-    /* Custom sizing for assets (No direct BS equivalent, kept in CSS) */
-    .size-8 { width: 2rem; height: 2rem; }
-    .size-24 { width: 6rem; height: 6rem; }
-</style>
+    <style>
+        @font-face {
+            font-family: 'Poppins Regular';
+            src: url("{{ asset('assets/fonts/poppins/Poppins-Regular.ttf') }}") format('truetype');
+        }
 
-<div class="poppins-regular container-fluid py-3">
+        body {
+            font-family: 'Poppins Regular', sans-serif;
+            background-color: #f4f7f6;
+        }
 
-    {{-- Info Section: Participants and Match Status (Centered) --}}
-    <section class="mb-5 center-info">
-        <div class="row align-items-center">
-            
-            {{-- Blue Team Info --}}
-            <div class="col-5 d-flex flex-column align-items-start">
-                <div id="kontigenb" class="text-blue-score fs-3 text-uppercase fw-bold" id="kontigenBiru">{{ $data['kontigenBiru'] }}</div>
-                <div id="namab" class="fs-1 fw-bold text-uppercase mb-3" id="namaBiru">{{ $data['namaBiru'] }}</div>
+        .header-monitor {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .team-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-box.red {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .team-icon-circle {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 4px solid;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .team-icon-circle img {
+            height: 35px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .blue-circle {
+            border-color: #0d6efd;
+        }
+
+        .red-circle {
+            border-color: #dc3545;
+        }
+
+        .team-labels {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-kontigen {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: -2px;
+        }
+
+        .team-nama {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .arena-info {
+            text-align: center;
+        }
+
+        .arena-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .match-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* --- Grid Layout for KP Monitoring --- */
+        .kp-grid {
+            display: grid;
+            grid-template-columns: 1fr 4fr 2fr 4fr 1fr;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #333;
+        }
+
+        .grid-header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            border-right: 1px solid #444;
+        }
+
+        .grid-header:last-child {
+            border-right: none;
+        }
+
+        .grid-item {
+            padding: 0;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            min-height: 70px;
+        }
+
+        .label-cell {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: #555;
+            justify-content: center;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .value-cell {
+            font-size: 2.2rem;
+            font-weight: 900;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .value-blue {
+            color: #0d6efd;
+        }
+
+        .value-red {
+            color: #dc3545;
+        }
+
+        .sub-grid-babak {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+
+        .sub-grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #eee;
+            padding: 10px 5px;
+        }
+
+        .sub-grid-item:last-child {
+            border-right: none;
+        }
+
+        .babak-sub-header {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .sub-val {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .category-name-cell {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: #eee;
+            justify-content: center;
+            text-transform: uppercase;
+            border-left: 2px solid #333;
+            border-right: 2px solid #333;
+            color: #333;
+            padding: 15px;
+        }
+
+        .highlight-flash {
+            background-color: #fff3cd !important;
+            animation: flash 0.5s ease-in-out;
+        }
+
+        .round-indicator {
+            background: #FFD600;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1rem;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        @keyframes flash {
+            0% {
+                background-color: #fff3cd;
+            }
+
+            50% {
+                background-color: #FFD600;
+            }
+
+            100% {
+                background-color: #fff3cd;
+            }
+        }
+
+        .icon-stroke {
+            filter: drop-shadow(1px 1px 0px #fff) drop-shadow(-1px -1px 0px #fff) drop-shadow(1px -1px 0px #fff) drop-shadow(-1px 1px 0px #fff);
+        }
+
+        .grid-icon {
+            width: 30px;
+            height: 30px;
+            filter: grayscale(50%) drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+        }
+    </style>
+
+    <div class="py-4 container-fluid px-5">
+        <!-- Header Section -->
+        <div class="header-monitor">
+            <!-- Team Blue -->
+            <div class="team-box">
+                <div class="team-icon-circle blue-circle">
+                    <img src="{{ asset('assets/Assets/karate.png') }}" alt="Blue Team Icon" class="icon-stroke">
+                </div>
+                <div class="team-labels">
+                    <span id="kontigenb" class="team-kontigen">{{ $data['kontigenBiru'] ?? '-' }}</span>
+                    <span id="namab" class="team-nama text-primary">{{ $data['namaBiru'] ?? '-' }}</span>
+                </div>
             </div>
 
-            {{-- Center Info (Babak, Time, Match Status) --}}
-            <div class="col-2 text-center">
-                <div class="text-primary fs-3">
-                    {{ $arena->name }}
-                </div>
-                {{-- <div class="fs-6 text-muted mb-2" id="infoKelas">{{ $data['infoKelas'] }}</div> --}}
-                <div class="fs-3 fw-bold text-dark" id="partai">
-                    Partai {{ $data['partai'] }}
-                </div>
-                <div class="fs-3 fw-semibold text-uppercase text-danger mb-3">
-                    ROUND <span id="babak">{{ $currentRound }}</span>
-                </div>
+            <!-- Arena/Match Info -->
+            <div class="arena-info">
+                <div class="arena-name text-uppercase">{{ $arenaData->name ?? 'ARENA' }}</div>
+                <div id="partai" class="match-number">Partai {{ $data['partai'] ?? '-' }}</div>
+                <div class="team-kontigen" style="color: #333; margin-bottom: 5px;">{{ $infoKategori }}</div>
+                <div class="round-indicator">BABAK <span id="babak">{{ $currentRound }}</span></div>
             </div>
 
-            {{-- Red Team Info --}}
-            <div class="col-5 d-flex flex-column align-items-end">
-                <div id="kontigenm"class="text-red-score fs-3 fw-bold text-end text-uppercase" id="kontigenMerah">{{ $data['kontigenMerah'] }}</div>
-                <div id="namam"class="fs-1 fw-bold text-end text-uppercase mb-3" id="namaMerah">{{ $data['namaMerah'] }}</div>
+            <!-- Team Red -->
+            <div class="team-box red">
+                <div class="team-labels">
+                    <span id="kontigenm" class="team-kontigen">{{ $data['kontigenMerah'] ?? '-' }}</span>
+                    <span id="namam" class="team-nama text-danger">{{ $data['namaMerah'] ?? '-' }}</span>
+                </div>
+                <div class="team-icon-circle red-circle">
+                    <img src="{{ asset('assets/Assets/karate (1).png') }}" alt="Red Team Icon" class="icon-stroke">
+                </div>
             </div>
         </div>
-    </section>
 
-    <hr class="my-4">
+        <!-- Main KP Grid -->
+        <div class="kp-grid">
+            <div class="grid-header">ICON</div>
+            <div class="grid-header">TIM BIRU</div>
+            <div class="grid-header">KATEGORI</div>
+            <div class="grid-header">TIM MERAH</div>
+            <div class="grid-header">ICON</div>
 
-    {{-- Detail Recap Section (Focus on Penalties/Actions) --}}
-    <section class="mb-5">
-        <h3 class="text-center fs-3 fw-bold mb-4">View KP Tanding</h3>
-        <div class="row">
-            
-            {{-- Left Side: Blue Team Details --}}
-            <div class="col-6">
-                <div class="text-primary text-center fs-2 mb-3 fw-semibold">Tim Biru</div>
-                @php
-                    $details = [
-                        // ['id' => 'pukulanb', 'label' => 'Pukulan (x1)', 'value' => $data['pukulanb'], 'bg_class' => 'bg-blue-score', 'img' => '../assets/Assets/fist (2).png', 'img_class' => ''],
-                        // ['id' => 'tendanganb', 'label' => 'Tendangan (x2)', 'value' => $data['tendanganb'], 'bg_class' => 'bg-blue-score', 'img' => '../assets/Assets/kick.png', 'img_class' => 'scale-x-[-1]'],
-                        ['id' => 'totalJatuhan1', 'label' => 'Jatuhan', 'value' => $data['jatuh1'], 'bg_class' => 'bg-info bg-opacity-25 highlightable', 'img' => '../assets/Assets/judo white.png', 'img_class' => ''],
-                        ['id' => 'totalBinaan1Biru', 'label' => 'Binaan I', 'value' => $data['totalBinaan1Biru'], 'bg_class' => 'bg-blue-score highlightable', 'img' => '../assets/Assets/pointing_hand.png', 'img_class' => ''],
-                        ['id' => 'totalBinaan2Biru', 'label' => 'Binaan II', 'value' => $data['totalBinaan2Biru'], 'bg_class' => 'bg-blue-score highlightable', 'img' => '../assets/Assets/peace_hand.png', 'img_class' => 'rotate-90'],
-                        ['id' => 'totalTeguran1Biru', 'label' => 'Teguran I', 'value' => $data['totalTeguran1Biru'], 'bg_class' => 'bg-blue-score highlightable', 'img' => '../assets/Assets/pointing_hand.png', 'img_class' => '-rotate-90'],
-                        ['id' => 'totalTeguran2Biru', 'label' => 'Teguran II', 'value' => $data['totalTeguran2Biru'], 'bg_class' => 'bg-blue-score highlightable', 'img' => '../assets/Assets/peace_hand.png', 'img_class' => ''],
-                        ['id' => 'totalPeringatan1', 'label' => 'Peringatan (x5)', 'value' => $data['totalPeringatan1'], 'bg_class' => 'bg-info bg-opacity-25 highlightable', 'img' => '../assets/Assets/raising_hand.png', 'img_class' => '']
-                    ];
-                @endphp
-                @foreach ($details as $detail)
-                    <div class="detail-card {{ $detail['bg_class'] }}" id="card-{{ $detail['id'] }}">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-primary rounded-circle p-1 me-3">
-                                <img src="{{ asset($detail['img']) }}" class="size-8 {{ $detail['img_class'] }}" alt="{{ $detail['label'] }}">
-                            </div>
-                            <span class="fs-5">{{ $detail['label'] }}</span>
+            @php
+                $categories = [
+                    ['id_b' => 'b1b', 'id_m' => 'b1m', 'label' => 'Binaan I', 'icon' => 'assets/Assets/pointing_hand.png', 'split' => true],
+                    ['id_b' => 'b2b', 'id_m' => 'b2m', 'label' => 'Binaan II', 'icon' => 'assets/Assets/peace_hand.png', 'split' => true],
+                    ['id_b' => 't1b', 'id_m' => 't1m', 'label' => 'Teguran I', 'icon' => 'assets/Assets/pointing_hand.png', 'split' => true],
+                    ['id_b' => 't2b', 'id_m' => 't2m', 'label' => 'Teguran II', 'icon' => 'assets/Assets/peace_hand.png', 'split' => true],
+                    ['id_b' => 'totalJatuhan1', 'id_m' => 'totalJatuhan2', 'label' => 'Jatuhan', 'icon' => 'assets/Assets/judo white.png', 'split' => false],
+                    ['id_b' => 'totalPeringatan1', 'id_m' => 'totalPeringatan2', 'label' => 'Peringatan', 'icon' => 'assets/Assets/raising_hand.png', 'split' => false],
+                ];
+            @endphp
+
+            @foreach ($categories as $cat)
+                <!-- Icon L -->
+                <div class="grid-item label-cell" style="grid-column: 1;">
+                    <img src="{{ asset($cat['icon']) }}" class="grid-icon">
+                </div>
+
+                <!-- Blue Value -->
+                <div class="grid-item" style="grid-column: 2;">
+                    @if($cat['split'])
+                        <div class="sub-grid-babak value-blue">
+                            @for($i = 1; $i <= 3; $i++)
+                                <div id="card-{{ $cat['id_b'] }}_{{ $i }}" class="sub-grid-item">
+                                    <span class="babak-sub-header">B {{$i}}</span>
+                                    <span id="{{ $cat['id_b'] }}_{{ $i }}"
+                                        class="sub-val">{{ $data[$cat['id_b'] . '_' . $i] ?? 0 }}</span>
+                                </div>
+                            @endfor
                         </div>
-                        <div class="fs-5 fw-bold" id="{{ $detail['id'] }}">{{ $detail['value'] }}</div>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- Right Side: Red Team Details --}}
-            <div class="col-6">
-                <div class="text-danger text-center fs-2 mb-3 fw-semibold">Tim Merah</div>
-                @php
-                    $details = [
-                        // ['id' => 'pukulanm', 'label' => 'Pukulan (x1)', 'value' => $data['pukulanm'], 'bg_class' => 'bg-red-score', 'img' => '../assets/Assets/fist (2).png', 'img_class' => 'scale-x-[-1]'],
-                        // ['id' => 'tendanganm', 'label' => 'Tendangan (x2)', 'value' => $data['tendanganm'], 'bg_class' => 'bg-red-score', 'img' => '../assets/Assets/kick.png', 'img_class' => ''],
-                        ['id' => 'totalJatuhan2', 'label' => 'Jatuhan', 'value' => $data['jatuh2'], 'bg_class' => 'bg-danger bg-opacity-25 highlightable', 'img' => '../assets/Assets/judo white.png', 'img_class' => 'scale-x-[-1]'],
-                        ['id' => 'totalBinaan1Merah', 'label' => 'Binaan I', 'value' => $data['totalBinaan1Merah'], 'bg_class' => 'bg-red-score highlightable', 'img' => '../assets/Assets/pointing_hand.png', 'img_class' => 'scale-x-[-1]'],
-                        ['id' => 'totalBinaan2Merah', 'label' => 'Binaan II', 'value' => $data['totalBinaan2Merah'], 'bg_class' => 'bg-red-score highlightable', 'img' => '../assets/Assets/peace_hand.png', 'img_class' => '-rotate-90 scale-x-[-1]'],
-                        ['id' => 'totalTeguran1Merah', 'label' => 'Teguran I', 'value' => $data['totalTeguran1Merah'], 'bg_class' => 'bg-red-score highlightable', 'img' => '../assets/Assets/pointing_hand.png', 'img_class' => 'rotate-90 scale-x-[-1]'],
-                        ['id' => 'totalTeguran2Merah', 'label' => 'Teguran II', 'value' => $data['totalTeguran2Merah'], 'bg_class' => 'bg-red-score highlightable', 'img' => '../assets/Assets/peace_hand.png', 'img_class' => 'scale-x-[-1]'],
-                        ['id' => 'totalPeringatan2', 'label' => 'Peringatan (x5)', 'value' => $data['totalPeringatan2'], 'bg_class' => 'bg-danger bg-opacity-25 highlightable', 'img' => '../assets/Assets/raising_hand.png', 'img_class' => 'scale-x-[-1]']
-                    ];
-                @endphp
-                 @foreach ($details as $detail)
-                    <div class="detail-card {{ $detail['bg_class'] }}" id="card-{{ $detail['id'] }}">
-                        <div class="fs-5 fw-bold" id="{{ $detail['id'] }}">{{ $detail['value'] }}</div>
-                        <div class="d-flex align-items-center">
-                            <span class="me-3 fs-5">{{ $detail['label'] }}</span>
-                            <div class="bg-danger rounded-circle p-1">
-                                <img src="{{ asset($detail['img']) }}" class="size-8 {{ $detail['img_class'] }}" alt="{{ $detail['label'] }}">
-                            </div>
+                    @else
+                        <div id="card-{{ $cat['id_b'] }}" class="value-cell value-blue d-flex align-items-center">
+                            <span id="{{ $cat['id_b'] }}">{{ $data[$cat['id_b']] ?? 0 }}</span>
                         </div>
-                    </div>
-                @endforeach
-            </div>
+                    @endif
+                </div>
+
+                <!-- Category Name -->
+                <div class="grid-item category-name-cell" style="grid-column: 3;">
+                    {{ $cat['label'] }}
+                </div>
+
+                <!-- Red Value -->
+                <div class="grid-item" style="grid-column: 4;">
+                    @if($cat['split'])
+                        <div class="sub-grid-babak value-red">
+                            @for($i = 1; $i <= 3; $i++)
+                                <div id="card-{{ $cat['id_m'] }}_{{ $i }}" class="sub-grid-item">
+                                    <span class="babak-sub-header">B {{$i}}</span>
+                                    <span id="{{ $cat['id_m'] }}_{{ $i }}"
+                                        class="sub-val">{{ $data[$cat['id_m'] . '_' . $i] ?? 0 }}</span>
+                                </div>
+                            @endfor
+                        </div>
+                    @else
+                        <div id="card-{{ $cat['id_m'] }}" class="value-cell value-red d-flex align-items-center">
+                            <span id="{{ $cat['id_m'] }}">{{ $data[$cat['id_m']] ?? 0 }}</span>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Icon R -->
+                <div class="grid-item label-cell" style="grid-column: 5; border-right: none;">
+                    <img src="{{ asset($cat['icon']) }}" class="grid-icon">
+                </div>
+            @endforeach
         </div>
-    </section>
 
+        <input type="hidden" name="{{ $data['arena'] ?? '' }}" id="arenaid">
+    </div>
 
+    {{-- Scripts --}}
+    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
 
-</div>
-{{-- Hidden elements for JavaScript access --}}
-<div class="d-none" name="{{ $data['arena'] ?? '' }}" id="arenaid"></div>
-<div class="d-none" name="{{ $data['partai'] ?? '' }}" id="idpartai"></div>
-<div class="d-none" name="{{ $data['sesi'] ?? '' }}" id="sesiid"></div>
+    <script>
+        const INITIAL_DATA = @json($datakp);
 
-
-{{-- Scripts --}}
-<script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
-{{-- Include custom core file which should contain modal and time logic (like getselisih) --}}
-{{-- @include('addon.tanding.core') --}}
-
-<script>
-    // --- JavaScript for Real-time Update ---
-
-    const INITIAL_DATA = @json($datakp);
-    
-    // UI elements that need updating (matches keys from sendTandingScore response)
-    const UI_ELEMENTS = [
-        'jaruh1', 'jatuh2', 'totalBinaan1Biru', 'totalBinaan2Biru', 'totalTeguran1Biru', 'totalTeguran2Biru',
-        'totalBinaan1Merah', 'totalBinaan2Merah', 'totalTeguran1Merah', 'totalTeguran2Merah',
-        'totalJatuhan1', 'totalJatuhan2', 'totalPeringatan1', 'totalPeringatan2',
-    ];
-
-    /**
-     * Highlights an element briefly when its value changes.
-     * @param {string} elementId - The ID of the element to highlight.
-     */
-    function flashHighlight(elementId) {
-        // Only flash elements marked as highlightable (penalties/fouls)
-        if (elementId.includes('Binaan') || elementId.includes('Teguran') || elementId.includes('Peringatan') || elementId.includes('Jatuhan')) {
+        function flashHighlight(elementId) {
             const $card = $(`#card-${elementId}`);
             $card.addClass('highlight-flash');
             setTimeout(() => {
                 $card.removeClass('highlight-flash');
-            }, 500);
+            }, 1000);
         }
-    }
 
-    /**
-     * Updates the UI elements based on the incoming WebSocket data payload.
-     * @param {Object} data - The score data object from sendTandingScore.
-     */
-    function updateScores(data) {
+        function updateScores(data) {
+            console.log("WebSocket Score Update:", data);
 
-        // 1. Update Detail Recap Counters and check for highlights
-        // UI_ELEMENTS.forEach(key => {
-        //     const $element = $(`#${key}`);
-        //     const newValue = data[key] || 0;
-        //     const currentValue = parseInt($element.text());
+            // Updated keys for split data
+            const rounds = [1, 2, 3];
+            const splitTypes = ['b1b', 'b2b', 't1b', 't2b', 'b1m', 'b2m', 't1m', 't2m'];
 
-        //     if (data.hasOwnProperty(key)) {
-        //         if (newValue > currentValue) {
-        //             flashHighlight(key);
-        //         }
-        //         $element.text(newValue);
-        //     }
-        // });
-
-        // 2. Update Match Status and Round
-        $('#partai').text(`Partai ${data.partai}`);
-        $('#statusPertandingan').text(data.statusPertandingan);
-        $('#babak').text(data.babak);
-
-        console.log(data.namaBiru);
-        $('#kontigenb').text(data.kontigenBiru);
-        $('#namab').text(data.namaBiru);
-
-        $('#kontigenm').text(data.kontigenMerah);
-        $('#namam').text(data.namaMerah);
-        
-        // 3. Update Timer
-        if (data.status === "pause") {
-            $('#timer1').text("PAUSE");
-        } else if (data.time) {
-             // Assuming getselisih function is available from addon.tanding.core
-            if (typeof getselisih === 'function') {
-                const timer = getselisih(data.time);
-                $('#timer1').text(timer);
-            } else {
-                 $('#timer1').text(data.time); 
-            }
-        }
-        
-        // 4. Handle Modal Notifications
-        if (data.notif === "not") {
-             $('.modal').modal('hide');
-        }
-    }
-
-
-    // --- WebSocket Implementation ---
-    function websocket() {
-        var arena_id = $('#arenaid').attr('name');
-        if (window.Echo) {
-            window.Echo.connector.pusher.connection.bind('connected', function () {
-                console.log("Terhubung ke Soketi!");
-            });
-
-            // Listen for the ScoreEvent which carries the final processed score data
-            Echo.channel('score-channel') 
-                .listen('ScoreEvent', (datas) => {
-                    // Use datas.message because the event payload wraps the response data in 'message'
-                    if(arena_id == datas.message.arena) {
-                        console.log(datas.messsage);
-                        updateScores(datas.message);
+            splitTypes.forEach(type => {
+                rounds.forEach(r => {
+                    const key = `${type}_${r}`;
+                    const $element = $(`#${key}`);
+                    if ($element.length) {
+                        const newValue = data[key] !== undefined ? data[key] : 0;
+                        const currentValue = parseInt($element.text()) || 0;
+                        if (newValue !== currentValue) {
+                            $element.text(newValue);
+                            flashHighlight(key);
+                        }
                     }
                 });
-            
-        } else {
-            console.error('Laravel Echo is not initialized. Real-time updates disabled.');
-        }
-    }
+            });
 
-    // --- Initial Load ---
-    $(document).ready(function() {
-        // We ensure data is correctly parsed before starting the websocket listener
-        updateScores(INITIAL_DATA);
-        websocket();
-    });
-</script>
+            // Single keys
+            const singleKeys = ['totalJatuhan1', 'totalJatuhan2', 'totalPeringatan1', 'totalPeringatan2',
+                'totalBinaan1Biru', 'totalBinaan2Biru', 'totalTeguran1Biru', 'totalTeguran2Biru',
+                'totalBinaan1Merah', 'totalBinaan2Merah', 'totalTeguran1Merah', 'totalTeguran2Merah'];
+            singleKeys.forEach(key => {
+                const $element = $(`#${key}`);
+                if ($element.length) {
+                    const newValue = data[key] !== undefined ? data[key] : 0;
+                    const currentValue = parseInt($element.text()) || 0;
+                    if (newValue !== currentValue) {
+                        $element.text(newValue);
+                        flashHighlight(key);
+                    }
+                }
+            });
+
+            $('#partai').text(`Partai ${data.partai}`);
+            $('#babak').text(data.babak);
+            $('#namab').text(data.namaBiru);
+            $('#namam').text(data.namaMerah);
+            $('#kontigenb').text(data.kontigenBiru);
+            $('#kontigenm').text(data.kontigenMerah);
+        }
+
+        function websocket() {
+            var arena_id = $('#arenaid').attr('name');
+            if (window.Echo) {
+                window.Echo.connector.pusher.connection.bind('connected', function () {
+                    console.log("Terhubung ke Soketi!");
+                });
+
+                Echo.channel('score-channel')
+                    .listen('ScoreEvent', (datas) => {
+                        if (arena_id == datas.message.arena) {
+                            updateScores(datas.message);
+                        }
+                    });
+            }
+        }
+
+        $(document).ready(function () {
+            updateScores(INITIAL_DATA);
+            websocket();
+        });
+    </script>
 @endsection

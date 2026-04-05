@@ -301,6 +301,7 @@
 
                     <form action="{{ route('rekap.seni.data') }}" method="post">
                         @csrf
+                        <input type="hidden" name="id_juri" value="{{ $id_juri }}">
                         <input type="text" hidden value="{{ $setting->arena }}" name="arena" id="arena_id">
                         <input type="text" hidden value="{{ $setting->biru }}" name="id_user">
                         <input type="text" hidden value="ganda" name="kategori">
@@ -324,6 +325,7 @@
                 </div>
                 <form action="{{ route('rekap.seni.data') }}" method="post">
                     @csrf
+                    <input type="hidden" name="id_juri" value="{{ $id_juri }}">
                     <div class="modal-body">
                         <p class="fs-5">Apakah Anda yakin ingin mendiskualifikasi peserta ini?</p>
                         <input type="text" hidden value="{{ $setting->arena }}" name="arena">
@@ -367,6 +369,7 @@
                             <div class="col-6">
                                 <form action="{{ route('rekap.seni.data') }}" method="post">
                                     @csrf
+                                    <input type="hidden" name="id_juri" value="{{ $id_juri }}">
                                     <input type="text" hidden value="{{ $setting->arena }}" name="arena">
                                     <input type="text" hidden value="{{ $setting->biru }}" name="id_user">
                                     <input type="text" hidden value="ganda" name="kategori">
@@ -381,6 +384,7 @@
                             <div class="col-6">
                                 <form action="{{ route('rekap.seni.data') }}" method="post">
                                     @csrf
+                                    <input type="hidden" name="id_juri" value="{{ $id_juri }}">
                                     <input type="text" hidden value="{{ $setting->arena }}" name="arena">
                                     <input type="text" hidden value="{{ $setting->biru }}" name="id_user">
                                     <input type="text" hidden value="ganda" name="kategori">

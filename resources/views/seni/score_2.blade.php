@@ -156,13 +156,28 @@
             left: 50%;
             transform: translate(-50%, -50%);
 
-            .w-10 {
-                width: 10%;
-            }
-
             .w-5 {
                 width: 5%;
             }
+        }
+
+        .change-bg {
+            transition: background-color 0.5s ease;
+        }
+
+        .bg-white-blink {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .bg-yellow-blink {
+            background-color: yellow !important;
+            color: black !important;
+        }
+
+        .bg-orange-blink {
+            background-color: orange !important;
+            color: white !important;
         }
     </style>
     {{--
@@ -187,8 +202,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -275,14 +290,14 @@
                         @endforeach
                     </div>
                 @else
-                    <div class=" text-green fw-bold" name="changetext" style="font-size: 3em;" id="nama">
+                    <div class=" text-green fw-bold change-text" style="font-size: 3em;" id="nama">
                         {{ $perserta->name }}
                     </div>
                 @endif
             </div>
             <div>
                 <div class="text-dark text-end fs-2">: Kontingen</div>
-                <div class="fs-1 text-end text-green fw-bold" name="changetext" style="font-size: 3em;" id="kontigen">
+                <div class="fs-1 text-end text-green fw-bold change-text" style="font-size: 3em;" id="kontigen">
                     {{ $kontigen }}
                 </div>
             </div>
@@ -319,7 +334,7 @@
                         @php
                             $juri = $setting->{'juri_' . $i};
                         @endphp
-                        <td name="{{ $juri }}" class="bg-white-1" name="changetext">
+                        <td name="{{ $juri }}" class="bg-green-2 change-bg change-text">
                             <div id="total{{ $i }}" style="font-size: 8em;">
 
                             </div>
@@ -336,8 +351,8 @@
                 <table class="table table-responsive table-bordered border-black">
                     <thead class="text-center align-middle ">
                         <tr>
-                            <th name="change" class="bg-green-2 text-light py-2 fs-2">Median</th>
-                            <th name="change" class="bg-green-2 text-light py-2 fs-2">Penalty</th>
+                            <th class="bg-green-2 change-bg text-light py-2 fs-2">Median</th>
+                            <th class="bg-green-2 change-bg text-light py-2 fs-2">Penalty</th>
                             {{-- <th class="bg-green-2 text-light py-5 fs-1">Total</th> --}}
                         </tr>
                     </thead>
@@ -349,7 +364,7 @@
                             {{-- <td class="py-5 fw-bold fs-2 text-primary" id="total"></td> --}}
                         </tr>
                         <tr>
-                            <td colspan="3" name="change" class="bg-green-2 text-light py-2 fs-2">Standard Deviation
+                            <td colspan="3" class="bg-green-2 change-bg text-light py-2 fs-2">Standard Deviation
                             </td>
                         </tr>
                         <tr>
@@ -361,21 +376,19 @@
             <div class="col-8 ">
                 <div class="row justify-content-center items-center ">
                     <div class="col">
-                        <div name="change"
-                            class="border border-black shadow-lg bg-green-2 h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
+                        <div class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Time Performance
                         </div>
-                        <div id="timer1" name="changetext" class="container text-green fw-bold text-center align-middle"
+                        <div id="timer1" class="change-text container text-green fw-bold text-center align-middle"
                             style="font-size: 14em;">
                             03:00
                         </div>
                     </div>
                     <div class="col">
-                        <div name="change"
-                            class="border border-black container shadow-lg bg-green-2 text-light border-3 rounded text-center px-5 py-3 fs-2">
+                        <div class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Total Score
                         </div>
-                        <div id="total" name="changetext" class="container text-green fw-bold text-center align-middle"
+                        <div id="total" class="change-text container text-green fw-bold text-center align-middle"
                             style="font-size: 14em;">
                             9.2
                         </div>
@@ -416,6 +429,7 @@
         let isPaused = false;
         let StatusCondition = '';
         let intervalId; // Simpan referensi interval
+        let response_current_global = '';
         // function untuk websoket
 
         function formatTime(seconds) {
@@ -498,20 +512,28 @@
                             console.log(data);
                             $(`[name='${data.id_juri}']`).removeClass('bg-success text-white bg-warning bg-primary bg-danger text-black text-success');
 
-                            if (data.status == "next") {
-                                $(`[name='${data.id_juri}']`).addClass('bg-warning text-black');
+                             if (data.status == "next") {
+                                $(`[name='${data.id_juri}']`).addClass('bg-white-blink');
                             }
                             else if (data.status == "flow") {
-                                $(`[name='${data.id_juri}']`).addClass('bg-primary text-white');
+                                $(`[name='${data.id_juri}']`).addClass('bg-orange-blink');
                             }
                             else if (data.status == "wrong") {
-                                $(`[name='${data.id_juri}']`).addClass('bg-danger text-white');
+                                $(`[name='${data.id_juri}']`).addClass('bg-yellow-blink');
+                            }
+                            else if (data.status == "save") {
+                                $(`[name='${data.id_juri}']`).addClass('bg-orange-blink');
                             }
 
                             setTimeout(() => {
-                                $(`[name='${data.id_juri}']`).removeClass('bg-success bg-primary bg-danger bg-warning text-black text-white');
-                                $(`[name='${data.id_juri}']`).addClass('bg-success text-white');
-                            }, 400);
+                                $(`[name='${data.id_juri}']`).removeClass('bg-success bg-primary bg-danger bg-warning text-black text-white bg-white-blink bg-yellow-blink bg-orange-blink');
+                                // Determine reset color based on current participant
+                                let resetColor = 'bg-green-2';
+                                if (response_current_global == "biru") resetColor = 'bg-blue-2';
+                                else if (response_current_global == "merah") resetColor = 'bg-red-2';
+                                
+                                $(`[name='${data.id_juri}']`).addClass(resetColor + ' text-white');
+                            }, 1000); // Pulse stays for 1 second then fades back via CSS transition
                         }
                     });
                 Echo.channel('timer')
@@ -746,24 +768,25 @@
                         let finalArr = [];
                         let result;
 
+                        response_current_global = response.current;
                         if (response.current == "biru") {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2');
-                            $("[name='change']").addClass('bg-blue-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2');
+                            $(".change-bg").addClass('bg-blue-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-blue');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-blue');
                         } else if (response.current == "merah") {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
-                            $("[name='change']").addClass('bg-red-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").addClass('bg-red-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-red');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-red');
                         } else {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
-                            $("[name='change']").addClass('bg-green-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").addClass('bg-green-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-green');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-green');
                         }
 
 
@@ -774,7 +797,7 @@
                             namaRegu.forEach((data, index) => {
 
                                 $('#parentRegu').append(`
-                                    <div class="fs-1 text-green" id="nama">
+                                    <div class="fs-1 text-green change-text" id="nama">
                                         ${data}
                                     </div>
                                 `);
@@ -834,7 +857,7 @@
                         $('#median').text(findMedian(all_juri));
                         $('#deviation').text(deviation);
 
-                        if (response.status == "finish") {
+                        if (response.status == "finished" || response.status == "finish") {
                             const send = {
                                 id_user: id,
                                 arena: arena,
@@ -844,6 +867,9 @@
                             }
 
                             rekap(send);
+                            const params = new URLSearchParams(window.location.search);
+                            const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
+                            window.location.href = `redirect?arena=${arena}&role=rekapPrestasiTunggal${isDewan}`;
                         }
 
                         if ((response.status == 'taking-time' || response.status == 'diskualify') && timeSaveStatus == false) {

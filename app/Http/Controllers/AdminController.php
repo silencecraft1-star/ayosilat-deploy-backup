@@ -306,6 +306,10 @@ class AdminController extends Controller
             return view('admin.arena.jadwal', compact('arena', 'status', 'id_juri', 'sesi'));
         } elseif ($role == "rekapTanding") {
             return view('rekapTanding', compact('arena'));
+        } elseif ($role == "rekapPrestasiTunggal") {
+            return view('seni.rekapPrestasiTunggal', compact('arena'));
+        } elseif ($role == "rekapPrestasiSolo") {
+            return view('seni.rekapPrestasiSolo', compact('arena'));
         } elseif ($role == "manual-tanding") {
             return view('penilaian.manual_tanding', compact('arena', 'id_juri'));
         } elseif ($role == "ranking") {
@@ -347,6 +351,8 @@ class AdminController extends Controller
             return view('seni.tunggal.juri', compact('id_juri', 'arena'));
         } elseif ($role == 'dewan-tunggal') {
             return view('seni.tunggal.dewan', compact('id_juri', 'arena'));
+        } elseif ($role == 'dewan-solo' || $role == 'dewan-ganda') {
+            return view('seni.ganda.dewan', compact('id_juri', 'arena'));
         } else {
             // dd($data);
         }

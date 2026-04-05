@@ -1,322 +1,438 @@
 @extends('layout.master2')
 
 @section('content')
-@php
-    use App\arena;
-    // --- Data Initialization (from controller) ---
-    $pending_scores = $datakp['data']; // Collection of all pending_tanding records
-    $currentRound = $datakp['babak'];
-    $teamBlue = $datakp['biru'];
-    $teamRed = $datakp['merah'];
-    $arena = $datakp['arena'];
-    $juriMap = $datakp['juri']; // Access the new Juri IDs: ['juri_1' => ID_A, 'juri_2' => ID_B, ...]
-    // dd($datakp);
-    $arenaData = arena::where('id', $arena)->first();
-    // Safely extract the two participant IDs (assuming two unique IDs in the pending scores)
-    $team_ids = $pending_scores->pluck('id_perserta')->unique()->toArray();
-    $tim_biru_id = $team_ids[0] ?? ''; 
-    $tim_merah_id = $team_ids[4] ?? '';
-    // UI Loop setup
-    $jumlahJuri = 3;
-@endphp
+    @php
+        use App\arena;
+        use App\PersertaModel;
+        use App\kelas;
+        // --- Data Initialization (from controller) ---
+        $pending_scores = $datakp['data']; // Collection of all pending_tanding records
+        $currentRound = $datakp['babak'];
+        $teamBlue = $datakp['biru'];
+        $teamRed = $datakp['merah'];
+        $arena = $datakp['arena'];
+        $juriMap = $datakp['juri']; // Access the new Juri IDs: ['juri_1' => ID_A, 'juri_2' => ID_B, ...]
+        $arenaData = arena::where('id', $arena)->first();
 
-<div class="py-5 container">
-    {{-- Display overall match info --}}
-    <div class="row mb-5">
-        <div class="col text-start">
-            <span id="kontigenb" class="team fw-bold text-uppercase">{{ $teamBlue['kontigen'] }}</span> <br>
-            <span id="namab" class="peserta text-primary text-uppercase">{{ $teamBlue['nama'] }}</span>
-        </div>
-        <div class="col">
-            <div class="mb-2">
-                <div class="text-center text-primary fs-3">
-                    {{ $arenaData->name }}
+        // Fetch Category/Class Info
+        $peserta = PersertaModel::where('id', $teamBlue['id'])->first();
+        $infoKategori = '';
+        if ($peserta) {
+            $kelasData = kelas::where('id', $peserta->kelas)->first();
+            $infoKategori = strtoupper(($peserta->gender ?? '') . ($kelasData ? "| Kelas " . $kelasData->name : ""));
+        }
+
+        $tim_biru_id = $teamBlue['id'] ?? '';
+        $tim_merah_id = $teamRed['id'] ?? '';
+        $jumlahJuri = 3;
+    @endphp
+
+    <style>
+        @font-face {
+            font-family: 'Poppins Regular';
+            src: url("{{ asset('assets/fonts/poppins/Poppins-Regular.ttf') }}") format('truetype');
+        }
+
+        body {
+            font-family: 'Poppins Regular', sans-serif;
+            background-color: #f4f7f6;
+        }
+
+        .header-monitor {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .team-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-box.red {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        .team-icon-circle {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 4px solid;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .team-icon-circle img {
+            height: 35px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .blue-circle {
+            border-color: #0d6efd;
+        }
+
+        .red-circle {
+            border-color: #dc3545;
+        }
+
+        .team-labels {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .team-kontigen {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: -2px;
+        }
+
+        .team-nama {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .arena-info {
+            text-align: center;
+        }
+
+        .arena-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .match-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* --- Grid Layout for Scoring --- */
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: 1fr 4fr 2fr 4fr 1fr;
+            /* Proportions: 1-4-2-4-1 */
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #333;
+        }
+
+        .grid-header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            border-right: 1px solid #444;
+        }
+
+        .grid-header:last-child {
+            border-right: none;
+        }
+
+        .grid-item {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            min-height: 60px;
+        }
+
+        /* Remove right border for the last items in each virtual row (which is the 5th column usually, but grid-span complicates it) */
+        /* To keep it simple, we'll use border-right on all and override the far right ones if they are consistently in col 5 */
+
+        .juri-label-cell {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: #555;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .score-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 6px;
+            overflow: hidden;
+            min-height: 40px;
+            align-items: center;
+            overflow-x: auto;
+            width: 100%;
+            scrollbar-width: thin;
+        }
+
+        .score-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .score-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .score-container div {
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .babak-cell {
+            font-size: 3rem;
+            font-weight: 900;
+            background: #fff;
+            justify-content: center;
+            border-left: 2.5px solid #333;
+            border-right: 2.5px solid #333;
+            transition: all 0.3s;
+            grid-column: 3;
+        }
+
+        .active-babak {
+            background: #FFD600 !important;
+            color: #000;
+        }
+
+        .text-decoration-line-through {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+    </style>
+
+    <div class="py-4 container-fluid px-5">
+        <!-- Header Section -->
+        <div class="header-monitor">
+            <!-- Team Blue -->
+            <div class="team-box">
+                <div class="team-icon-circle blue-circle">
+                    <img src="{{ asset('assets/Assets/karate.png') }}" alt="Blue Team Icon">
+                </div>
+                <div class="team-labels">
+                    <span id="kontigenb" class="team-kontigen">{{ $teamBlue['kontigen'] }}</span>
+                    <span id="namab" class="team-nama text-primary">{{ $teamBlue['nama'] }}</span>
                 </div>
             </div>
-            <div class="mb-1">
-                <div class="text-center fs-3">
-                    Partai {{ $datakp["partai"] }}
+
+            <!-- Arena/Match Info -->
+            <div class="arena-info">
+                <div class="arena-name text-uppercase">{{ $arenaData->name }}</div>
+                <div class="match-number">Partai {{ $datakp["partai"] }}</div>
+                <div class="team-kontigen" style="color: #333;">{{ $infoKategori }}</div>
+            </div>
+
+            <!-- Team Red -->
+            <div class="team-box red">
+                <div class="team-labels">
+                    <span id="kontigenm" class="team-kontigen">{{ $teamRed['kontigen'] }}</span>
+                    <span id="namam" class="team-nama text-danger">{{ $teamRed['nama'] }}</span>
+                </div>
+                <div class="team-icon-circle red-circle">
+                    <img src="{{ asset('assets/Assets/karate (1).png') }}" alt="Red Team Icon">
                 </div>
             </div>
         </div>
-        <div class="col text-end">
-            <span id="kontigenm" class="team fw-bold text-uppercase">{{ $teamRed['kontigen'] }}</span> <br>
-            <span id="namam" class="peserta text-danger text-uppercase">{{ $teamRed['nama'] }}</span>
+
+        <!-- Main Scoring Grid (1-4-2-4-1) -->
+        <div class="scoring-grid">
+            <!-- Grid Headers -->
+            <div class="grid-header" style="grid-column: span 2;">RIWAYAT JURI (BIRU)</div>
+            <div class="grid-header">BABAK</div>
+            <div class="grid-header" style="grid-column: span 2;">RIWAYAT JURI (MERAH)</div>
+
+            @for ($babak = 1; $babak <= 3; $babak++)
+                @for ($jIdx = 1; $jIdx <= 3; $jIdx++)
+                    <!-- Juri Label Label L -->
+                    <div class="grid-item juri-label-cell" style="grid-column: 1;">JURI {{ $jIdx }}</div>
+
+                    <!-- Blue Scores -->
+                    <div class="grid-item" style="grid-column: 2;">
+                        <div id="data{{$babak}}b_{{$jIdx}}" class="score-container">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Babak Central (Spans 3 Rows) -->
+                    @if ($jIdx === 1)
+                        <div class="grid-item babak-cell @if($currentRound == $babak) active-babak @endif" id="babak-{{$babak}}"
+                            style="grid-row: span 3; border-bottom: 2px solid #333;">
+                            {{ $babak === 1 ? 'I' : ($babak === 2 ? 'II' : 'III') }}
+                        </div>
+                    @endif
+
+                    <!-- Red Scores -->
+                    <div class="grid-item" style="grid-column: 4; justify-content: flex-end;">
+                        <div id="data{{$babak}}m_{{$jIdx}}" class="score-container" style="justify-content: flex-end;">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Juri Label Label R -->
+                    <div class="grid-item juri-label-cell" style="grid-column: 5; border-right: none;">JURI {{ $jIdx }}</div>
+                @endfor
+            @endfor
         </div>
+
+        <input type="hidden" name="{{ $arena }}" id="arenaid">
     </div>
-    
-    {{-- Loop through each judge (Juri) --}}
-    @for ($i = 1; $i <= $jumlahJuri; $i++)
-        @php
-            $juriKeyName = 'juri_' . $i; // Key name in the $juriMap: 'juri_1', 'juri_2', etc.
-            $juriKey = $juriMap[$juriKeyName] ?? null; // The actual Juri ID from DB (e.g., 'JURI-A')
-            $currentJuriName = "Juri {$i}";
 
-            // Filter the initial data set for this specific judge using the actual Juri ID
-            $scoresByJuri = $pending_scores->filter(function ($item) use ($juriKey) {
-                // Ensure $item->juri1 matches the actual ID passed from the controller
-                return $item->juri1 === $juriKey; 
+    {{-- Includes jQuery and Echo setup scripts --}}
+    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
+    {{-- Assuming Echo/Pusher setup is available here or in master2 layout --}}
+    @include('addon.tanding.reload')
+
+    <script>
+        // Define PHP variables in JavaScript scope
+        const TIM_BIRU_ID = "{{ $tim_biru_id }}";
+        const TIM_MERAH_ID = "{{ $tim_merah_id }}";
+        const JUMLAH_JURI = {{ $jumlahJuri }};
+        const INITIAL_DATA = @json($datakp);
+        // NEW: Juri IDs are now correctly passed to match the incoming WebSocket data
+        const JURI_IDS = @json($datakp['juri']);
+
+
+        /**
+         * Renders scores from the given data set onto the UI, filtered by judge.
+         * @param {Object} data - The data payload containing 'data' (scores) and 'babak' (current round).
+         */
+        function updateScores(dataPayload) {
+            const info = dataPayload;
+            const scores = dataPayload.data;
+            const currentBabak = dataPayload.babak;
+            const placeholder = '<div>-</div>';
+
+            $(`#namab`).text(info.biru.nama);
+            $(`#namam`).text(info.merah.nama);
+
+            $(`#kontigenb`).text(info.biru.kontigen);
+            $(`#kontigenm`).text(info.merah.kontigen);
+
+            // 1. Clear all existing score containers
+            for (let i = 1; i <= JUMLAH_JURI; i++) {
+                for (let b = 1; b <= 3; b++) {
+                    $(`#data${b}b_${i}`).empty();
+                    $(`#data${b}m_${i}`).empty();
+                }
+            }
+
+            // 2. Update active babak color
+            $(`.babak-cell`).removeClass('active-babak');
+            $(`#babak-${currentBabak}`).addClass('active-babak');
+
+
+            // 3. Tracking flags for placeholders
+            let foundFlags = {};
+            for (let i = 1; i <= JUMLAH_JURI; i++) {
+                for (let b = 1; b <= 3; b++) {
+                    foundFlags[`${b}b_${i}`] = false;
+                    foundFlags[`${b}m_${i}`] = false;
+                }
+            }
+
+            // 4. Process all scores
+            scores.forEach((data) => {
+                // Determine the Juri index (1, 2, or 3) by matching data.juri1 (the actual ID) 
+                // against the known JURI_IDS map.
+                let juriIndex = null;
+                if (data.juri1 === JURI_IDS.juri_1) {
+                    juriIndex = 1;
+                } else if (data.juri1 === JURI_IDS.juri_2) {
+                    juriIndex = 2;
+                } else if (data.juri1 === JURI_IDS.juri_3) {
+                    juriIndex = 3;
+                }
+
+                if (juriIndex === null) {
+                    return; // Skip if juri ID doesn't match a known judge slot
+                }
+
+                // Determine the score value (1 for pukulan, 2 for tendangan)
+                let score = 0;
+                if (data.keterangan === "pukulan") {
+                    score = 1;
+                } else if (data.keterangan === "tendangan") {
+                    score = 2;
+                } else {
+                    score = data.score || 0; // Fallback to original score or 0
+                }
+
+                // Determine output team
+                let team = '';
+                if (data.id_perserta == info.biru.id) {
+                    team = 'b';
+                } else if (data.id_perserta == info.merah.id) {
+                    team = 'm';
+                } else {
+                    return; // Not a recognized team
+                }
+
+                // Determine output HTML and update flag
+                const outputId = `data${data.babak}${team}_${juriIndex}`;
+                const outputHTML = data.isValid === "false"
+                    ? `<div class="text-decoration-line-through">${score},</div>`
+                    : `<div>${score},</div>`;
+
+
+                // Append score
+                $(`#${outputId}`).append(outputHTML);
+                foundFlags[`${data.babak}${team}_${juriIndex}`] = true;
             });
 
-            // Filter by babak and team for initial render
-            $data1b = $scoresByJuri->where('id_perserta', $tim_biru_id)->where('babak', '1');
-            $data2b = $scoresByJuri->where('id_perserta', $tim_biru_id)->where('babak', '2');
-            $data3b = $scoresByJuri->where('id_perserta', $tim_biru_id)->where('babak', '3');
-            $data1m = $scoresByJuri->where('id_perserta', $tim_merah_id)->where('babak', '1');
-            $data2m = $scoresByJuri->where('id_perserta', $tim_merah_id)->where('babak', '2');
-            $data3m = $scoresByJuri->where('id_perserta', $tim_merah_id)->where('babak', '3');
-        @endphp
-
-        <div class="row my-4 border-bottom pb-4 judge-row">
-            <div class="col-12 text-center fs-3 mb-3">
-                {{-- Display the judge name and their actual ID for troubleshooting --}}
-                <h2 class="fw-bold">{{ $currentJuriName }} (ID: {{ $juriKey }})</h2>
-            </div>
-
-            <!-- Scorering UI Structure -->
-            <section id="scorering-{{ $i }}" class="d-flex justify-content-center w-100 score-section">
-                
-                {{-- Kiri (Blue Score Table) --}}
-                <div class="blueScore table-responsive me-3">
-                    <table class="table table-bordered border border-dark" style="min-width: 500px; max-width: 500px;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class=" text-center bg-primary text-white" colspan="3">Riwayat Point Tim Biru</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for ($babak = 1; $babak <= 3; $babak++)
-                                @php 
-                                    // Use dynamic variable name for the collection based on loop
-                                    // $data = ${"data{$babak}b"}; 
-                                    $data = 'data'.$babak.'b'; 
-                                @endphp
-                                <tr>
-                                    {{-- Dynamic ID for JavaScript updates: data[Round][Team]_Juri[Number] --}}
-                                    <td colspan="3" class="d-flex flex-wrap" style="min-height: 40px;" id="data{{$babak}}b_{{$i}}">
-                                        @forelse ($data as $item)
-                                            @php
-                                                // Dynamic score calculation: Pukulan=1, Tendangan=2
-                                                $scoreValue = ($item->keterangan == 'pukulan') ? 1 : (($item->keterangan == 'tendangan') ? 2 : $item->score);
-                                            @endphp
-                                            @if($item->isValid == "false")
-                                                <div class="text-decoration-line-through">
-                                                    {{ $scoreValue }},
-                                                </div>
-                                            @else
-                                                <div>{{ $scoreValue }},</div>
-                                            @endif
-                                        @empty
-                                            <div>-</div> 
-                                        @endforelse
-                                    </td>
-                                </tr>
-                            @endfor
-                        </tbody>
-                    </table>
-                </div>
-
-                {{-- Tengah (Babak Table) --}}
-                <div class="babak d-flex flex-column align-items-center me-3" style="min-width: 100px;">
-                    <table class="table tabelBabak border border-dark">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="text-center border-top border-black">BABAK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr id="babak-1">
-                                <td class="text-center" @if ($currentRound == '1') style="background-color: #FFD600;" @endif>I</td>
-                            </tr>
-                            <tr id="babak-2">
-                                <td class="text-center" @if ($currentRound == '2') style="background-color: #FFD600;" @endif>II</td>
-                            </tr>
-                            <tr id="babak-3">
-                                <td class="text-center" @if ($currentRound == '3') style="background-color: #FFD600;" @endif>III</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-
-                {{-- Kanan (Red Score Table) --}}
-                <div class="redScore table-responsive">
-                    <table class="table table-bordered border border-dark" style="min-width: 500px; max-width: 500px;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class=" text-center bg-danger text-white" colspan="3">Riwayat Point Tim Merah</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for ($babak = 1; $babak <= 3; $babak++)
-                                @php 
-                                    // Use dynamic variable name for the collection based on loop
-                                    $data = ${"data{$babak}m"}; 
-                                @endphp
-                                <tr>
-                                    {{-- Dynamic ID for JavaScript updates: data[Round][Team]_Juri[Number] --}}
-                                    <td colspan="3" class="d-flex flex-wrap" style="min-height: 40px;" id="data{{$babak}}m_{{$i}}">
-                                        @forelse ($data as $item)
-                                            @php
-                                                // Dynamic score calculation: Pukulan=1, Tendangan=2
-                                                $scoreValue = ($item->keterangan == 'pukulan') ? 1 : (($item->keterangan == 'tendangan') ? 2 : $item->score);
-                                            @endphp
-                                            @if($item->isValid == "false")
-                                                <div class="text-decoration-line-through">
-                                                    {{ $scoreValue }},
-                                                </div>
-                                            @else
-                                                <div>{{ $scoreValue }},</div>
-                                            @endif
-                                        @empty
-                                            <div>-</div> 
-                                        @endforelse
-                                    </td>
-                                </tr>
-                            @endfor
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    @endfor
-    <input type="hidden" name="{{ $arena }}" id="arenaid">
-</div>
-
-{{-- Includes jQuery and Echo setup scripts --}}
-<script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
-{{-- Assuming Echo/Pusher setup is available here or in master2 layout --}}
-@include('addon.tanding.reload') 
-
-<script>
-    // Define PHP variables in JavaScript scope
-    const TIM_BIRU_ID = "{{ $tim_biru_id }}";
-    const TIM_MERAH_ID = "{{ $tim_merah_id }}";
-    const JUMLAH_JURI = {{ $jumlahJuri }};
-    const INITIAL_DATA = @json($datakp);
-    // NEW: Juri IDs are now correctly passed to match the incoming WebSocket data
-    const JURI_IDS = @json($datakp['juri']); 
-
-
-    /**
-     * Renders scores from the given data set onto the UI, filtered by judge.
-     * @param {Object} data - The data payload containing 'data' (scores) and 'babak' (current round).
-     */
-    function updateScores(dataPayload) {
-        const info = dataPayload;
-        const scores = dataPayload.data;
-        const currentBabak = dataPayload.babak;
-        const placeholder = '<div>-</div>';
-
-        $(`#namab`).text(info.biru.nama);
-        $(`#namam`).text(info.merah.nama);
-
-        $(`#kontigenb`).text(info.biru.kontigen);
-        $(`#kontigenm`).text(info.merah.kontigen);
-
-        // 1. Clear all existing score containers
-        for (let i = 1; i <= JUMLAH_JURI; i++) {
-            for (let b = 1; b <= 3; b++) {
-                $(`#data${b}b_${i}`).empty();
-                $(`#data${b}m_${i}`).empty();
-            }
-        }
-        
-        // 2. Update active babak color
-        $(`.tabelBabak tr td`).css('background-color', '');
-        $(`#babak-${currentBabak} td`).css('background-color', '#FFD600');
-
-
-        // 3. Tracking flags for placeholders
-        let foundFlags = {};
-        for (let i = 1; i <= JUMLAH_JURI; i++) {
-            for (let b = 1; b <= 3; b++) {
-                foundFlags[`${b}b_${i}`] = false;
-                foundFlags[`${b}m_${i}`] = false;
+            // 5. Insert Placeholders where no data was found
+            for (let i = 1; i <= JUMLAH_JURI; i++) {
+                for (let b = 1; b <= 3; b++) {
+                    if (!foundFlags[`${b}b_${i}`]) { $(`#data${b}b_${i}`).append(placeholder); }
+                    if (!foundFlags[`${b}m_${i}`]) { $(`#data${b}m_${i}`).append(placeholder); }
+                }
             }
         }
 
-        // 4. Process all scores
-        scores.forEach((data) => {
-            // Determine the Juri index (1, 2, or 3) by matching data.juri1 (the actual ID) 
-            // against the known JURI_IDS map.
-            let juriIndex = null;
-            if (data.juri1 === JURI_IDS.juri_1) {
-                juriIndex = 1;
-            } else if (data.juri1 === JURI_IDS.juri_2) {
-                juriIndex = 2;
-            } else if (data.juri1 === JURI_IDS.juri_3) {
-                juriIndex = 3;
-            }
-            
-            if (juriIndex === null) {
-                return; // Skip if juri ID doesn't match a known judge slot
-            }
-
-            // Determine the score value (1 for pukulan, 2 for tendangan)
-            let score = 0;
-            if (data.keterangan === "pukulan") {
-                score = 1;
-            } else if (data.keterangan === "tendangan") {
-                score = 2;
-            } else {
-                score = data.score || 0; // Fallback to original score or 0
-            }
-
-            // Determine output team
-            let team = '';
-            if (data.id_perserta == info.biru.id) {
-                team = 'b';
-            } else if (data.id_perserta == info.merah.id) {
-                team = 'm';
-            } else {
-                return; // Not a recognized team
-            }
-
-            // Determine output HTML and update flag
-            const outputId = `data${data.babak}${team}_${juriIndex}`;
-            const outputHTML = data.isValid === "false"
-                ? `<div class="text-decoration-line-through">${score},</div>`
-                : `<div>${score},</div>`;
-
-
-            // Append score
-            $(`#${outputId}`).append(outputHTML);
-            foundFlags[`${data.babak}${team}_${juriIndex}`] = true;
+        // --- Initial Load ---
+        $(document).ready(function () {
+            updateScores(INITIAL_DATA);
+            websocket();
         });
 
-        // 5. Insert Placeholders where no data was found
-        for (let i = 1; i <= JUMLAH_JURI; i++) {
-            for (let b = 1; b <= 3; b++) {
-                if (!foundFlags[`${b}b_${i}`]) { $(`#data${b}b_${i}`).append(placeholder); }
-                if (!foundFlags[`${b}m_${i}`]) { $(`#data${b}m_${i}`).append(placeholder); }
-            }
-        }
-    }
-    
-    // --- Initial Load ---
-    $(document).ready(function() {
-        updateScores(INITIAL_DATA);
-        websocket();
-    });
-
-    // --- WebSocket Listener ---
-    function websocket() {
-        var arena_id = $('#arenaid').attr('name');
-        if (window.Echo) {
-            window.Echo.connector.pusher.connection.bind('connected', function () {
-                console.log("Terhubung ke Soketi!");
-            });
-            // Listen for the JuriEvent containing the updated score data
-            Echo.channel('juri-channel')
-                .listen('JuriEvent', (datas) => {
-                    console.log('JuriEvent received:', datas.message);
-                    let data = datas.message;
-
-                    if(arena_id == data.arena) {
-                        updateScores(datas.message);
-                    }
+        // --- WebSocket Listener ---
+        function websocket() {
+            var arena_id = $('#arenaid').attr('name');
+            if (window.Echo) {
+                window.Echo.connector.pusher.connection.bind('connected', function () {
+                    console.log("Terhubung ke Soketi!");
                 });
+                // Listen for the JuriEvent containing the updated score data
+                Echo.channel('juri-channel')
+                    .listen('JuriEvent', (datas) => {
+                        console.log('JuriEvent received:', datas.message);
+                        let data = datas.message;
+
+                        if (arena_id == data.arena) {
+                            updateScores(datas.message);
+                        }
+                    });
 
                 Echo.channel('score-channel')
                     .listen('ScoreEvent', ({ message: data }) => {
@@ -324,27 +440,24 @@
 
                         console.log(data);
                         // Ensure data.babak is treated as a number for strict comparison
-                        const currentBabak = parseInt(data.babak); 
+                        const currentBabak = parseInt(data.babak);
 
                         for (let i = 1; i <= 3; i++) {
-                            // Target the first/only <td> inside the <tr>
-                            $(`#babak-${i} td`).css('background-color', 
-                                i === currentBabak ? '#FFD600' : '' // Set 'transparent' or empty string for default
-                            );
+                            $(`#babak-${i}`).toggleClass('active-babak', i === currentBabak);
                         }
                     });
-            
-            // Listen for verification channel for modal updates (if needed)
-            Echo.channel('verification-channel')
-                .listen('VerificationEvent', (datas) => {
-                    console.log('VerificationEvent received:', datas.message);
-                    // Add logic here to display verification status if required for KP monitoring
-                });
 
-        } else {
-            console.error('Laravel Echo is not initialized. Real-time updates disabled.');
+                // Listen for verification channel for modal updates (if needed)
+                Echo.channel('verification-channel')
+                    .listen('VerificationEvent', (datas) => {
+                        console.log('VerificationEvent received:', datas.message);
+                        // Add logic here to display verification status if required for KP monitoring
+                    });
+
+            } else {
+                console.error('Laravel Echo is not initialized. Real-time updates disabled.');
+            }
         }
-    }
-</script>
-<script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
+    </script>
+    <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
 @endsection

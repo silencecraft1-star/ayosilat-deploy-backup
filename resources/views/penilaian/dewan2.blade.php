@@ -503,7 +503,7 @@
         <div class="lg:grid lg:grid-cols-5 px-6">
             <!-- Button Biru Section -->
             @php
-                $jatuh_babak = score::where('keterangan', 'jatuh')
+                $jatuh_babak_biru = score::where('keterangan', 'jatuh')
                     ->where('babak', $setting->babak)
                     ->where('id_perserta', $tim_biru)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
@@ -512,7 +512,7 @@
                         $query->whereNull('id_sesi');
                     })->where('partai', $partai)
                     ->count();
-                $bina_babak = score::where('keterangan', 'binaan')
+                $bina_babak_biru = score::where('keterangan', 'binaan')
                     ->where('babak', $setting->babak)
                     ->where('id_perserta', $tim_biru)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
@@ -521,7 +521,7 @@
                         $query->whereNull('id_sesi');
                     })->where('partai', $partai)
                     ->count();
-                $teguran_babak = score::where('keterangan', 'teguran')
+                $teguran_babak_biru = score::where('keterangan', 'teguran')
                     ->where('babak', $setting->babak)
                     ->where('id_perserta', $tim_biru)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
@@ -530,7 +530,7 @@
                         $query->whereNull('id_sesi');
                     })->where('partai', $partai)
                     ->count();
-                $peringatan_babak = score::where('keterangan', 'peringatan')
+                $peringatan_babak_biru = score::where('keterangan', 'peringatan')
                     ->where('babak', $setting->babak)
                     ->where('id_perserta', $tim_biru)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
@@ -545,17 +545,17 @@
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_biru }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:jatuh p:3 keterangan:plus"
                         id="kirimData"
-                        class="bg-blue-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue disabled:bg-gray-900">JATUHAN</button>
+                        class="bg-blue-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">JATUHAN</button>
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_biru }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:binaan p:0 keterangan:plus"
                         id="kirimData"
-                        class="bg-blue-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue"
-                        @if ($bina_babak === 2) disabled @endif>BINAAN</button>
+                        class="{{ $bina_babak_biru >= 2 ? 'bg-gray-400 opacity-50 cursor-not-allowed' : 'bg-blue-600' }} px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue btn-binaan-biru"
+                        @if ($bina_babak_biru >= 2) disabled @endif>BINAAN</button>
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_biru }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:teguran p:1 keterangan:plus"
                         id="kirimData"
-                        class="bg-blue-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue"
-                        @if ($teguran_babak === 2) disabled @endif>TEGURAN</button>
+                        class="{{ $teguran_babak_biru >= 2 ? 'bg-gray-400 opacity-50 cursor-not-allowed' : 'bg-blue-600' }} px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue btn-teguran-biru"
+                        @if ($teguran_babak_biru >= 2) disabled @endif>TEGURAN</button>
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_biru }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:peringatan p:5 keterangan:plus"
                         id="kirimData"
@@ -664,7 +664,7 @@
                 </div>
             </div>
             @php
-                $jatuh_babak = score::where('keterangan', 'jatuh')
+                $jatuh_babak_merah = score::where('keterangan', 'jatuh')
                     ->where('babak', $setting->babak)
                     ->where('partai', $partai)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
@@ -673,32 +673,32 @@
                         $query->whereNull('id_sesi');
                     })->where('id_perserta', $tim_merah)
                     ->count();
-                $bina_babak = score::where('keterangan', 'binaan')
+                $bina_babak_merah = score::where('keterangan', 'binaan')
                     ->where('babak', $setting->babak)
                     ->where('partai', $partai)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
                         $query->where('id_sesi', $id_sesi);
                     }, function ($query) {
                         $query->whereNull('id_sesi');
-                    })->where('id_perserta', $tim_merah)->where('id_perserta', $tim_merah)
+                    })->where('id_perserta', $tim_merah)
                     ->count();
-                $teguran_babak = score::where('keterangan', 'teguran')
+                $teguran_babak_merah = score::where('keterangan', 'teguran')
                     ->where('babak', $setting->babak)
                     ->where('partai', $partai)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
                         $query->where('id_sesi', $id_sesi);
                     }, function ($query) {
                         $query->whereNull('id_sesi');
-                    })->where('id_perserta', $tim_merah)->where('id_perserta', $tim_merah)
+                    })->where('id_perserta', $tim_merah)
                     ->count();
-                $peringatan_babak = score::where('keterangan', 'peringatan')
+                $peringatan_babak_merah = score::where('keterangan', 'peringatan')
                     ->where('babak', $setting->babak)
                     ->where('partai', $partai)
                     ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
                         $query->where('id_sesi', $id_sesi);
                     }, function ($query) {
                         $query->whereNull('id_sesi');
-                    })->where('id_perserta', $tim_merah)->where('id_perserta', $tim_merah)
+                    })->where('id_perserta', $tim_merah)
                     ->count();
             @endphp
             <!-- Button Merah Section -->
@@ -729,17 +729,17 @@
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_merah }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:jatuh p:3 keterangan:plus"
                         id="kirimData"
-                        class="bg-red-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red">JATUHAN</button>
+                        class="bg-red-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">JATUHAN</button>
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_merah }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:binaan p:0 keterangan:plus"
                         id="kirimData"
-                        class="bg-red-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red"
-                        @if ($bina_babak === 2) disabled @endif>BINAAN</button>
+                        class="{{ $bina_babak_merah >= 2 ? 'bg-gray-400 opacity-50 cursor-not-allowed' : 'bg-red-600' }} px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red btn-binaan-merah"
+                        @if ($bina_babak_merah >= 2) disabled @endif>BINAAN</button>
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_merah }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:teguran p:1 keterangan:plus"
                         id="kirimData"
-                        class="bg-red-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red"
-                        @if ($teguran_babak === 2) disabled @endif>TEGURAN</button>
+                        class="{{ $teguran_babak_merah >= 2 ? 'bg-gray-400 opacity-50 cursor-not-allowed' : 'bg-red-600' }} px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red btn-teguran-merah"
+                        @if ($teguran_babak_merah >= 2) disabled @endif>TEGURAN</button>
                     <button @if ($peringatan === 3) disabled @endif
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_merah }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:peringatan p:5 keterangan:plus"
                         id="kirimData"
@@ -937,6 +937,10 @@
                 $("#status-winner").text($(this).attr('name'));
             });
             var arena = $("#IDarena").attr('name');
+            var lastPenaltyCounts = {
+                biru: { binaan: {{ $bina_babak_biru }}, teguran: {{ $teguran_babak_biru }} },
+                merah: { binaan: {{ $bina_babak_merah }}, teguran: {{ $teguran_babak_merah }} }
+            };
 
             function WebSocket() {
                 if (window.Echo) {
@@ -949,7 +953,7 @@
 
                             if (arena == data.arena) {
                                 console.log(data);
-                                assignDewan(data.data);
+                                assignDewan(data.data, data.babak);
                             }
                             // alert(JSON.stringify(datas.message));
                         });
@@ -1023,6 +1027,13 @@
 
                     $(this).attr('name', arr.join(' '));
                 });
+
+                // Update penalty button states
+                lastPenaltyCounts = {
+                    biru: { binaan: data.totalBinaan1, teguran: data.teguranTotal1 },
+                    merah: { binaan: data.totalBinaan2, teguran: data.teguranTotal2 }
+                };
+                updatePenaltyButtons(lastPenaltyCounts);
 
                 // Update semua button biru delete
                 $(".button-blue-delete").each(function () {
@@ -1142,7 +1153,41 @@
                 console.log("Dewan data updated successfully");
             }
 
-            function assignDewan(datas) {
+            function updatePenaltyButtons(counts) {
+                // Blue Binaan
+                $('.btn-binaan-biru').prop('disabled', counts.biru.binaan >= 2);
+                if (counts.biru.binaan >= 2) {
+                    $('.btn-binaan-biru').removeClass('bg-blue-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-binaan-biru').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-blue-600');
+                }
+
+                // Blue Teguran
+                $('.btn-teguran-biru').prop('disabled', counts.biru.teguran >= 2);
+                if (counts.biru.teguran >= 2) {
+                    $('.btn-teguran-biru').removeClass('bg-blue-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-teguran-biru').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-blue-600');
+                }
+
+                // Red Binaan
+                $('.btn-binaan-merah').prop('disabled', counts.merah.binaan >= 2);
+                if (counts.merah.binaan >= 2) {
+                    $('.btn-binaan-merah').removeClass('bg-red-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-binaan-merah').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-red-600');
+                }
+
+                // Red Teguran
+                $('.btn-teguran-merah').prop('disabled', counts.merah.teguran >= 2);
+                if (counts.merah.teguran >= 2) {
+                    $('.btn-teguran-merah').removeClass('bg-red-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-teguran-merah').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-red-600');
+                }
+            }
+
+            function assignDewan(datas, currentBabak) {
                 var list = ['jatuh', 'binaan', 'teguran', 'peringatan']
 
                 list.forEach((data, index) => {
@@ -1166,6 +1211,21 @@
                     }
 
                 })
+
+                // Update penalty button states if babak info is available
+                if (currentBabak && datas[currentBabak]) {
+                    lastPenaltyCounts = {
+                        biru: {
+                            binaan: datas[currentBabak]["biru"]["binaan"],
+                            teguran: datas[currentBabak]["biru"]["teguran"]
+                        },
+                        merah: {
+                            binaan: datas[currentBabak]["merah"]["binaan"],
+                            teguran: datas[currentBabak]["merah"]["teguran"]
+                        }
+                    };
+                    updatePenaltyButtons(lastPenaltyCounts);
+                }
             }
 
             const btnveryfication = document.querySelectorAll('#btn-veryfication-jatuhan , #btn-veryfication-hukuman');
@@ -1395,10 +1455,12 @@
                             console.log(data);
                             // console.log('aa');
                             $('button').prop('disabled', false);
+                            updatePenaltyButtons(lastPenaltyCounts);
                         })
                         .catch(error => {
                             console.log(error);
                             $('button').prop('disabled', false);
+                            updatePenaltyButtons(lastPenaltyCounts);
                             // Tangani kesalahan jika ada
                         });
                     // reload();

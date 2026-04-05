@@ -21,8 +21,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                        window.history.back();
-                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                window.history.back();
+                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -89,9 +89,13 @@
             color: #f5f5f5;
         }
 
-        table tbody tr td.bg-blue-2 {
-            background-color: blue;
-            color: #f5f5f5;
+        .change-bg {
+            transition: background-color 0.5s ease;
+        }
+
+        .bg-orange-blink {
+            background-color: orange !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -145,7 +149,7 @@
                     <div class="fs-4">
                         Nama Peserta :
                     </div>
-                    <div class="text-green fw-bold" name="changetext" style="font-size: 3em;" id="nama">
+                    <div class="text-green change-text fw-bold" style="font-size: 3em;" id="nama">
                         {{ $perserta->name }}
                     </div>
                 </div>
@@ -153,7 +157,7 @@
                     <div class="text-end fs-4">
                         : Kontingen
                     </div>
-                    <div class="text-end fw-bold text-green" name="changetext" style="font-size: 3em;" id="kontigen">
+                    <div class="text-end fw-bold change-text text-green" style="font-size: 3em;" id="kontigen">
                         {{ $kontigen }}
                     </div>
                 </div>
@@ -190,7 +194,7 @@
                             @php
                                 $juri = $setting->{'juri_' . $i};
                             @endphp
-                            <td class="fw-semibold bg-green-2 text-white" style="font-size: 5em;" name="{{ $juri }}"
+                            <td class="fw-semibold bg-green-2 change-bg text-white" style="font-size: 5em;" name="{{ $juri }}"
                                 id="total{{ $i }}"></td>
                         @endfor
                     </tr>
@@ -206,17 +210,17 @@
                                 <table class="table table-responsive table-bordered border-black">
                                     <thead class="text-center align-middle">
                                         <tr class="text-center">
-                                            <th name="change" class="bg-green-2 text-light py-2 fs-2">
+                                            <th class="bg-green-2 change-bg text-light py-2 fs-2">
                                                 Median
                                             </th>
-                                            <th name="change" class="bg-green-2 text-light py-2 fs-2">
+                                            <th class="bg-green-2 change-bg text-light py-2 fs-2">
                                                 Penalty
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-center align-middle">
                                         <tr class="text-center">
-                                            <td id="medianscore" name="changetext" class="py-3 fw-bold"
+                                            <td id="medianscore" class="change-text py-3 fw-bold"
                                                 style="font-size: 4em; overflow:hidden; max-width: 7em;">
                                                 0
                                             </td>
@@ -226,7 +230,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" name="change" class="bg-green-2 text-light py-2 fs-2">
+                                            <td colspan="3" class="bg-green-2 change-bg text-light py-2 fs-2">
                                                 Standard Deviation
                                             </td>
                                         </tr>
@@ -243,23 +247,19 @@
                     <div class="col-8">
                         <div class="row justify-content-center items-center">
                             <div class="col">
-                                <div name="change"
-                                    class="border border-black shadow-lg bg-green-2 h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
+                                <div class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                                     Time Performance
                                 </div>
-                                <div id="timer1" name="changetext"
-                                    class="container text-green fw-bold text-center align-middle"
+                                <div id="timer1" class="change-text container text-green fw-bold text-center align-middle"
                                     style="font-size: 14em;">
                                     03:00
                                 </div>
                             </div>
                             <div class="col">
-                                <div name="change"
-                                    class="border border-black container shadow-lg bg-green-2 text-light border-3 rounded text-center px-5 py-3 fs-2">
+                                <div class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
                                     Score
                                 </div>
-                                <div id="total_score" name="changetext"
-                                    class="container text-green fw-bold text-center align-middle"
+                                <div id="total_score" class="change-text container text-green fw-bold text-center align-middle"
                                     style="font-size: 14em;">
                                     9.2
                                 </div>
@@ -300,6 +300,7 @@
         let isPaused = false;
         let StatusCondition = '';
         let intervalId; // Simpan referensi interval
+        let response_current_global = '';
         // function untuk websoket
 
         function formatTime(seconds) {
@@ -379,13 +380,20 @@
 
                         if (arena_id == data.arena && data.tipe == 'notif') {
                             console.log(data);
-                            $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-white text-success');
-                            $(`[name='${data.id_juri}']`).addClass('bg-warning text-black');
+                             $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-white text-success');
+                            
+                            // For Solo, all blinks are now smooth orange fades
+                            $(`[name='${data.id_juri}']`).addClass('bg-orange-blink');
 
                             setTimeout(() => {
-                                $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-success text-white');
-                                $(`[name='${data.id_juri}']`).addClass('bg-success text-white');
-                            }, 300);
+                                $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-success text-white bg-orange-blink');
+                                // Determine reset color based on current participant
+                                let resetColor = 'bg-green-2';
+                                if (response_current_global == "biru") resetColor = 'bg-blue-2';
+                                else if (response_current_global == "merah") resetColor = 'bg-red-2';
+                                
+                                $(`[name='${data.id_juri}']`).addClass(resetColor + ' text-white');
+                            }, 1000); // Highlight stays for 1 second then fades back via CSS transition
                         }
 
                     })
@@ -548,24 +556,25 @@
                         //     $('#timer1').text("pause");
                         // }
 
+                        response_current_global = response.current;
                         if (response.current == "biru") {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2');
-                            $("[name='change']").addClass('bg-blue-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2');
+                            $(".change-bg").addClass('bg-blue-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-blue');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-blue');
                         } else if (response.current == "merah") {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
-                            $("[name='change']").addClass('bg-red-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").addClass('bg-red-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-red');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-red');
                         } else {
-                            $("[name='change']").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
-                            $("[name='change']").addClass('bg-green-2');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").addClass('bg-green-2');
 
-                            $("[name='changetext']").removeClass('text-green text-red text-blue');
-                            $("[name='changetext']").addClass('text-green');
+                            $(".change-text").removeClass('text-green text-red text-blue');
+                            $(".change-text").addClass('text-green');
                         }
 
                         $('#nama').text(response.nama);
@@ -610,7 +619,7 @@
                         $('#medianscore').text(findMedian(all_juri));
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
-                        if (response.status == "finish") {
+                        if (response.status == "finished" || response.status == "finish") {
                             const send = {
                                 id_user: id,
                                 arena: arena,
@@ -620,8 +629,9 @@
                             }
 
                             rekap(send);
-                            //clearInterval(intervalId);
-                            //location.reload();
+                            const params = new URLSearchParams(window.location.search);
+                            const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
+                            window.location.href = `redirect?arena=${arena}&role=rekapPrestasiSolo${isDewan}`;
                         }
 
                         if ((response.status == 'taking-time' || response.status == 'diskualify') && timeSaveStatus == false) {
