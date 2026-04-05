@@ -559,7 +559,7 @@
                     <button
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_biru }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:peringatan p:5 keterangan:plus"
                         id="kirimData"
-                        class="bg-blue-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue"
+                        class="bg-blue-600 px-12 py-4 btn-peringatan-biru rounded text-white shadow shadow-gray-500 hover:bg-blue-400 active:bg-blue-700 button-blue"
                         @if ($peringatan === 3) disabled @endif>PERINGATAN</button>
                 </div>
                 <div class="flex flex-wrap flex-col gap-2">
@@ -743,7 +743,7 @@
                     <button @if ($peringatan === 3) disabled @endif
                         name="arena:{{ $id_arena }} juri:{{ $id_juri }} id:{{ $tim_merah }} babak:{{ $setting->babak }} sesi:{{ $jadwalData->id_sesi ?? null }} status:peringatan p:5 keterangan:plus"
                         id="kirimData"
-                        class="bg-red-600 px-12 py-4 rounded text-white shadow shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red">PERINGATAN</button>
+                        class="bg-red-600 px-12 py-4 rounded text-white shadow btn-peringatan-merah shadow-gray-500 hover:bg-red-400 active:bg-red-700 button-red">PERINGATAN</button>
                 </div>
                 <div class="modal fade" id="vjatuhan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                     aria-labelledby="staticBackdropJatuhan" aria-hidden="true">
@@ -1030,9 +1030,10 @@
 
                 // Update penalty button states
                 lastPenaltyCounts = {
-                    biru: { binaan: data.totalBinaan1, teguran: data.teguranTotal1 },
-                    merah: { binaan: data.totalBinaan2, teguran: data.teguranTotal2 }
+                    biru: { binaan: data.totalBinaan1, teguran: data.teguranTotal1, peringatan: data.totalPeringatan1 },
+                    merah: { binaan: data.totalBinaan2, teguran: data.teguranTotal2, peringatan: data.totalPeringatan2 }
                 };
+
                 updatePenaltyButtons(lastPenaltyCounts);
 
                 // Update semua button biru delete
@@ -1154,6 +1155,14 @@
             }
 
             function updatePenaltyButtons(counts) {
+                // Blue Peringatan
+                $('.btn-peringatan-biru').prop('disabled', counts.biru.peringatan >= 3);
+                if (counts.biru.peringatan >= 3) {
+                    $('.btn-peringatan-biru').removeClass('bg-blue-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-peringatan-biru').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-blue-600');
+                }
+
                 // Blue Binaan
                 $('.btn-binaan-biru').prop('disabled', counts.biru.binaan >= 2);
                 if (counts.biru.binaan >= 2) {
@@ -1168,6 +1177,14 @@
                     $('.btn-teguran-biru').removeClass('bg-blue-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
                 } else {
                     $('.btn-teguran-biru').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-blue-600');
+                }
+
+                // Merah peringatan
+                $('.btn-peringatan-merah').prop('disabled', counts.merah.peringatan >= 3);
+                if (counts.merah.peringatan >= 3) {
+                    $('.btn-peringatan-merah').removeClass('bg-red-600').addClass('bg-gray-400 opacity-50 cursor-not-allowed');
+                } else {
+                    $('.btn-peringatan-merah').removeClass('bg-gray-400 opacity-50 cursor-not-allowed').addClass('bg-red-600');
                 }
 
                 // Red Binaan

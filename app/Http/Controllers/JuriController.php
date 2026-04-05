@@ -439,20 +439,24 @@ class JuriController extends Controller
 
             $babakData = [
                 'biru' => [
-                    'binaan1' => [0, 0, 0, 0], 'binaan2' => [0, 0, 0, 0],
-                    'teguran1' => [0, 0, 0, 0], 'teguran2' => [0, 0, 0, 0]
+                    'binaan1' => [0, 0, 0, 0],
+                    'binaan2' => [0, 0, 0, 0],
+                    'teguran1' => [0, 0, 0, 0],
+                    'teguran2' => [0, 0, 0, 0]
                 ],
                 'merah' => [
-                    'binaan1' => [0, 0, 0, 0], 'binaan2' => [0, 0, 0, 0],
-                    'teguran1' => [0, 0, 0, 0], 'teguran2' => [0, 0, 0, 0]
+                    'binaan1' => [0, 0, 0, 0],
+                    'binaan2' => [0, 0, 0, 0],
+                    'teguran1' => [0, 0, 0, 0],
+                    'teguran2' => [0, 0, 0, 0]
                 ]
             ];
 
             $participants = [
-                'biru' => [$setting->biru, 0, 0, 0, 0], 
+                'biru' => [$setting->biru, 0, 0, 0, 0],
                 'merah' => [$setting->merah, 0, 0, 0, 0]
             ];
-            
+
             // We need references if we want to keep the summation logic identical, but let's just use babakData for sums too.
             $binaanSum = ['biru' => [0, 0], 'merah' => [0, 0]];
             $teguranSum = ['biru' => [0, 0], 'merah' => [0, 0]];
@@ -465,7 +469,7 @@ class JuriController extends Controller
                     }, function ($query) {
                         $query->whereNull('id_sesi');
                     })->where('arena', $arena)->where('id_perserta', $id)->where('babak', $babakLoop)->count();
-                    
+
                     $valB1 = ($binaan >= 1) ? 1 : 0;
                     $valB2 = ($binaan > 1) ? 1 : 0;
                     $binaanSum[$key][0] += $valB1;
@@ -478,7 +482,7 @@ class JuriController extends Controller
                     }, function ($query) {
                         $query->whereNull('id_sesi');
                     })->where('arena', $arena)->where('id_perserta', $id)->where('babak', $babakLoop)->count();
-                    
+
                     $valT1 = ($teguran >= 1) ? 1 : 0;
                     $valT2 = ($teguran > 1) ? 1 : 0;
                     $teguranSum[$key][0] += $valT1;
@@ -603,15 +607,31 @@ class JuriController extends Controller
                         'totalTeguran2Merah' => $teguranSum['merah'][1],
 
                         // Per-Babak Data
-                        'b1b_1' => $babakData['biru']['binaan1'][1], 'b1b_2' => $babakData['biru']['binaan1'][2], 'b1b_3' => $babakData['biru']['binaan1'][3],
-                        'b2b_1' => $babakData['biru']['binaan2'][1], 'b2b_2' => $babakData['biru']['binaan2'][2], 'b2b_3' => $babakData['biru']['binaan2'][3],
-                        't1b_1' => $babakData['biru']['teguran1'][1], 't1b_2' => $babakData['biru']['teguran1'][2], 't1b_3' => $babakData['biru']['teguran1'][3],
-                        't2b_1' => $babakData['biru']['teguran2'][1], 't2b_2' => $babakData['biru']['teguran2'][2], 't2b_3' => $babakData['biru']['teguran2'][3],
+                        'b1b_1' => $babakData['biru']['binaan1'][1],
+                        'b1b_2' => $babakData['biru']['binaan1'][2],
+                        'b1b_3' => $babakData['biru']['binaan1'][3],
+                        'b2b_1' => $babakData['biru']['binaan2'][1],
+                        'b2b_2' => $babakData['biru']['binaan2'][2],
+                        'b2b_3' => $babakData['biru']['binaan2'][3],
+                        't1b_1' => $babakData['biru']['teguran1'][1],
+                        't1b_2' => $babakData['biru']['teguran1'][2],
+                        't1b_3' => $babakData['biru']['teguran1'][3],
+                        't2b_1' => $babakData['biru']['teguran2'][1],
+                        't2b_2' => $babakData['biru']['teguran2'][2],
+                        't2b_3' => $babakData['biru']['teguran2'][3],
 
-                        'b1m_1' => $babakData['merah']['binaan1'][1], 'b1m_2' => $babakData['merah']['binaan1'][2], 'b1m_3' => $babakData['merah']['binaan1'][3],
-                        'b2m_1' => $babakData['merah']['binaan2'][1], 'b2m_2' => $babakData['merah']['binaan2'][2], 'b2m_3' => $babakData['merah']['binaan2'][3],
-                        't1m_1' => $babakData['merah']['teguran1'][1], 't1m_2' => $babakData['merah']['teguran1'][2], 't1m_3' => $babakData['merah']['teguran1'][3],
-                        't2m_1' => $babakData['merah']['teguran2'][1], 't2m_2' => $babakData['merah']['teguran2'][2], 't2m_3' => $babakData['merah']['teguran2'][3],
+                        'b1m_1' => $babakData['merah']['binaan1'][1],
+                        'b1m_2' => $babakData['merah']['binaan1'][2],
+                        'b1m_3' => $babakData['merah']['binaan1'][3],
+                        'b2m_1' => $babakData['merah']['binaan2'][1],
+                        'b2m_2' => $babakData['merah']['binaan2'][2],
+                        'b2m_3' => $babakData['merah']['binaan2'][3],
+                        't1m_1' => $babakData['merah']['teguran1'][1],
+                        't1m_2' => $babakData['merah']['teguran1'][2],
+                        't1m_3' => $babakData['merah']['teguran1'][3],
+                        't2m_1' => $babakData['merah']['teguran2'][1],
+                        't2m_2' => $babakData['merah']['teguran2'][2],
+                        't2m_3' => $babakData['merah']['teguran2'][3],
 
                         'totalJatuhan1' => $totalJatuhan1,
                         'totalJatuhan2' => $totalJatuhan2,
