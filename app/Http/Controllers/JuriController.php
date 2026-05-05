@@ -981,6 +981,7 @@ class JuriController extends Controller
                 $data = score::where('id_perserta', $id)->where('partai', $partai)->where('arena', $arena)->get();
                 $dewan = $data->where('status', 'seni_minus')->sum('score');
                 $setting = Setting::where('arena', $request->input('arena'))->first();
+                $jadwalGanda = jadwal_group::where('id', $setting->jadwal)->first();
 
                 $partaiFinal = $setting->partai;
 
@@ -1020,6 +1021,7 @@ class JuriController extends Controller
                         'dewan' => 0,
                         'time' => $setting->time,
                         'status' => $setting->status,
+                        'keterangan_jadwal' => $jadwalGanda->keterangan ?? 'pemasalan',
                     ];
                     $response['dewan'] += $dewan;
                     foreach ($data as $item) {
@@ -1122,6 +1124,7 @@ class JuriController extends Controller
                 $pesertaBiru = PersertaModel::where('id', $setting->biru)->first();
                 $data = score::where('id_perserta', $pesertaBiru->id)->where('partai', $partai)->where('arena', $arena)->get();
                 $dewan = $data->where('status', 'seni_minus')->sum('score');
+                $jadwalTunggal = jadwal_group::where('id', $setting->jadwal)->first();
 
                 $partaiFinal = $setting->partai;
 
@@ -1167,103 +1170,56 @@ class JuriController extends Controller
                         'dewan' => 0,
                         'time' => $setting->time,
                         'status' => $setting->status,
+                        'keterangan_jadwal' => $jadwalTunggal->keterangan ?? 'pemasalan',
                     ];
                     $response['dewan'] = number_format($dewan, 2);
                     foreach ($data as $item) {
                         if ($item->id_juri === $setting->juri_1) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual1'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual1'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo1'] = $item->score;
                             }
 
                         } elseif ($item->id_juri === $setting->juri_2) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual2'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual2'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo2'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_3) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual3'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual3'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo3'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_4) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual4'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual4'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo4'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_5) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual5'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual5'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo5'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_6) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual6'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual6'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo6'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_7) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual7'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual7'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo7'] = $item->score;
                             }
                         } elseif ($item->id_juri === $setting->juri_8) {
                             if ($item->keterangan === "next") {
-                                $numbers = 9.90 - 0.1;
-                                if ($item->score === '0') {
-                                    $sc = number_format($item->score / 100, 2);
-                                } else {
-                                    $sc = number_format(($item->score - 10) / 100, 2);
-                                }
-                                $response['actual8'] = floor(abs($numbers - $sc) * 100) / 100;
+                                $response['actual8'] = 9.90 - ($item->score / 100);
                             } elseif ($item->keterangan === "flwo") {
                                 $response['flwo8'] = $item->score;
                             }

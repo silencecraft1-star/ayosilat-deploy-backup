@@ -265,6 +265,7 @@ class RekapController extends Controller
         $arena = $request->arena;
 
         $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $jadwalData = \App\jadwal_group::where('id', $settingData->jadwal)->first();
 
         if ($settingData->status != "finish") {
             return response()->json([
@@ -273,7 +274,13 @@ class RekapController extends Controller
                 'status' => $settingData->status,
                 'jadwal_id' => $settingData->jadwal,
                 'partai' => $settingData->partai,
-                'active_id' => $settingData->biru
+                'active_id' => $settingData->biru,
+                'timer_biru' => $jadwalData->timer_biru ?? '00:00',
+                'timer_merah' => $jadwalData->timer_merah ?? '00:00',
+                'score_biru' => $jadwalData->score_biru ?? 0,
+                'score_merah' => $jadwalData->score_merah ?? 0,
+                'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
+                'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
             ], 200);
         } else {
             $time = $settingData->time ?? "00:00";
@@ -302,7 +309,13 @@ class RekapController extends Controller
                 'status' => $settingData->status ?? "pending",
                 'jadwal_id' => $jadwal_id,
                 'partai' => $partai,
-                'active_id' => $active_id
+                'active_id' => $active_id,
+                'timer_biru' => $jadwalData->timer_biru ?? '00:00',
+                'timer_merah' => $jadwalData->timer_merah ?? '00:00',
+                'score_biru' => $jadwalData->score_biru ?? 0,
+                'score_merah' => $jadwalData->score_merah ?? 0,
+                'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
+                'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
             ], 200);
         }
     }
@@ -311,8 +324,33 @@ class RekapController extends Controller
     {
         $data = Setting::where('arena', $request->arena)->whereNotNull('judul')->first();
 
-        if ($data->status != "finish") {
+        if (!$data) {
+            return back()->with('error', 'Setting arena tidak ditemukan.');
+        }
 
+        $jadwal = \App\jadwal_group::where('id', $data->jadwal)->first();
+
+        if (!$jadwal) {
+            return back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+
+        // Jika ada menang (dari form Tentukan Pemenang), simpan pemenang ke jadwal_group
+        if ($request->has('menang') && $request->menang) {
+            $jadwal->update([
+                'pemenang' => $request->menang,
+                'status'   => 'selesai',
+            ]);
+
+            // Redirect kembali ke halaman rekap dengan isDewan
+            if ($request->kategori == "tunggal") {
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiTunggal&isDewan=true');
+            } else {
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiSolo&isDewan=true');
+            }
+        }
+
+        // Flow lama: dewan selesaikan pertandingan (tanpa penentuan pemenang manual)
+        if ($data->status != "finish") {
             if ($request->status_pertandingan == "diskualifikasi") {
                 $data->update([
                     'status' => 'diskualify',
@@ -322,9 +360,7 @@ class RekapController extends Controller
             }
         }
 
-        $jadwal = \App\jadwal_group::where('id', $data->jadwal)->first();
-
-        if ($jadwal && $jadwal->keterangan == "prestasi") {
+        if ($jadwal->keterangan == "prestasi") {
             $juriNameStr = $request->has('id_juri') ? '&name=' . $request->id_juri : '';
             if ($request->kategori == "tunggal") {
                 return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiTunggal&isDewan=true' . $juriNameStr);
@@ -339,7 +375,6 @@ class RekapController extends Controller
                 'arena' => $request->arena
             ]);
         } else {
-
             return view('seni.rekapSolo', [
                 'id_user' => $request->id_user,
                 'arena' => $request->arena

@@ -571,7 +571,10 @@
                                                                     </td>
                                                                     <td class="text-primary text-center">{{ $subitem->timer_biru }}</td>
                                                                     <td class="text-primary text-center">{{ $subitem->timer_merah }}</td>
-                                                                    <td class="text-primary text-center">{{ $subitem->pemenang }}</td>
+                                                                    @php
+                                                                        $namaPemenang = PersertaModel::where('id', $subitem->pemenang)->value('name') ?? '-';
+                                                                    @endphp
+                                                                    <td class="text-success text-center fw-bold">{{ $namaPemenang }}</td>
                                                                     <td>
                                                                         <div class="d-flex justify-content-center p-0">
                                                                             @if(!empty($subitem->keterangan) && $subitem->keterangan == "prestasi")

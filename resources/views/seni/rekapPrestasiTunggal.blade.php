@@ -11,14 +11,14 @@
 
 <body class="bg-gray-100">
     <!-- Splash Screen -->
-    <div id="splash" class="fixed inset-0 z-50 bg-slate-100 flex justify-center items-center transition-all duration-500">
+    <!-- <div id="splash" class="fixed inset-0 z-50 bg-slate-100 flex justify-center items-center transition-all duration-500">
         <div class="text-center">
             <div class="inline bg-gradient-to-br from-blue-700 to-blue-300 text-3xl bg-clip-text text-transparent font-bold animate-pulse">
                 Sedang Mengambil Data Pertandingan...
             </div>
             <p class="text-gray-500 mt-2">Mohon tunggu sebentar</p>
         </div>
-    </div>
+    </div> -->
     @php
         use App\score;
         use App\Setting;
@@ -44,21 +44,25 @@
             $setting->juri_4,
         ];
 
-        function getSeniScore($id_peserta, $arena, $partai, $juri_id, $keterangan) {
-            return score::where('id_perserta', $id_peserta)
-                ->where('arena', $arena)
-                ->where('partai', $partai)
-                ->where('id_juri', $juri_id)
-                ->where('keterangan', $keterangan)
-                ->value('score') ?? 0;
+        if (!function_exists('getSeniScore')) {
+            function getSeniScore($id_peserta, $arena, $partai, $juri_id, $keterangan) {
+                return score::where('id_perserta', $id_peserta)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juri_id)
+                    ->where('keterangan', $keterangan)
+                    ->value('score') ?? 0;
+            }
         }
 
-        function getDewanMinus($id_peserta, $arena, $partai) {
-             return score::where('id_perserta', $id_peserta)
-                ->where('arena', $arena)
-                ->where('partai', $partai)
-                ->where('status', 'seni_minus')
-                ->get();
+        if (!function_exists('getDewanMinus')) {
+            function getDewanMinus($id_peserta, $arena, $partai) {
+                 return score::where('id_perserta', $id_peserta)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('status', 'seni_minus')
+                    ->get();
+            }
         }
     @endphp
 
@@ -68,7 +72,7 @@
             <h2 class="text-2xl text-blue-700">{{ $arenaNama[1] ?? 'PRESTASI' }}</h2>
             <div class="mt-3 flex justify-center gap-4 text-xl font-bold text-gray-700">
                 <span class="bg-gray-200 px-4 py-1 rounded shadow">Partai: {{ $setting->partai }}</span>
-                <span class="bg-gray-200 px-4 py-1 rounded shadow">Kelas: {{ $jadwal->kelas }}</span>
+                <!-- <span class="bg-gray-200 px-4 py-1 rounded shadow">Kelas: {{ $jadwal->kelas }}</span> -->
             </div>
             <div class="flex justify-center gap-4 mt-2">
                 <img src="{{ asset('assets/Assets/IPSI.png') }}" class="w-16" alt="IPSI">
@@ -81,7 +85,7 @@
                 <!-- Blue Participant -->
                 <div class="col-span-1">
                     <div class="bg-gradient-to-b from-blue-700 to-blue-500 rounded shadow-xl h-24 flex justify-center items-center">
-                        <div class="text-white text-4xl font-bold">
+                        <div class="text-white text-4xl font-bold" id="score_biru_top">
                             {{ number_format($jadwal->score_biru, 2) }}
                         </div>
                     </div>
@@ -108,13 +112,18 @@
                 </div>
                 <div class="col-span-1">
                     <div class="bg-gradient-to-b from-red-700 to-red-500 rounded shadow-xl h-24 flex justify-center items-center">
-                        <div class="text-white text-4xl font-bold">
+                        <div class="text-white text-4xl font-bold" id="score_merah_top">
                             {{ number_format($jadwal->score_merah, 2) }}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- Center Button Tentukan Pemenang (Dewan Only) -->
+        <div id="btnTentukanPemenangWrap" class="flex justify-center mb-8 hidden">
+             <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full shadow-lg text-xl transition-all" data-bs-toggle="modal" data-bs-target="#winnerModal">🏆 Tentukan Pemenang</button>
+        </div>
 
         <!-- Detailed Scores Section -->
         <div class="grid grid-cols-12 gap-8">
@@ -163,15 +172,15 @@
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-blue-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Score Monitor</div>
-                        <div class="text-2xl font-bold">{{ number_format($jadwal->score_biru, 2) }}</div>
+                        <div class="text-2xl font-bold" id="score_biru_bot">{{ number_format($jadwal->score_biru, 2) }}</div>
                     </div>
                     <div class="bg-blue-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Deviasi</div>
-                        <div class="text-2xl font-bold">{{ number_format($jadwal->deviasi_biru, 4) }}</div>
+                        <div class="text-lg font-bold overflow-hidden" id="deviasi_biru">{{ $jadwal->deviasi_biru }}</div>
                     </div>
                     <div class="bg-blue-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Timer</div>
-                        <div class="text-2xl font-bold">{{ $jadwal->timer_biru ?? '00:00' }}</div>
+                        <div class="text-2xl font-bold" id="timer_biru">{{ $jadwal->timer_biru ?? '00:00' }}</div>
                     </div>
                 </div>
 
@@ -238,15 +247,15 @@
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-red-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Timer</div>
-                        <div class="text-2xl font-bold">{{ $jadwal->timer_merah ?? '00:00' }}</div>
+                        <div class="text-2xl font-bold" id="timer_merah">{{ $jadwal->timer_merah ?? '00:00' }}</div>
                     </div>
                     <div class="bg-red-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Deviasi</div>
-                        <div class="text-2xl font-bold">{{ number_format($jadwal->deviasi_merah, 4) }}</div>
+                        <div class="text-lg font-bold overflow-hidden" id="deviasi_merah">{{ $jadwal->deviasi_merah }}</div>
                     </div>
                     <div class="bg-red-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Score Monitor</div>
-                        <div class="text-2xl font-bold">{{ number_format($jadwal->score_merah, 2) }}</div>
+                        <div class="text-2xl font-bold" id="score_merah_bot">{{ number_format($jadwal->score_merah, 2) }}</div>
                     </div>
                 </div>
 
@@ -277,12 +286,199 @@
             <a href="{{ url('login-juri') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition-colors no-underline">
                  Kembali ke Login
             </a>
-        </footer> -->
+        </footer>
+        <!-- Winner Modal (Bootstrap) — Premium Redesign -->
+        <style>
+            .winner-modal-header {
+                background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+            }
+            .card-blue {
+                background: linear-gradient(145deg, #1d4ed8, #2563eb);
+                border: 2px solid rgba(147, 197, 253, 0.3);
+                box-shadow: 0 8px 32px rgba(37, 99, 235, 0.35);
+                transition: all 0.25s ease;
+            }
+            .card-blue:hover {
+                transform: translateY(-4px) scale(1.02);
+                box-shadow: 0 16px 48px rgba(37, 99, 235, 0.5);
+            }
+            .card-red {
+                background: linear-gradient(145deg, #b91c1c, #dc2626);
+                border: 2px solid rgba(252, 165, 165, 0.3);
+                box-shadow: 0 8px 32px rgba(220, 38, 38, 0.35);
+                transition: all 0.25s ease;
+            }
+            .card-red:hover {
+                transform: translateY(-4px) scale(1.02);
+                box-shadow: 0 16px 48px rgba(220, 38, 38, 0.5);
+            }
+            .score-badge {
+                background: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.35);
+                backdrop-filter: blur(4px);
+            }
+            #winnerModal .modal-content,
+            #confirmModal .modal-content {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .confirm-modal-icon {
+                width: 72px;
+                height: 72px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                margin: 0 auto 1rem;
+            }
+        </style>
+
+    <div class="modal fade" id="winnerModal" aria-hidden="true" aria-labelledby="winnerModalLabel" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 bg-transparent">
+                <div class="rounded-3xl overflow-hidden shadow-2xl">
+                    <!-- Header Gradient -->
+                    <div class="winner-modal-header px-10 pt-8 pb-6 text-white text-center relative">
+                        <button type="button" class="btn-close btn-close-white absolute top-5 right-5 opacity-80" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="text-4xl mb-2">🏆</div>
+                        <h2 class="text-3xl font-bold tracking-tight" id="winnerModalLabel">Tentukan Pemenang</h2>
+                        <p class="text-blue-200 text-sm mt-1">Pilih peserta yang memenangkan pertandingan ini</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="bg-gray-50 px-8 py-8">
+                        <div class="flex gap-5">
+                            <!-- Blue Card -->
+                            <button class="card-blue w-1/2 text-white rounded-2xl p-7 text-center cursor-pointer border-0"
+                                data-bs-target="#confirmModal" data-bs-toggle="modal"
+                                onclick="prepareConfirm('{{$pesertabiru->id}}', '{{ addslashes($pesertabiru->name) }}', '{{$pesertamerah->id}}', 'BIRU', '#1d4ed8')">
+                                <div class="text-xs font-bold uppercase tracking-widest opacity-70 mb-3">SUDUT BIRU</div>
+                                <div class="text-2xl font-extrabold mb-1 leading-tight">{{ $pesertabiru->name }}</div>
+                                <div class="text-sm opacity-75 mb-5">{{ $kontigenbiru }}</div>
+                                <div class="score-badge rounded-xl px-4 py-3">
+                                    <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
+                                    <div class="text-4xl font-black tabular-nums">{{ number_format($jadwal->score_biru, 2) }}</div>
+                                </div>
+                                <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
+                                    <span>Pilih sebagai Pemenang</span>
+                                    <span>→</span>
+                                </div>
+                            </button>
+
+                            <!-- VS Divider -->
+                            <div class="flex flex-col items-center justify-center gap-2 px-2 flex-shrink-0">
+                                <div class="text-gray-400 text-xs font-bold uppercase tracking-widest">VS</div>
+                                <div class="w-px flex-1 bg-gray-300"></div>
+                                <div class="text-gray-400 text-xs font-bold uppercase tracking-widest">VS</div>
+                            </div>
+
+                            <!-- Red Card -->
+                            <button class="card-red w-1/2 text-white rounded-2xl p-7 text-center cursor-pointer border-0"
+                                data-bs-target="#confirmModal" data-bs-toggle="modal"
+                                onclick="prepareConfirm('{{$pesertamerah->id}}', '{{ addslashes($pesertamerah->name) }}', '{{$pesertabiru->id}}', 'MERAH', '#b91c1c')">
+                                <div class="text-xs font-bold uppercase tracking-widest opacity-70 mb-3">SUDUT MERAH</div>
+                                <div class="text-2xl font-extrabold mb-1 leading-tight">{{ $pesertamerah->name }}</div>
+                                <div class="text-sm opacity-75 mb-5">{{ $kontigenmerah }}</div>
+                                <div class="score-badge rounded-xl px-4 py-3">
+                                    <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
+                                    <div class="text-4xl font-black tabular-nums">{{ number_format($jadwal->score_merah, 2) }}</div>
+                                </div>
+                                <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
+                                    <span>Pilih sebagai Pemenang</span>
+                                    <span>→</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-100 px-8 py-4 text-center border-t border-gray-200">
+                        <button type="button" data-bs-dismiss="modal" class="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors">
+                            ✕ Batal, tutup tanpa memilih pemenang
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
+    <!-- Confirmation Modal — Premium -->
+    <div class="modal fade" id="confirmModal" aria-hidden="true" aria-labelledby="confirmModalLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 bg-transparent">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl">
+                    <!-- Top accent bar -->
+                    <div id="confirmAccentBar" class="h-2 w-full"></div>
+
+                    <div class="px-8 py-8 text-center">
+                        <!-- Icon -->
+                        <div class="confirm-modal-icon mb-4" id="confirmIconWrap">
+                            <span id="confirmIcon">🏆</span>
+                        </div>
+
+                        <h3 class="text-2xl font-bold mb-2 text-gray-800" id="confirmModalLabel">Konfirmasi Pemenang</h3>
+                        <p class="text-base text-gray-500 mb-2">Anda akan menetapkan pemenang:</p>
+                        <div id="confirmMessage" class="text-xl font-bold mb-8 text-gray-800">...</div>
+
+                        <form id="confirmForm" action="{{route('rekap.seni.data')}}" method="post">
+                            @csrf
+                            <input type="hidden" value="{{$arena}}" name="arena">
+                            <input type="hidden" id="confirm_id_user" name="id_user">
+                            <input type="hidden" value="tunggal" name="kategori">
+                            <input type="hidden" id="confirm_menang" name="menang">
+                            <input type="hidden" id="confirm_kalah" name="kalah">
+                            <div class="flex justify-center gap-3">
+                                <button type="button"
+                                    class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-xl transition-all border border-gray-200"
+                                    data-bs-target="#winnerModal" data-bs-toggle="modal">
+                                    ← Kembali
+                                </button>
+                                <button type="submit" id="confirmSubmitBtn"
+                                    class="flex items-center gap-2 text-white font-bold px-8 py-2.5 rounded-xl transition-all shadow-lg hover:opacity-90">
+                                    ✓ Yakin, Tetapkan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
     <script>
+        function prepareConfirm(winnerId, winnerName, loserId, winnerColor, accentColor) {
+            document.getElementById('confirm_id_user').value = winnerId;
+            document.getElementById('confirm_menang').value = winnerId;
+            document.getElementById('confirm_kalah').value = loserId;
+            
+            const isBlue = winnerColor === 'BIRU';
+            const colorText = isBlue ? 'text-blue-700' : 'text-red-700';
+            const icon = isBlue ? '🔵' : '🔴';
+
+            // Update accent bar
+            document.getElementById('confirmAccentBar').style.background = isBlue
+                ? 'linear-gradient(90deg, #1e40af, #2563eb)'
+                : 'linear-gradient(90deg, #991b1b, #dc2626)';
+
+            // Update icon
+            document.getElementById('confirmIconWrap').style.background = isBlue ? '#dbeafe' : '#fee2e2';
+            document.getElementById('confirmIcon').textContent = icon;
+
+            // Update message
+            document.getElementById('confirmMessage').innerHTML =
+                `<span class="font-extrabold ${colorText}">${winnerName}</span><br><span class="text-gray-500 text-base font-normal">(Sudut ${winnerColor})</span>`;
+
+            // Update submit button color
+            const btn = document.getElementById('confirmSubmitBtn');
+            btn.style.background = isBlue
+                ? 'linear-gradient(135deg, #1e40af, #2563eb)'
+                : 'linear-gradient(135deg, #991b1b, #dc2626)';
+        }
         let reloadCount = 0;
         const currentJadwalId = "{{ $jadwal->id }}";
         const currentPartai = "{{ $setting->partai }}";
@@ -294,6 +490,15 @@
 
         function checkStatus() {
             $('#splash').addClass('hidden');
+
+            // Show Tentukan Pemenang button only for dewan
+            const params = new URLSearchParams(window.location.search);
+            const isDewan = params.get('isDewan');
+            console.log(isDewan);
+            if (isDewan) {
+                $('#btnTentukanPemenangWrap').removeClass('hidden');
+            }
+
             $.ajax({
                 url: `/take-timer-data/?arena={{ $arena }}`,
                 method: 'GET',
@@ -313,6 +518,17 @@
                     }
 
                     if (response.isDone === false) {
+                        $('#timer_biru').text(response.timer_biru);
+                        $('#timer_merah').text(response.timer_merah);
+                        
+                        $('#score_biru_top').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#score_biru_bot').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#deviasi_biru').text(response.deviasi_biru);
+
+                        $('#score_merah_top').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#score_merah_bot').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#deviasi_merah').text(response.deviasi_merah);
+
                         // Only redirect back to score/dewan if the match status was reverted
                         if (response.status === 'pending' || response.status === 'proses') {
                             if (isDewan) {
@@ -324,6 +540,17 @@
                             setTimeout(checkStatus, 1000);
                         }
                     } else {
+                        $('#timer_biru').text(response.timer_biru);
+                        $('#timer_merah').text(response.timer_merah);
+                        
+                        $('#score_biru_top').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#score_biru_bot').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#deviasi_biru').text(response.deviasi_biru);
+
+                        $('#score_merah_top').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#score_merah_bot').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#deviasi_merah').text(response.deviasi_merah);
+
                         setTimeout(checkStatus, 1000);
                     }
                 },

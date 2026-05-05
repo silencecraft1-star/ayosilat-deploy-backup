@@ -202,8 +202,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -376,7 +376,8 @@
             <div class="col-8 ">
                 <div class="row justify-content-center items-center ">
                     <div class="col">
-                        <div class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
+                        <div
+                            class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Time Performance
                         </div>
                         <div id="timer1" class="change-text container text-green fw-bold text-center align-middle"
@@ -385,7 +386,8 @@
                         </div>
                     </div>
                     <div class="col">
-                        <div class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
+                        <div
+                            class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Total Score
                         </div>
                         <div id="total" class="change-text container text-green fw-bold text-center align-middle"
@@ -507,12 +509,12 @@
                 Echo.channel('tunggal-channel')
                     .listen('TunggalEvent', (datas) => {
                         const data = datas.message;
-                        console.log(data);
+                        //console.log(data);
                         if (arena_id == data.arena && data.tipe == 'notif') {
-                            console.log(data);
+                            // console.log(data);
                             $(`[name='${data.id_juri}']`).removeClass('bg-success text-white bg-warning bg-primary bg-danger text-black text-success');
 
-                             if (data.status == "next") {
+                            if (data.status == "next") {
                                 $(`[name='${data.id_juri}']`).addClass('bg-white-blink');
                             }
                             else if (data.status == "flow") {
@@ -531,7 +533,7 @@
                                 let resetColor = 'bg-green-2';
                                 if (response_current_global == "biru") resetColor = 'bg-blue-2';
                                 else if (response_current_global == "merah") resetColor = 'bg-red-2';
-                                
+
                                 $(`[name='${data.id_juri}']`).addClass(resetColor + ' text-white');
                             }, 1000); // Pulse stays for 1 second then fades back via CSS transition
                         }
@@ -706,6 +708,7 @@
                             all_juri.push(score);
                         }
 
+
                         for (let i = 0; i < jumlahJuri; i++) {
                             $(`#total${i + 1}`).text(all_juri[i]);
                         }
@@ -867,9 +870,11 @@
                             }
 
                             rekap(send);
-                            const params = new URLSearchParams(window.location.search);
-                            const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
-                            window.location.href = `redirect?arena=${arena}&role=rekapPrestasiTunggal${isDewan}`;
+                            if (response.keterangan_jadwal !== "pemasalan") {
+                                const params = new URLSearchParams(window.location.search);
+                                const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
+                                window.location.href = `redirect?arena=${arena}&role=rekapPrestasiTunggal${isDewan}`;
+                            }
                         }
 
                         if ((response.status == 'taking-time' || response.status == 'diskualify') && timeSaveStatus == false) {
