@@ -360,6 +360,10 @@ class AdminController extends Controller
 
     public function addpesertas(Request $request, $arena)
     {
+        if (empty($request->input('partai'))) {
+            return redirect()->back()->with('error', 'Input Partai tidak boleh kosong!');
+        }
+
         $biru = $request->input('biru');
         $merah = $request->input('merah');
         $seni = $request->input('pesertaSeni');
@@ -1037,6 +1041,10 @@ class AdminController extends Controller
 
     public function editJadwal(Request $request)
     {
+        if (empty($request->input('partai'))) {
+            return redirect()->back()->with('error', 'Input Partai tidak boleh kosong!');
+        }
+
         $idJadwal = $request->input('newJadwalId');
         $kelasData = PersertaModel::where('id', $request->input('biruEdit'))->first();
         $newSession = $request->input('newSession');

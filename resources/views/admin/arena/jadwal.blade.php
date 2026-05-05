@@ -14,7 +14,7 @@
             position: absolute;
             top: calc(36%);
             left: .8rem;
-        }   
+        }
 
         .forma {
             width: 400px;
@@ -464,9 +464,9 @@
                                                                 <tr>
                                                                     @php
                                                                         $item = PersertaModel::where('id', $subitem->merah)->first() ?? PersertaModel::where('id', $subitem->biru)->first();
-                                                                        $kelas = kelas::where('id', $item->kelas)->value('name');
-                                                                        $category = category::where('id', $item->category)->value('name');
-                                                                        $datar = score::where('id_perserta', $item->id)->get();
+                                                                        $kelas = $item ? kelas::where('id', $item->kelas)->value('name') ?? 'Kelas tidak ada' : 'Kelas tidak ada';
+                                                                        $category = $item ? category::where('id', $item->category)->value('name') : '';
+                                                                        $datar = $item ? score::where('id_perserta', $item->id)->get() : collect();
                                                                         $actual = 9.9;
                                                                         $sc = [];
 
@@ -474,7 +474,7 @@
                                                                     <td class="text-center">{{ $loop->index + 1 }}</td>
                                                                     <td class="text-center">{{ $subitem->partai }}</td>
                                                                     <td>{{ $kelas }}</td>
-                                                                    <td class="">{{ $item->name }}</td>
+                                                                    <td class="">{{ $item->name ?? 'Data tidak ditemukan' }}</td>
                                                                     {{-- <td class="">{{$category}}</td> --}}
                                                                     <td class="text-danger text-center">{{ $subitem->score_biru }}</td>
                                                                     <td class="text-primary text-center">{{ $subitem->timer_biru }}</td>
@@ -548,17 +548,18 @@
                                                                     @php
                                                                         $merah = PersertaModel::where('id', $subitem->merah)->first();
                                                                         $biru = PersertaModel::where('id', $subitem->biru)->first();
-                                                                        $kelas = kelas::where('id', $item->kelas)->value('name');
-                                                                        $category = category::where('id', $item->category)->value('name');
-                                                                        $datar = score::where('id_perserta', $item->id)->get();
+                                                                        $item = $biru ?? $merah;
+                                                                        $kelas = $item ? kelas::where('id', $item->kelas)->value('name') ?? 'Kelas tidak ada' : 'Kelas tidak ada';
+                                                                        $category = $item ? category::where('id', $item->category)->value('name') : '';
+                                                                        $datar = $item ? score::where('id_perserta', $item->id)->get() : collect();
                                                                         $actual = 9.9;
                                                                         $sc = [];
                                                                     @endphp
                                                                     <td class="text-center">{{ $loop->index + 1 }}</td>
                                                                     <td class="text-center">{{ $subitem->partai }}</td>
                                                                     <td>{{ $kelas }}</td>
-                                                                    <td class="">{{ $biru->name }}</td>
-                                                                    <td class="">{{ $merah->name }}</td>
+                                                                    <td class="">{{ $biru->name ?? 'Data tidak ditemukan' }}</td>
+                                                                    <td class="">{{ $merah->name ?? 'Data tidak ditemukan' }}</td>
                                                                     {{-- <td class="">{{$category}}</td> --}}
                                                                     <td class="text-primary text-center">
                                                                         {{ $subitem->score_biru }} </br>
@@ -665,8 +666,8 @@
                                             @endforeach
                                         </select>
                                         <!-- <input type="text" name="biru" id="biru" class="form-control" list="peserta-list">
-                                                                                                                                                                                                                                                                        <datalist id="peserta-list">
-                                                                                                                                                                                                                                                                        </datalist> -->
+                                                                                                                                                                                                                                                                            <datalist id="peserta-list">
+                                                                                                                                                                                                                                                                            </datalist> -->
                                     </div>
                                     <div class="col">
                                         <label for="biru" class="fs-5 text-danger">Tim Merah</label>
@@ -942,11 +943,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenib"
                                             id="pesertaSenib">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                        @php
-                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                        @endphp
-                                                                        @endforeach -->
+                                                                            @php
+                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                            @endphp
+                                                                            @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -957,11 +958,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenim"
                                             id="pesertaSenim">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                        @php
-                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                        @endphp
-                                                                        @endforeach -->
+                                                                            @php
+                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                            @endphp
+                                                                            @endforeach -->
                                         </select>
                                     </div>
                                 </div>
