@@ -564,7 +564,7 @@
                             $(".change-text").removeClass('text-green text-red text-blue');
                             $(".change-text").addClass('text-blue');
                         } else if (response.current == "merah") {
-                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2');
                             $(".change-bg").addClass('bg-red-2');
 
                             $(".change-text").removeClass('text-green text-red text-blue');
@@ -659,7 +659,7 @@
         }
 
         // Jalankan calldata() setiap 500ms, simpan referensi ke intervalId
-        calldata();
+        // calldata();
         websocket();
         setInterval(calldata, 500);
     </script>
