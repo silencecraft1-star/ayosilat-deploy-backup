@@ -19,3 +19,15 @@ silat-backup.zip
 
 /socket/config-local.json
 /socket/soketi-server-local.json
+public/css/tailwind.css
+public/css/tailwind.css.map
+public/js/app.js
+public/js/app.js.map
+storage/logs/laravel.log
+.gitignore
+public/assets/Assets/uploads/1777-gambar1.png
+public/css/tailwind.css
+public/css/tailwind.css.map
+public/js/app.js
+public/js/app.js.map
+storage/logs/laravel.log
