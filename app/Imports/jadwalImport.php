@@ -44,19 +44,16 @@ class jadwalImport implements ToCollection
                 $forArena = null;
 
                 //Cek Apakah Kontigen
-
-                if (str_contains($rowMerah, "PEMENANG PARTAI")) {
+                if (str_contains($rowMerah, "PEMENANG PARTAI") || str_contains($rowMerah, "Pemenang Partai") || str_contains($rowMerah, "pemenang partai") || str_contains($rowMerah, "Pemenang partai")) {
                     $explodeMerah = explode(" ", $rowMerah)[2];
-                    $forArena = str_contains($rowMerah, ",") ? "," . explode(",", $rowMerah)[1] : "";
 
-                    $pemenangMerah = "[$explodeMerah$forArena]";
+                    $pemenangMerah = "[$explodeMerah]";
                 }
 
-                if (str_contains($rowBiru, "PEMENANG PARTAI")) {
+                if (str_contains($rowBiru, "PEMENANG PARTAI") || str_contains($rowBiru, "Pemenang Partai") || str_contains($rowBiru, "pemenang partai") || str_contains($rowBiru, "Pemenang partai")) {
                     $explodeBiru = explode(" ", $rowBiru)[2];
-                    $forArena = str_contains($rowBiru, ",") ? "," . explode(",", $rowBiru)[1] : "";
 
-                    $pemenangBiru = "[$explodeBiru$forArena]";
+                    $pemenangBiru = "[$explodeBiru]";
                 }
 
                 $biru = PersertaModel::where('name', $rowBiru)->first()->id ?? $pemenangBiru;

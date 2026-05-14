@@ -18,8 +18,8 @@
         use App\Setting;
         if (empty($id_user && $arena)) {
             echo '<script>
-                                                                                        window.history.back();
-                                                                                    </script>';
+                                                                                                                                                                window.history.back();
+                                                                                                                                                            </script>';
             exit();
         }
 
@@ -335,10 +335,10 @@
                     var juri2 = (parseFloat(response.actual2) + parseFloat(response.flwo2)).toFixed(2);
                     var juri3 = (parseFloat(response.actual3) + parseFloat(response.flwo3)).toFixed(2);
                     var juri4 = (parseFloat(response.actual4) + parseFloat(response.flwo4)).toFixed(2);
-                    var juri5 = (parseFloat(response.actual5) + parseFloat(response.flwo5)).toFixed(2);
-                    var juri6 = (parseFloat(response.actual6) + parseFloat(response.flwo6)).toFixed(2);
-                    var juri7 = (parseFloat(response.actual7) + parseFloat(response.flwo7)).toFixed(2);
-                    var juri8 = (parseFloat(response.actual8) + parseFloat(response.flwo8)).toFixed(2);
+                    // var juri5 = (parseFloat(response.actual5) + parseFloat(response.flwo5)).toFixed(2);
+                    // var juri6 = (parseFloat(response.actual6) + parseFloat(response.flwo6)).toFixed(2);
+                    // var juri7 = (parseFloat(response.actual7) + parseFloat(response.flwo7)).toFixed(2);
+                    // var juri8 = (parseFloat(response.actual8) + parseFloat(response.flwo8)).toFixed(2);
                     var all_juri = [];
                     var data_juri = [];
 
@@ -433,7 +433,6 @@
                     var sortedArray = data_juri.sort((a, b) => a.point - b.point);
                     console.log(JSON.stringify(sortedArray));
                     // alert(JSON.stringify(sortedArray[4]));
-
                     // Perbarui tampilan dengan data yang diperbarui
                     // console.log(all_juri);
                     $('#actual1').text(response.actual1);
@@ -456,25 +455,25 @@
                     $('#total2').text(juri2);
                     $('#total3').text(juri3);
                     $('#total4').text(juri4);
-                    $('#total5').text(juri5);
-                    $('#total6').text(juri6);
-                    $('#total7').text(juri7);
-                    $('#total8').text(juri8);
+                    // $('#total5').text(juri5);
+                    // $('#total6').text(juri6);
+                    // $('#total7').text(juri7);
+                    // $('#total8').text(juri8);
                     $('#total').text(total_score);
                     $('#urut1').text(sortedArray[0].point);
                     $('#urut2').text(sortedArray[1].point);
                     $('#urut3').text(sortedArray[2].point);
                     $('#urut4').text(sortedArray[3].point);
-                    $('#urut5').text(sortedArray[4].point);
-                    $('#urut6').text(sortedArray[5].point);
+                    // $('#urut5').text(sortedArray[4].point);
+                    // $('#urut6').text(sortedArray[5].point);
                     // $('#urut7').text(sortedArray[6].point ?? null);
                     // $('#urut8').text(sortedArray[7].point ?? null);
                     $('#urutNama1').text(sortedArray[0].nama);
                     $('#urutNama2').text(sortedArray[1].nama);
                     $('#urutNama3').text(sortedArray[2].nama);
                     $('#urutNama4').text(sortedArray[3].nama);
-                    $('#urutNama5').text(sortedArray[4].nama);
-                    $('#urutNama6').text(sortedArray[5].nama);
+                    // $('#urutNama5').text(sortedArray[4].nama);
+                    // $('#urutNama6').text(sortedArray[5].nama);
                     // $('#urutNama7').text(sortedArray[6].nama ?? null);
                     // $('#urutNama8').text(sortedArray[7].nama ?? null);
 
@@ -485,7 +484,7 @@
 
                     //$('#dewan').text('-' + response.dewan);
                     //$('#median').text(findMedian(all_juri));
-                    //$('#deviation').text(deviation);
+                    $('#deviation').text(deviation);
                 }
             });
         }

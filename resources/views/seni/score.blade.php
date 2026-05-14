@@ -564,7 +564,7 @@
                             $(".change-text").removeClass('text-green text-red text-blue');
                             $(".change-text").addClass('text-blue');
                         } else if (response.current == "merah") {
-                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2 ');
+                            $(".change-bg").removeClass('bg-green-2 bg-red-2 bg-blue-2');
                             $(".change-bg").addClass('bg-red-2');
 
                             $(".change-text").removeClass('text-green text-red text-blue');
@@ -619,20 +619,23 @@
                         $('#medianscore').text(findMedian(all_juri));
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
-                        if (response.status == "finished" || response.status == "finish") {
-                            const send = {
-                                id_user: id,
-                                arena: arena,
-                                time: formatTime(currentTime),
-                                score: total_score,
-                                deviation: deviation
+                            if (response.status == "finished" || response.status == "finish") {
+                                const send = {
+                                    id_user: id,
+                                    arena: arena,
+                                    time: formatTime(currentTime),
+                                    score: total_score,
+                                    deviation: deviation
+                                }
+    
+                                rekap(send);
+                                if(response.keterangan_jadwal !== "pemasalan") {
+                                    const params = new URLSearchParams(window.location.search);
+                                    const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
+                                    window.location.href = `redirect?arena=${arena}&role=rekapPrestasiSolo${isDewan}`;
+                                }
                             }
-
-                            rekap(send);
-                            const params = new URLSearchParams(window.location.search);
-                            const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
-                            window.location.href = `redirect?arena=${arena}&role=rekapPrestasiSolo${isDewan}`;
-                        }
+                            
 
                         if ((response.status == 'taking-time' || response.status == 'diskualify') && timeSaveStatus == false) {
                             let currentRunningTime = $('#timer1').text();
@@ -656,7 +659,7 @@
         }
 
         // Jalankan calldata() setiap 500ms, simpan referensi ke intervalId
-        calldata();
+        // calldata();
         websocket();
         setInterval(calldata, 500);
     </script>

@@ -17,8 +17,8 @@
         use App\score;
         if (empty($id_user && $arena)) {
             echo '<script>
-                        window.history.back();
-                    </script>';
+                                window.history.back();
+                            </script>';
             exit();
         }
 
