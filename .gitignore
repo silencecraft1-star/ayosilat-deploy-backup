@@ -15,7 +15,8 @@ npm-debug.log
 yarn-error.log
 composer.lock
 backup-ayosilat.zip
-silat-backup.zip
+silat-backup.zi
 
 /socket/config-local.json
 /socket/soketi-server-local.json
+storage/logs/laravel.log
