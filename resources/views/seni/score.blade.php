@@ -526,7 +526,7 @@
 
                         var all_juri = [];
                         for (let i = 1; i <= jumlahJuri; i++) {
-                            let score = (parseFloat(response[`firmness${i}`]) + parseFloat(response[`attack${i}`]) + parseFloat(response[`soulfullness${i}`]) + 9.1).toFixed(3);
+                            let score = (parseFloat(response[`firmness${i}`]) + parseFloat(response[`attack${i}`]) + parseFloat(response[`soulfullness${i}`]) + 9.1).toFixed(2);
                             all_juri.push(score);
                         }
 

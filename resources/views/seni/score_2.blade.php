@@ -227,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -728,7 +728,7 @@
 
 
                         for (let i = 1; i <= jumlahJuri; i++) {
-                            let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(3);
+                            let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(2);
                             all_juri.push(score);
                         }
 
