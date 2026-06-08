@@ -18,12 +18,13 @@ yarn-error.log
 composer.lock
 backup-ayosilat.zip
 silat-backup.zip
-
 update.bat
 /socket/config-local.json
 /socket/soketi-server-local.json
 storage/logs/laravel.log
 /storage/logs/laravel.log
+/storage/logs/
+storage/
 public/css
 /public/css
 /public
