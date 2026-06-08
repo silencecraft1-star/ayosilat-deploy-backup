@@ -485,7 +485,7 @@
                             $('#actualScore').text(parseFloat(actualScore.toFixed(2)));
                             $('#flwo').text(parseFloat(flwo.toFixed(2)));
                             $('#totalScore').text(parseFloat(totalScore.toFixed(2)));
-
+                            alert('aa');
                             // Only update select if value actually changed
                             var currentJurus = $('#jurusSelect').val();
                             if (String(currentJurus) != String(jurus)) {
