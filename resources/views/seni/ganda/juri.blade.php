@@ -66,7 +66,7 @@
             <tbody>
                 <tr>
                     <td class="px-2  align-middle">
-                        Teknik Serangan dan Pertahanan
+                        Teknik Serang-Bela
                         (0,01-0,30)
                     </td>
                     <td>
@@ -110,7 +110,7 @@
                 </tr>
                 <tr>
                     <td class="px-2 align-middle">
-                        Ketegasan dan Keharmonisan
+                        Kemantapan
                         (0,01-0,30)
                     </td>
                     <td>
