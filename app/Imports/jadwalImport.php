@@ -41,7 +41,6 @@ class jadwalImport implements ToCollection
 
                 $pemenangBiru = null;
                 $pemenangMerah = null;
-                $forArena = null;
 
                 //Cek Apakah Kontigen
                 if (str_contains($rowMerah, "PEMENANG PARTAI") || str_contains($rowMerah, "Pemenang Partai") || str_contains($rowMerah, "pemenang partai") || str_contains($rowMerah, "Pemenang partai")) {

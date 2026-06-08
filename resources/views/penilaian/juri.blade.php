@@ -868,7 +868,7 @@
                     data[parts[0]] = parts[1];
                 });
 
-                // $('button').prop('disabled', true);
+                $('button').prop('disabled', true);
 
                 // Sekarang, Anda memiliki data dalam bentuk objek
                 console.log(data);
@@ -882,7 +882,9 @@
                     body: JSON.stringify(data)
                 })
                     .then(response => {
-                        // $('button').prop('disabled', false);
+                        setTimeout(() => {
+                            $('button').prop('disabled', false);
+                        }, 300);
 
                         if (currentModal != "") {
                             $(`#${currentModal}`).modal('hide');

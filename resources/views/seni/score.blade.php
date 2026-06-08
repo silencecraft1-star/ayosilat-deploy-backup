@@ -41,11 +41,11 @@
     @endphp
     <style>
         .text-green {
-            color: rgb(3, 161, 0);
+            color: #198754;
         }
 
         .bg-green-2 {
-            background-color: rgb(3, 161, 0);
+            background-color: #198754;
         }
 
         .bg-red-2 {
@@ -65,7 +65,7 @@
         }
 
         table thead th.bg-green-2 {
-            background-color: rgb(3, 161, 0);
+            background-color: #198754;
             color: #f5f5f5;
         }
 
@@ -80,12 +80,17 @@
         }
 
         table tbody tr td.bg-green-2 {
-            background-color: rgb(3, 161, 0);
+            background-color: #198754;
             color: #f5f5f5;
         }
 
         table tbody tr td.bg-red-2 {
             background-color: red;
+            color: #f5f5f5;
+        }
+
+        table tbody tr td.bg-blue-2 {
+            background-color: blue;
             color: #f5f5f5;
         }
 
@@ -96,6 +101,19 @@
         .bg-orange-blink {
             background-color: orange !important;
             color: white !important;
+        }
+        .median-highlight {
+            border: 3px solid #F5A623 !important;
+            box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15) !important;
+            animation: medianPulse 2s ease-in-out infinite;
+            position: relative;
+            color: #F5A623 !important;
+            text-shadow: 0 0 8px rgba(245, 166, 35, 0.8) !important;
+        }
+
+        @keyframes medianPulse {
+            0%, 100% { box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15); border-color: #F5A623; text-shadow: 0 0 8px rgba(245, 166, 35, 0.8); }
+            50% { box-shadow: 0 0 22px 6px rgba(245, 166, 35, 0.75), inset 0 0 12px rgba(245, 166, 35, 0.25); border-color: #E8920D; text-shadow: 0 0 16px rgba(232, 146, 13, 1); }
         }
     </style>
 </head>
@@ -542,7 +560,30 @@
                         //    Math.pow((parseFloat(juri6) - average), 2) + Math.pow((parseFloat(juri7) - average),
                         //        2) + Math.pow((parseFloat(juri8) - average), 2);
                         var deviation = Math.sqrt(deviations / jumlahJuri);
-                        var total_score = findMedian(all_juri) - response.dewan;
+                            // Save original order before findMedian sorts the array
+                            var all_juri_original = [...all_juri];
+                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(3);
+
+                            // Highlight juror(s) that contributed to the median
+                            (function() {
+                                var sorted = all_juri_original.map(function(val, idx) {
+                                    return { val: parseFloat(val), idx: idx + 1 };
+                                });
+                                sorted.sort(function(a, b) { return a.val - b.val; });
+                                var mid = Math.floor(sorted.length / 2);
+                                var medianIndices = [];
+                                if (sorted.length % 2 === 0) {
+                                    medianIndices = [sorted[mid - 1].idx, sorted[mid].idx];
+                                } else {
+                                    medianIndices = [sorted[mid].idx];
+                                }
+                                for (var j = 1; j <= jumlahJuri; j++) {
+                                    $('#total' + j).removeClass('median-highlight');
+                                }
+                                medianIndices.forEach(function(idx) {
+                                    $('#total' + idx).addClass('median-highlight');
+                                });
+                            })();
 
                         // if (response.status != "pause") {
                         //     if (response.time != 0) {
