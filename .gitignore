@@ -23,6 +23,7 @@ update.bat
 /socket/soketi-server-local.json
 storage/logs/laravel.log
 /storage/logs/laravel.log
+/storage/logs/*.log
 /storage/logs/
 storage/
 public/css
