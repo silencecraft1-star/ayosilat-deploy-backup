@@ -240,7 +240,7 @@
             <!-- Arena/Match Info -->
             <div class="arena-info">
                 <div class="arena-name text-uppercase">{{ $arenaData->name }}</div>
-                <div class="match-number">Partai {{ $datakp["partai"] }}</div>
+                <div id="partai" class="match-number">Partai {{ $datakp["partai"] }}</div>
                 <div class="team-kontigen" style="color: #333;">{{ $infoKategori }}</div>
             </div>
 
@@ -329,6 +329,7 @@
 
             $(`#kontigenb`).text(info.biru.kontigen);
             $(`#kontigenm`).text(info.merah.kontigen);
+            $(`#partai`).text(`Partai ${info.partai}`);
 
             // 1. Clear all existing score containers
             for (let i = 1; i <= JUMLAH_JURI; i++) {
@@ -445,6 +446,11 @@
                         for (let i = 1; i <= 3; i++) {
                             $(`#babak-${i}`).toggleClass('active-babak', i === currentBabak);
                         }
+                        $(`#partai`).text(`Partai ${data.partai}`);
+                        $(`#namab`).text(data.namaBiru);
+                        $(`#namam`).text(data.namaMerah);
+                        $(`#kontigenb`).text(data.kontigenBiru);
+                        $(`#kontigenm`).text(data.kontigenMerah);
                     });
 
                 // Listen for verification channel for modal updates (if needed)

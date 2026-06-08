@@ -16,7 +16,7 @@
         use App\arena;
         use App\jadwal_group;
         $id_arena = $arena;
-        $setting = Setting::where('arena', $arena)->first();
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
         $id_juri = $id_juri;
         $tim_merahs = PersertaModel::where('id', $setting->merah)->first();
         $tim_birus = PersertaModel::where('id', $setting->biru)->first();
@@ -26,7 +26,7 @@
 
         $kontigenBiru = KontigenModel::where('id', $tim_birus->id_kontigen)->first();
         $kontigenMerah = KontigenModel::where('id', $tim_merahs->id_kontigen)->first();
-        $babak = Setting::where('arena', $arena)->first();
+        $babak = Setting::where('arena', $arena)->whereNotNull('judul')->first();
         $babak = $babak->babak;
         $arena = arena::where('id', $setting->arena)->first();
     @endphp

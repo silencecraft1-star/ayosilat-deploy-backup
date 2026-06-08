@@ -95,7 +95,7 @@
         use App\kelas;
         use App\arena;
         use App\jadwal_group;
-        $data = Setting::where('arena', $arena)->first();
+        $data = Setting::where('arena', $arena)->whereNotNull('judul')->first();
         $babak = $data->babak;
     @endphp
 </head>

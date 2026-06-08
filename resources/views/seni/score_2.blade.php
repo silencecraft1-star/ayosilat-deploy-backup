@@ -179,6 +179,20 @@
             background-color: orange !important;
             color: white !important;
         }
+
+        .median-highlight {
+            border: 3px solid #F5A623 !important;
+            box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15) !important;
+            animation: medianPulse 2s ease-in-out infinite;
+            position: relative;
+            color: #F5A623 !important;
+            text-shadow: 0 0 8px rgba(245, 166, 35, 0.8) !important;
+        }
+
+        @keyframes medianPulse {
+            0%, 100% { box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15); border-color: #F5A623; text-shadow: 0 0 8px rgba(245, 166, 35, 0.8); }
+            50% { box-shadow: 0 0 22px 6px rgba(245, 166, 35, 0.75), inset 0 0 12px rgba(245, 166, 35, 0.25); border-color: #E8920D; text-shadow: 0 0 16px rgba(232, 146, 13, 1); }
+        }
     </style>
     {{--
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -202,8 +216,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -740,8 +754,33 @@
                         //    parseFloat(juri7) - average), 2) + Math.pow((
                         //    parseFloat(juri8) - average), 2);
                         var deviation = Math.sqrt(deviations / jumlahJuri);
-                        var total_score = (parseFloat(findMedian(all_juri)) - parseFloat(response.dewan))
-                            .toFixed(2);
+                        // Save original order before findMedian sorts the array
+                        var all_juri_original = [...all_juri];
+                        // Compute total score and truncate to 3 decimals without rounding
+                        let medianVal = parseFloat(findMedian(all_juri));
+                        let totalRaw = medianVal - parseFloat(response.dewan);
+                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(3);
+
+                        // Highlight juror(s) that contributed to the median
+                        (function() {
+                            var sorted = all_juri_original.map(function(val, idx) {
+                                return { val: parseFloat(val), idx: idx + 1 };
+                            });
+                            sorted.sort(function(a, b) { return a.val - b.val; });
+                            var mid = Math.floor(sorted.length / 2);
+                            var medianIndices = [];
+                            if (sorted.length % 2 === 0) {
+                                medianIndices = [sorted[mid - 1].idx, sorted[mid].idx];
+                            } else {
+                                medianIndices = [sorted[mid].idx];
+                            }
+                            for (var j = 1; j <= jumlahJuri; j++) {
+                                $('#total' + j).closest('td').removeClass('median-highlight');
+                            }
+                            medianIndices.forEach(function(idx) {
+                                $('#total' + idx).closest('td').addClass('median-highlight');
+                            });
+                        })();
                         //console.log(response);
                         // if (response.status != "pause") {
                         //     if (response.time != 0) {

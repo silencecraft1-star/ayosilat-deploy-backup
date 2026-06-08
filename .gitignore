@@ -2,6 +2,8 @@
 /public/hot
 /public/storage
 /storage/*.key
+storage/
+storage/*
 /vendor
 /storage/logs/
 /storage/logs
@@ -15,8 +17,9 @@ npm-debug.log
 yarn-error.log
 composer.lock
 backup-ayosilat.zip
-silat-backup.zi
+silat-backup.zip
 
 /socket/config-local.json
 /socket/soketi-server-local.json
 storage/logs/laravel.log
+/storage/logs/laravel.log
