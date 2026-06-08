@@ -268,12 +268,11 @@
     <div class="d-flex justify-content-center ">
         <div class="mid-header-text text-center">
             {{$arenaNama[0]}} <br />
-            Partai {{ $partai  }}
-            <hr>
+            Partai {{$partai}}
         </div>
     </div>
     <!-- Player Info Section -->
-    <div class="container mt-3">
+    <div class="container mt-2">
         <div class="row">
             <div class="col">
                 Nama : <br>
