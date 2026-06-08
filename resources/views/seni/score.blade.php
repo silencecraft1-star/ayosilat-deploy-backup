@@ -656,7 +656,7 @@
                         //$('#total8').text(juri8);
                         $('#total_score').text(total_score);
                         $('#dewan_pinalti').text(response.dewan);
-                        $('#medianscore').text(findMedian(all_juri));
+                        $('#medianscore').text(findMedian(all_juri).toFixed(2));
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
                             if (response.status == "finished" || response.status == "finish") {

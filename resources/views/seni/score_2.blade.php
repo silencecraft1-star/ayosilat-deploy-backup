@@ -227,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -906,7 +906,7 @@
                         //$('#total8').text(juri8);
                         $('#total').text(total_score);
                         $('#dewan').text('-' + response.dewan);
-                        $('#median').text(findMedian(all_juri));
+                        $('#median').text(findMedian(all_juri).toFixed(2));
                         $('#deviation').text(deviation);
 
                         if (response.status == "finished" || response.status == "finish") {
