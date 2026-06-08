@@ -227,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -642,7 +642,7 @@
                 let sum = 0;
 
                 for (let i = 1; i <= jumlahJuri; i++) {
-                    let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(2);
+                    let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(3);
                     juri.push(parseFloat(score));
                     sum += parseFloat(score);
                 }
@@ -714,21 +714,21 @@
                     url: '/call-data/?tipe=seni_tunggal&kt=tunggal&id=' + id + '&arena=' + arena + '',
                     method: 'GET',
                     success: function (response) {
-                        //var juri1 = (parseFloat(response.actual1) + parseFloat(response.flwo1)).toFixed(2);
-                        //var juri2 = (parseFloat(response.actual2) + parseFloat(response.flwo2)).toFixed(2);
-                        //var juri3 = (parseFloat(response.actual3) + parseFloat(response.flwo3)).toFixed(2);
-                        //var juri4 = (parseFloat(response.actual4) + parseFloat(response.flwo4)).toFixed(2);
-                        //var juri5 = (parseFloat(response.actual5) + parseFloat(response.flwo5)).toFixed(2);
-                        //var juri6 = (parseFloat(response.actual6) + parseFloat(response.flwo6)).toFixed(2);
-                        //var juri7 = (parseFloat(response.actual7) + parseFloat(response.flwo7)).toFixed(2);
-                        //var juri8 = (parseFloat(response.actual8) + parseFloat(response.flwo8)).toFixed(2);
+                        //var juri1 = (parseFloat(response.actual1) + parseFloat(response.flwo1)).toFixed(3);
+                        //var juri2 = (parseFloat(response.actual2) + parseFloat(response.flwo2)).toFixed(3);
+                        //var juri3 = (parseFloat(response.actual3) + parseFloat(response.flwo3)).toFixed(3);
+                        //var juri4 = (parseFloat(response.actual4) + parseFloat(response.flwo4)).toFixed(3);
+                        //var juri5 = (parseFloat(response.actual5) + parseFloat(response.flwo5)).toFixed(3);
+                        //var juri6 = (parseFloat(response.actual6) + parseFloat(response.flwo6)).toFixed(3);
+                        //var juri7 = (parseFloat(response.actual7) + parseFloat(response.flwo7)).toFixed(3);
+                        //var juri8 = (parseFloat(response.actual8) + parseFloat(response.flwo8)).toFixed(3);
                         //var all_juri = [juri1, juri2, juri4, juri3, juri5, juri6, juri7, juri8];
                         var all_juri = [];
 
 
 
                         for (let i = 1; i <= jumlahJuri; i++) {
-                            let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(2);
+                            let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(3);
                             all_juri.push(score);
                         }
 
@@ -769,7 +769,7 @@
                         // Compute total score and truncate to 3 decimals without rounding
                         let medianVal = parseFloat(findMedian(all_juri));
                         let totalRaw = medianVal - parseFloat(response.dewan);
-                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(2);
+                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(3);
 
                         // Highlight juror(s) that contributed to the median
                         (function () {
@@ -906,7 +906,7 @@
                         //$('#total8').text(juri8);
                         $('#total').text(total_score);
                         $('#dewan').text('-' + response.dewan);
-                        $('#median').text(findMedian(all_juri).toFixed(2));
+                        $('#median').text(findMedian(all_juri).toFixed(3));
                         $('#deviation').text(deviation);
 
                         if (response.status == "finished" || response.status == "finish") {
