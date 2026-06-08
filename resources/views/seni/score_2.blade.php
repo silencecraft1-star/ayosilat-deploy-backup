@@ -190,8 +190,19 @@
         }
 
         @keyframes medianPulse {
-            0%, 100% { box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15); border-color: #F5A623; text-shadow: 0 0 8px rgba(245, 166, 35, 0.8); }
-            50% { box-shadow: 0 0 22px 6px rgba(245, 166, 35, 0.75), inset 0 0 12px rgba(245, 166, 35, 0.25); border-color: #E8920D; text-shadow: 0 0 16px rgba(232, 146, 13, 1); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15);
+                border-color: #F5A623;
+                text-shadow: 0 0 8px rgba(245, 166, 35, 0.8);
+            }
+
+            50% {
+                box-shadow: 0 0 22px 6px rgba(245, 166, 35, 0.75), inset 0 0 12px rgba(245, 166, 35, 0.25);
+                border-color: #E8920D;
+                text-shadow: 0 0 16px rgba(232, 146, 13, 1);
+            }
         }
     </style>
     {{--
@@ -216,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -458,7 +469,6 @@
                 currentTime = 0; // Reset waktu ke 00:00 saat start
             }
 
-            currentTime++;
             //$('#timer1').removeClass('text-green');
             $('#timer1').text(formatTime(currentTime));
 
@@ -762,11 +772,11 @@
                         var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(3);
 
                         // Highlight juror(s) that contributed to the median
-                        (function() {
-                            var sorted = all_juri_original.map(function(val, idx) {
+                        (function () {
+                            var sorted = all_juri_original.map(function (val, idx) {
                                 return { val: parseFloat(val), idx: idx + 1 };
                             });
-                            sorted.sort(function(a, b) { return a.val - b.val; });
+                            sorted.sort(function (a, b) { return a.val - b.val; });
                             var mid = Math.floor(sorted.length / 2);
                             var medianIndices = [];
                             if (sorted.length % 2 === 0) {
@@ -777,7 +787,7 @@
                             for (var j = 1; j <= jumlahJuri; j++) {
                                 $('#total' + j).closest('td').removeClass('median-highlight');
                             }
-                            medianIndices.forEach(function(idx) {
+                            medianIndices.forEach(function (idx) {
                                 $('#total' + idx).closest('td').addClass('median-highlight');
                             });
                         })();

@@ -331,7 +331,6 @@
                 currentTime = 0; // Reset waktu ke 00:00 saat start
             }
 
-            currentTime++;
             //$('#timer1').removeClass('text-green');
             $('#timer1').text(formatTime(currentTime));
 
