@@ -227,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -769,7 +769,7 @@
                         // Compute total score and truncate to 3 decimals without rounding
                         let medianVal = parseFloat(findMedian(all_juri));
                         let totalRaw = medianVal - parseFloat(response.dewan);
-                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(3);
+                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(2);
 
                         // Highlight juror(s) that contributed to the median
                         (function () {

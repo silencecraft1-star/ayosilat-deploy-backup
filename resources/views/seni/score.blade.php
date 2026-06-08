@@ -561,7 +561,7 @@
                         var deviation = Math.sqrt(deviations / jumlahJuri);
                             // Save original order before findMedian sorts the array
                             var all_juri_original = [...all_juri];
-                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(3);
+                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(2);
 
                             // Highlight juror(s) that contributed to the median
                             (function() {
