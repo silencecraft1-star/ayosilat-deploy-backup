@@ -32,8 +32,8 @@
                 $pesertaMerah = PersertaModel::where('id', $jadwal->merah)->first();
             }
 
-            $a = 'PESERTA KELUAR DARI 10X10 meter ARENA';
-            $b = 'GERAKAN TIDAK SESUAI DESKRIPSI DAN SENJATA TIDAK SESUAI';
+            $a = 'PESERTA KELUAR DARI ARENA';
+            $b = 'GERAKAN TIDAK SESUAI DENGAN DESKRIPSI DAN SENJATA TIDAK SESUAI';
             $c = 'SENJATA JATUH KELUAR ARENA WALAUPUN TIM MASIH DI TUNTUT UNTUK MENGGUNAKANNYA';
             $d = 'PESERTA BERHENTI DALAM 1 GERAKAN LEBIH DARI 5 DETIK';
             $e = 'PESILAT MELEBIHI BATAS WAKTU TOLERANSI';

@@ -36,9 +36,9 @@
                 $pesertaMerah = PersertaModel::where('id', $jadwal->merah)->first();
             }
 
-            $a = "PESERTA KELUAR DARI 10X10 METER ARENA";
+            $a = "PESERTA KELUAR DARI ARENA";
             $b = "MENJATUHKAN SENJATA, MENYENTUH LANTAI";
-            $c = "BUSANA TIDAK SESUAI PERSYARATAN(TANJAK ATAU SAMPING JATUH)";
+            $c = "BUSANA TIDAK SESUAI PERSYARATAN";
             $d = "PESERTA BERHENTI DALAM 1 GERAKAN LEBIH DARI 5 DETIK";
             $e = "PESILAT MELEBIHI BATAS WAKTU TOLERANSI";
             $minus = '0.50';
