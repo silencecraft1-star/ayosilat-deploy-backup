@@ -268,7 +268,7 @@
     <div class="d-flex justify-content-center ">
         <div class="mid-header-text text-center">
             {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}}
+            Partai {{ $partai  }}
             <hr>
         </div>
     </div>
