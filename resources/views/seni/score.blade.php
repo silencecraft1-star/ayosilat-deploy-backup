@@ -507,21 +507,21 @@
                     method: 'GET',
                     success: function (response) {
                         //var juri1 = (parseFloat(response.firmness1) + parseFloat(response.attack1) + parseFloat(
-                        //    response.soulfullness1) + 9.1).toFixed(3);
+                        //    response.soulfullness1) + 9.1).toFixed(2);
                         //var juri2 = (parseFloat(response.firmness2) + parseFloat(response.attack2) + parseFloat(
-                        //    response.soulfullness2) + 9.1).toFixed(3);
+                        //    response.soulfullness2) + 9.1).toFixed(2);
                         //var juri3 = (parseFloat(response.firmness3) + parseFloat(response.attack3) + parseFloat(
-                        //    response.soulfullness3) + 9.1).toFixed(3);
+                        //    response.soulfullness3) + 9.1).toFixed(2);
                         //var juri4 = (parseFloat(response.firmness4) + parseFloat(response.attack4) + parseFloat(
-                        //    response.soulfullness4) + 9.1).toFixed(3);
+                        //    response.soulfullness4) + 9.1).toFixed(2);
                         //var juri5 = (parseFloat(response.firmness5) + parseFloat(response.attack5) + parseFloat(
-                        //    response.soulfullness5) + 9.1).toFixed(3);
+                        //    response.soulfullness5) + 9.1).toFixed(2);
                         //var juri6 = (parseFloat(response.firmness6) + parseFloat(response.attack6) + parseFloat(
-                        //    response.soulfullness6) + 9.1).toFixed(3);
+                        //    response.soulfullness6) + 9.1).toFixed(2);
                         //var juri7 = (parseFloat(response.firmness7) + parseFloat(response.attack7) + parseFloat(
-                        //    response.soulfullness7) + 9.1).toFixed(3);
+                        //    response.soulfullness7) + 9.1).toFixed(2);
                         //var juri8 = (parseFloat(response.firmness8) + parseFloat(response.attack8) + parseFloat(
-                        //    response.soulfullness8) + 9.1).toFixed(3);
+                        //    response.soulfullness8) + 9.1).toFixed(2);
                         //var all_juri = [juri1, juri2, juri3, juri4, juri5, juri6, juri7, juri8];
 
                         var all_juri = [];
@@ -561,7 +561,7 @@
                         var deviation = Math.sqrt(deviations / jumlahJuri);
                             // Save original order before findMedian sorts the array
                             var all_juri_original = [...all_juri];
-                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(3);
+                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(2);
 
                             // Highlight juror(s) that contributed to the median
                             (function() {
@@ -656,7 +656,7 @@
                         //$('#total8').text(juri8);
                         $('#total_score').text(total_score);
                         $('#dewan_pinalti').text(response.dewan);
-                        $('#medianscore').text(findMedian(all_juri).toFixed(3));
+                        $('#medianscore').text(findMedian(all_juri).toFixed(2));
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
                             if (response.status == "finished" || response.status == "finish") {
