@@ -19,8 +19,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                        window.history.back();
-                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                window.history.back();
+                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -446,7 +446,7 @@
                         }
 
                         for (let i = 0; i < jumlahJuri; i++) {
-                            $(`#total${i + 1}`).text(all_juri[i]);
+                            $(`#total${i + 1}`).text(parseFloat(all_juri[i]).toFixed(2));
                         }
 
                         var totalAll = 0;
@@ -474,7 +474,7 @@
                         //    Math.pow((parseFloat(juri6) - average), 2) + Math.pow((parseFloat(juri7) - average),
                         //        2) + Math.pow((parseFloat(juri8) - average), 2);
                         var deviation = Math.sqrt(deviations / jumlahJuri);
-                        var total_score = findMedian(all_juri) - response.dewan;
+                        var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
 
                         // if (response.status != "pause") {
                         //     if (response.time != 0) {
@@ -490,30 +490,30 @@
 
                         $('#nama').text(response.nama);
                         $('#kontigen').text(response.kontigen);
-                        $('#soulfullness1').text(response.soulfullness1);
-                        $('#soulfullness2').text(response.soulfullness2);
-                        $('#soulfullness3').text(response.soulfullness3);
-                        $('#soulfullness4').text(response.soulfullness4);
-                        $('#soulfullness5').text(response.soulfullness5);
-                        $('#soulfullness6').text(response.soulfullness6);
-                        $('#soulfullness7').text(response.soulfullness7);
+                        $('#soulfullness1').text(parseFloat(response.soulfullness1).toFixed(2));
+                        $('#soulfullness2').text(parseFloat(response.soulfullness2).toFixed(2));
+                        $('#soulfullness3').text(parseFloat(response.soulfullness3).toFixed(2));
+                        $('#soulfullness4').text(parseFloat(response.soulfullness4).toFixed(2));
+                        $('#soulfullness5').text(parseFloat(response.soulfullness5).toFixed(2));
+                        $('#soulfullness6').text(parseFloat(response.soulfullness6).toFixed(2));
+                        $('#soulfullness7').text(parseFloat(response.soulfullness7).toFixed(2));
                         $('#soulfullness8').text(response.soulfullness8);
-                        $('#attack1').text(response.attack1);
-                        $('#attack2').text(response.attack2);
-                        $('#attack3').text(response.attack3);
-                        $('#attack4').text(response.attack4);
-                        $('#attack5').text(response.attack5);
-                        $('#attack6').text(response.attack6);
-                        $('#attack7').text(response.attack7);
-                        $('#attack8').text(response.attack8);
-                        $('#firmness1').text(response.firmness1);
-                        $('#firmness2').text(response.firmness2);
-                        $('#firmness3').text(response.firmness3);
-                        $('#firmness4').text(response.firmness4);
-                        $('#firmness5').text(response.firmness5);
-                        $('#firmness6').text(response.firmness6);
-                        $('#firmness7').text(response.firmness7);
-                        $('#firmness8').text(response.firmness8);
+                        $('#attack1').text(parseFloat(response.attack1).toFixed(2));
+                        $('#attack2').text(parseFloat(response.attack2).toFixed(2));
+                        $('#attack3').text(parseFloat(response.attack3).toFixed(2));
+                        $('#attack4').text(parseFloat(response.attack4).toFixed(2));
+                        $('#attack5').text(parseFloat(response.attack5).toFixed(2));
+                        $('#attack6').text(parseFloat(response.attack6).toFixed(2));
+                        $('#attack7').text(parseFloat(response.attack7).toFixed(2));
+                        $('#attack8').text(parseFloat(response.attack8).toFixed(2));
+                        $('#firmness1').text(parseFloat(response.firmness1).toFixed(2));
+                        $('#firmness2').text(parseFloat(response.firmness2).toFixed(2));
+                        $('#firmness3').text(parseFloat(response.firmness3).toFixed(2));
+                        $('#firmness4').text(parseFloat(response.firmness4).toFixed(2));
+                        $('#firmness5').text(parseFloat(response.firmness5).toFixed(2));
+                        $('#firmness6').text(parseFloat(response.firmness6).toFixed(2));
+                        $('#firmness7').text(parseFloat(response.firmness7).toFixed(2));
+                        $('#firmness8').text(parseFloat(response.firmness8).toFixed(2));
 
 
                         //$('#total1').text(juri1);

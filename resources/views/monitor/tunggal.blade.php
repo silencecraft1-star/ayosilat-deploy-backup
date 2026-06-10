@@ -146,8 +146,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                window.history.back();
-                                                                                                                            </script>';
+                                                                                                                                                                                window.history.back();
+                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -268,7 +268,7 @@
                         <td class="" style="font-size: 3em" id="actual{{ $i }}"></td>
                     @endfor
                 </tr>
-                <tr>
+                <tr>c
                     @for ($i = 1; $i <= $totaljuri; $i++)
                         <td class="text-primary fw-bold" style="font-size: 3em" id="flwo{{ $i }}"></td>
                     @endfor
@@ -606,7 +606,7 @@
                         }
 
                         for (let i = 0; i < jumlahJuri; i++) {
-                            $(`#total${i + 1}`).text(all_juri[i]);
+                            $(`#total${i + 1}`).text(parseFloat(all_juri[i]).toFixed(2));
                         }
 
                         var totalAll = 0;
@@ -636,8 +636,7 @@
                         //    parseFloat(juri7) - average), 2) + Math.pow((
                         //    parseFloat(juri8) - average), 2);
                         var deviation = Math.sqrt(deviations / jumlahJuri);
-                        var total_score = (parseFloat(findMedian(all_juri)) - parseFloat(response.dewan))
-                            .toFixed(2);
+                        var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
                         //console.log(response);
                         // if (response.status != "pause") {
                         //     if (response.time != 0) {
@@ -702,12 +701,12 @@
 
                         //$('#nama').text(response.nama);
                         $('#kontigen').text(response.kontigen);
-                        $('#actual1').text(response.actual1);
-                        $('#actual2').text(response.actual2);
-                        $('#actual3').text(response.actual3);
-                        $('#actual4').text(response.actual4);
-                        $('#actual5').text(response.actual5);
-                        $('#actual6').text(response.actual6);
+                        $('#actual1').text(parseFloat(response.actual1).toFixed(2));
+                        $('#actual2').text(parseFloat(response.actual2).toFixed(2));
+                        $('#actual3').text(parseFloat(response.actual3).toFixed(2));
+                        $('#actual4').text(parseFloat(response.actual4).toFixed(2));
+                        $('#actual5').text(parseFloat(response.actual5).toFixed(2));
+                        $('#actual6').text(parseFloat(response.actual6).toFixed(2));
                         $('#actual7').text(response.actual7);
                         $('#actual8').text(response.actual8);
                         $('#flwo1').text(response.flwo1);

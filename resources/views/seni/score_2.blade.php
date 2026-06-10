@@ -180,7 +180,7 @@
             color: white !important;
         }
 
-        .median-highlight {
+        td.median-highlight, .median-highlight {
             border: 3px solid #F5A623 !important;
             box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15) !important;
             animation: medianPulse 2s ease-in-out infinite;
@@ -227,8 +227,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -558,7 +558,10 @@
                                 if (response_current_global == "biru") resetColor = 'bg-blue-2';
                                 else if (response_current_global == "merah") resetColor = 'bg-red-2';
 
-                                $(`[name='${data.id_juri}']`).addClass(resetColor + ' text-white');
+                                $(`[name='${data.id_juri}']`).addClass(resetColor);
+                                if (!$(`[name='${data.id_juri}']`).hasClass('median-highlight')) {
+                                    $(`[name='${data.id_juri}']`).addClass('text-white');
+                                }
                             }, 1000); // Pulse stays for 1 second then fades back via CSS transition
                         }
                     });
@@ -594,9 +597,11 @@
             function findMedian(arr) {
                 arr.sort((a, b) => a - b);
                 const middleIndex = Math.floor(arr.length / 2);
-
+                const left = (arr[middleIndex - 1]) * 100;
+                const right = (arr[middleIndex]) * 100;
+                const middle = (left + right) / 2 / 100;
                 if (arr.length % 2 === 0) {
-                    return (arr[middleIndex - 1] + arr[middleIndex]) / 2;
+                    return middle;
                 } else {
                     return arr[middleIndex];
                 }
@@ -611,19 +616,6 @@
                         console.log(response);
                     }
                 });
-            }
-
-            function findMedian(arr) {
-                arr.sort((a, b) => a - b);
-                const middleIndex = Math.floor(arr.length / 2);
-                const left = (arr[middleIndex - 1]) * 100;
-                const right = (arr[middleIndex]) * 100;
-                const middle = (left + right) / 2 / 100;
-                if (arr.length % 2 === 0) {
-                    return middle;
-                } else {
-                    return arr[middleIndex];
-                }
             }
 
             var elemenDiv = document.getElementById("id_perserta");
@@ -769,7 +761,7 @@
                         // Compute total score and truncate to 3 decimals without rounding
                         let medianVal = parseFloat(findMedian(all_juri));
                         let totalRaw = medianVal - parseFloat(response.dewan);
-                        var total_score = (Math.trunc(totalRaw * 1000) / 1000).toFixed(2);
+                        var total_score = (Math.trunc(totalRaw * 1000) / 1000);
 
                         // Highlight juror(s) that contributed to the median
                         (function () {
@@ -785,11 +777,23 @@
                                 medianIndices = [sorted[mid].idx];
                             }
                             for (var j = 1; j <= jumlahJuri; j++) {
-                                $('#total' + j).closest('td').removeClass('median-highlight');
+                                $('#total' + j).closest('td').removeClass('median-highlight').addClass('text-white');
                             }
-                            medianIndices.forEach(function (idx) {
-                                $('#total' + idx).closest('td').addClass('median-highlight');
-                            });
+                            
+                            var hasScore = false;
+                            for (let k = 0; k < jumlahJuri; k++) {
+                                let val = parseFloat(all_juri_original[k]);
+                                if (val !== 9.90 && val !== 9.10 && val !== 0.00) {
+                                    hasScore = true;
+                                    break;
+                                }
+                            }
+
+                            if (hasScore) {
+                                medianIndices.forEach(function (idx) {
+                                    $('#total' + idx).closest('td').addClass('median-highlight').removeClass('text-white');
+                                });
+                            }
                         })();
                         //console.log(response);
                         // if (response.status != "pause") {
@@ -906,7 +910,7 @@
                         //$('#total8').text(juri8);
                         $('#total').text(total_score);
                         $('#dewan').text('-' + response.dewan);
-                        $('#median').text(findMedian(all_juri).toFixed(2));
+                        $('#median').text(findMedian(all_juri));
                         $('#deviation').text(deviation);
 
                         if (response.status == "finished" || response.status == "finish") {

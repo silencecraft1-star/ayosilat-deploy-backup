@@ -89,7 +89,7 @@
                 <div class="col-span-1">
                     <div class="bg-gradient-to-b from-blue-700 to-blue-500 rounded shadow-xl h-24 flex justify-center items-center">
                         <div class="text-white text-4xl font-bold" id="score_biru_top">
-                            {{ number_format($jadwal->score_biru, 2) }}
+                            {{ round($jadwal->score_biru, 3) }}
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 <div class="col-span-1">
                     <div class="bg-gradient-to-b from-red-700 to-red-500 rounded shadow-xl h-24 flex justify-center items-center">
                         <div class="text-white text-4xl font-bold" id="score_merah_top">
-                            {{ number_format($jadwal->score_merah, 2) }}
+                            {{ round($jadwal->score_merah, 3) }}
                         </div>
                     </div>
                 </div>
@@ -185,7 +185,7 @@
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-blue-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Score Monitor</div>
-                        <div class="text-2xl font-bold" id="score_biru_bot">{{ number_format($jadwal->score_biru, 2) }}</div>
+                        <div class="text-2xl font-bold" id="score_biru_bot">{{ round($jadwal->score_biru, 3) }}</div>
                     </div>
                     <div class="bg-blue-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Deviasi</div>
@@ -277,7 +277,7 @@
                     </div>
                     <div class="bg-red-600 text-white p-3 rounded shadow text-center">
                         <div class="text-xs uppercase opacity-75">Score Monitor</div>
-                        <div class="text-2xl font-bold" id="score_merah_bot">{{ number_format($jadwal->score_merah, 2) }}</div>
+                        <div class="text-2xl font-bold" id="score_merah_bot">{{ round($jadwal->score_merah, 3) }}</div>
                     </div>
                 </div>
 
@@ -382,7 +382,7 @@
                                     <div class="text-sm opacity-75 mb-5">{{ $kontigenbiru }}</div>
                                     <div class="score-badge rounded-xl px-4 py-3">
                                         <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
-                                        <div class="text-4xl font-black tabular-nums">{{ number_format($jadwal->score_biru, 2) }}</div>
+                                        <div class="text-4xl font-black tabular-nums">{{ round($jadwal->score_biru, 3) }}</div>
                                     </div>
                                     <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
                                         <span>Pilih sebagai Pemenang</span>
@@ -406,7 +406,7 @@
                                     <div class="text-sm opacity-75 mb-5">{{ $kontigenmerah }}</div>
                                     <div class="score-badge rounded-xl px-4 py-3">
                                         <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
-                                        <div class="text-4xl font-black tabular-nums">{{ number_format($jadwal->score_merah, 2) }}</div>
+                                        <div class="text-4xl font-black tabular-nums">{{ round($jadwal->score_merah, 3) }}</div>
                                     </div>
                                     <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
                                         <span>Pilih sebagai Pemenang</span>
@@ -546,12 +546,12 @@
                         $('#timer_biru').text(response.timer_biru);
                         $('#timer_merah').text(response.timer_merah);
                         
-                        $('#score_biru_top').text(parseFloat(response.score_biru).toFixed(2));
-                        $('#score_biru_bot').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#score_biru_top').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
+                        $('#score_biru_bot').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#deviasi_biru').text(response.deviasi_biru);
 
-                        $('#score_merah_top').text(parseFloat(response.score_merah).toFixed(2));
-                        $('#score_merah_bot').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#score_merah_top').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
+                        $('#score_merah_bot').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#deviasi_merah').text(response.deviasi_merah);
 
                         if (response.status === 'pending' || response.status === 'proses') {
@@ -567,12 +567,12 @@
                         $('#timer_biru').text(response.timer_biru);
                         $('#timer_merah').text(response.timer_merah);
                         
-                        $('#score_biru_top').text(parseFloat(response.score_biru).toFixed(2));
-                        $('#score_biru_bot').text(parseFloat(response.score_biru).toFixed(2));
+                        $('#score_biru_top').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
+                        $('#score_biru_bot').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#deviasi_biru').text(response.deviasi_biru);
 
-                        $('#score_merah_top').text(parseFloat(response.score_merah).toFixed(2));
-                        $('#score_merah_bot').text(parseFloat(response.score_merah).toFixed(2));
+                        $('#score_merah_top').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
+                        $('#score_merah_bot').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#deviasi_merah').text(response.deviasi_merah);
 
                         setTimeout(checkStatus, 1000);

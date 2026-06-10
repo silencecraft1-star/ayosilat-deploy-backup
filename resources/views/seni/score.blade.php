@@ -102,7 +102,7 @@
             background-color: orange !important;
             color: white !important;
         }
-        .median-highlight {
+        td.median-highlight, .median-highlight {
             border: 3px solid #F5A623 !important;
             box-shadow: 0 0 12px 2px rgba(245, 166, 35, 0.5), inset 0 0 8px rgba(245, 166, 35, 0.15) !important;
             animation: medianPulse 2s ease-in-out infinite;
@@ -409,7 +409,10 @@
                                 if (response_current_global == "biru") resetColor = 'bg-blue-2';
                                 else if (response_current_global == "merah") resetColor = 'bg-red-2';
                                 
-                                $(`[name='${data.id_juri}']`).addClass(resetColor + ' text-white');
+                                $(`[name='${data.id_juri}']`).addClass(resetColor);
+                                if (!$(`[name='${data.id_juri}']`).hasClass('median-highlight')) {
+                                    $(`[name='${data.id_juri}']`).addClass('text-white');
+                                }
                             }, 1000); // Highlight stays for 1 second then fades back via CSS transition
                         }
 
@@ -561,7 +564,7 @@
                         var deviation = Math.sqrt(deviations / jumlahJuri);
                             // Save original order before findMedian sorts the array
                             var all_juri_original = [...all_juri];
-                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000).toFixed(2);
+                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
 
                             // Highlight juror(s) that contributed to the median
                             (function() {
@@ -577,11 +580,23 @@
                                     medianIndices = [sorted[mid].idx];
                                 }
                                 for (var j = 1; j <= jumlahJuri; j++) {
-                                    $('#total' + j).removeClass('median-highlight');
+                                    $('#total' + j).removeClass('median-highlight').addClass('text-white');
                                 }
-                                medianIndices.forEach(function(idx) {
-                                    $('#total' + idx).addClass('median-highlight');
-                                });
+                                
+                                var hasScore = false;
+                                for (let k = 0; k < jumlahJuri; k++) {
+                                    let val = parseFloat(all_juri_original[k]);
+                                    if (val !== 9.90 && val !== 9.10 && val !== 0.00) {
+                                        hasScore = true;
+                                        break;
+                                    }
+                                }
+
+                                if (hasScore) {
+                                    medianIndices.forEach(function(idx) {
+                                        $('#total' + idx).addClass('median-highlight').removeClass('text-white');
+                                    });
+                                }
                             })();
 
                         // if (response.status != "pause") {
@@ -656,7 +671,7 @@
                         //$('#total8').text(juri8);
                         $('#total_score').text(total_score);
                         $('#dewan_pinalti').text(response.dewan);
-                        $('#medianscore').text(findMedian(all_juri).toFixed(2));
+                        $('#medianscore').text(findMedian(all_juri));
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
                             if (response.status == "finished" || response.status == "finish") {
