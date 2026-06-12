@@ -669,8 +669,8 @@
                                             @endforeach
                                         </select>
                                         <!-- <input type="text" name="biru" id="biru" class="form-control" list="peserta-list">
-                                                                                                                                                                                                                                                                            <datalist id="peserta-list">
-                                                                                                                                                                                                                                                                            </datalist> -->
+                                                                                                                                                                                                                                                                                <datalist id="peserta-list">
+                                                                                                                                                                                                                                                                                </datalist> -->
                                     </div>
                                     <div class="col">
                                         <label for="biru" class="fs-5 text-danger">Tim Merah</label>
@@ -946,11 +946,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenib"
                                             id="pesertaSenib">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                            @php
-                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                            @endphp
-                                                                            @endforeach -->
+                                                                                @php
+                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                @endphp
+                                                                                @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -961,11 +961,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenim"
                                             id="pesertaSenim">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                            @php
-                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                            @endphp
-                                                                            @endforeach -->
+                                                                                @php
+                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                @endphp
+                                                                                @endforeach -->
                                         </select>
                                     </div>
                                 </div>

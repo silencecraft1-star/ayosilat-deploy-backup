@@ -669,8 +669,8 @@
                         //$('#total6').text(juri6);
                         //$('#total7').text(juri7);
                         //$('#total8').text(juri8);
-                        let final_median_display = hasScore ? parseFloat(findMedian(all_juri)).toFixed(2) : parseFloat(findMedian(all_juri)).toFixed(2);
-                        let final_total_display = hasScore ? total_score.toFixed(2) : total_score.toFixed(2);
+                        let final_median_display = hasScore ? parseFloat(findMedian(all_juri)).toFixed(3).replace(/0$/, '') : parseFloat(findMedian(all_juri)).toFixed(3).replace(/0$/, '');
+                        let final_total_display = hasScore ? total_score.toFixed(3).replace(/0$/, '') : total_score.toFixed(3).replace(/0$/, '');
                         $('#total_score').text(final_total_display);
                         $('#dewan_pinalti').text(response.dewan);
                         $('#medianscore').text(final_median_display);

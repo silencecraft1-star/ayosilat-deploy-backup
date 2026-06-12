@@ -338,7 +338,7 @@ class RekapController extends Controller
         if ($request->has('menang') && $request->menang) {
             $jadwal->update([
                 'pemenang' => $request->menang,
-                'status'   => 'selesai',
+                'status' => 'selesai',
             ]);
 
             // Redirect kembali ke halaman rekap dengan isDewan
