@@ -80,10 +80,20 @@
             'Jurus 5 (6 Gerakan)',
             'Jurus 6 (8 Gerakan)',
             'Jurus 7 (11 Gerakan)',
-            'Jurus 8 (7 Gerakan)',
-            'Jurus 9 (6 Gerakan)',
-            'Jurus 10 (12 Gerakan)',
         ];
+
+        // $jurusTanganKosong = [
+        //     'Jurus 1 (7 Gerakan)',
+        //     'Jurus 2 (6 Gerakan)',
+        //     'Jurus 3 (5 Gerakan)',
+        //     'Jurus 4 (7 Gerakan)',
+        //     'Jurus 5 (6 Gerakan)',
+        //     'Jurus 6 (8 Gerakan)',
+        //     'Jurus 7 (11 Gerakan)',
+        //     'Jurus 8 (7 Gerakan)',
+        //     'Jurus 9 (6 Gerakan)',
+        //     'Jurus 10 (12 Gerakan)',
+        // ];
 
         $jurusSenjata = [
             'Jurus 8 (7 Gerakan)',
