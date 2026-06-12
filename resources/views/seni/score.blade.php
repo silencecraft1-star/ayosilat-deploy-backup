@@ -565,6 +565,7 @@
                             // Save original order before findMedian sorts the array
                             var all_juri_original = [...all_juri];
                             var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
+                            var hasScore = false;
 
                             // Highlight juror(s) that contributed to the median
                             (function() {
@@ -583,7 +584,6 @@
                                     $('#total' + j).removeClass('median-highlight').addClass('text-white');
                                 }
                                 
-                                var hasScore = false;
                                 for (let k = 0; k < jumlahJuri; k++) {
                                     let val = parseFloat(all_juri_original[k]);
                                     if (val !== 9.90 && val !== 9.10 && val !== 0.00) {
@@ -669,9 +669,11 @@
                         //$('#total6').text(juri6);
                         //$('#total7').text(juri7);
                         //$('#total8').text(juri8);
-                        $('#total_score').text(total_score);
+                        let final_median_display = hasScore ? parseFloat(findMedian(all_juri)).toFixed(3) : parseFloat(findMedian(all_juri)).toFixed(2);
+                        let final_total_display = hasScore ? total_score.toFixed(3) : total_score.toFixed(2);
+                        $('#total_score').text(final_total_display);
                         $('#dewan_pinalti').text(response.dewan);
-                        $('#medianscore').text(findMedian(all_juri));
+                        $('#medianscore').text(final_median_display);
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
                             if (response.status == "finished" || response.status == "finish") {
