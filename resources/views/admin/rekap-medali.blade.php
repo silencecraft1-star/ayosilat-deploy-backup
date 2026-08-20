@@ -116,10 +116,9 @@
             <thead>
               <tr>
                 <th class="bg-light">Kontigen</th>
-                <th class="bg-light">Emas</th>
-                <th class="bg-light">Perak</th>
-                <th class="bg-light">Perunggu</th>
-                <th class="bg-light">Total</th>
+                <th class="bg-light">Emas 🥇</th>
+                <th class="bg-light">Perak 🥈</th>
+                <th class="bg-light">Perunggu 🥉</th>
               </tr>
             </thead>
             <tbody>
@@ -129,7 +128,6 @@
                   <td>{{ $item['emas'] }}</td>
                   <td>{{ $item['perak'] }}</td>
                   <td>{{ $item['perunggu'] }}</td>
-                  <td>{{ ($item['emas'] * 5) + ($item['perak'] * 3) + ($item['perunggu'] * 2) }}</td>
                 </tr>
               @endforeach
             </tbody>
@@ -151,10 +149,9 @@
               <tr>
                 <th class="bg-light">Peringkat</th>
                 <th class="bg-light">Kontigen</th>
-                <th class="bg-light">Emas</th>
-                <th class="bg-light">Perak</th>
-                <th class="bg-light">Perunggu</th>
-                <th class="bg-light">Total</th>
+                <th class="bg-light">Emas 🥇</th>
+                <th class="bg-light">Perak 🥈</th>
+                <th class="bg-light">Perunggu 🥉</th>
               </tr>
             </thead>
             <tbody>
@@ -182,7 +179,6 @@
                   <td>{{ $item['emas'] }}</td>
                   <td>{{ $item['perak'] }}</td>
                   <td>{{ $item['perunggu'] }}</td>
-                  <td>{{ ($item['emas'] * 5) + ($item['perak'] * 3) + ($item['perunggu'] * 2) }}</td>
                 </tr>
               @endforeach
             </tbody>

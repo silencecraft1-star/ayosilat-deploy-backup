@@ -77,8 +77,17 @@
         </div>
         <div id=""name="" class="mid-header">
             <img src="../assets/Assets/header.png" alt="" style="position: relative; left: -50%; height: 40px; margin-bottom: 30px;">
-            <div id=""name="" class="mid-text">
+            <div id=""name="" class="mid-text text-center">
                 <div id=""name="" class="mid-text-title " style="margin-left: 10px;">Partai {{ $partai  }}</div>
+                @php
+                    $ketTanding = $cekpartai ? (($cekpartai->keterangan != 'N/a' && $cekpartai->keterangan != '') ? strtoupper($cekpartai->keterangan) : '') : '';
+                    $kondTanding = $cekpartai ? (($cekpartai->kondisi != 'N/a' && $cekpartai->kondisi != '') ? strtoupper($cekpartai->kondisi) : '') : '';
+                @endphp
+                @if($ketTanding || $kondTanding)
+                    <div style="font-size: 0.8rem; font-weight: bold; margin-top: -5px; color: #ffeb3b; padding-left: 10px; line-height: 1.1;">
+                        {{ $kondTanding }} {{ $ketTanding ? ' - ' . $ketTanding : '' }}
+                    </div>
+                @endif
             </div>
         </div>
         <div id=""name="" class="header-pict">

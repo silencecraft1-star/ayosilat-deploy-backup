@@ -297,6 +297,7 @@
 
         //// console.log(timer);
         $('#partai').text(`Partai ${response.partai}`);
+        $('#ketTanding').text(response.keteranganTanding);
         $('#infoKelas').text(response.infoKelas);
         $('#namaBiru').text(response.namaBiru);
         $('#namaMerah').text(response.namaMerah);
@@ -803,7 +804,9 @@
 
                     //// console.log(timer);
                     $('#partai').text(`Partai ${response.partai}`);
+                    $('#ketTanding').text(response.keteranganTanding);
                     $('#infoKelas').text(response.infoKelas);
+                    $('#infoGender').text(response.infoGender);
                     $('#namaBiru').text(response.namaBiru);
                     $('#namaMerah').text(response.namaMerah);
                     $('#kontigenBiru').text(response.kontigenBiru);

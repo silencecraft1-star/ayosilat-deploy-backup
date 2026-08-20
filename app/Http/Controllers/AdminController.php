@@ -445,7 +445,8 @@ class AdminController extends Controller
                 'arena' => $arena,
                 'status' => "pending",
                 'pemenang' => "N/a",
-                'tipe' => 'tanding'
+                'tipe' => 'tanding',
+                'keterangan' => $request->input('babak-tanding') ?? "N/a"
             ];
         }
         // dd($datas);

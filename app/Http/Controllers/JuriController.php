@@ -536,11 +536,12 @@ class JuriController extends Controller
                 $query->whereNull('id_sesi');
             })->count();
             //dd($arena, $partaiFinal, $sesi, $setting);
-            $statusPertandingan = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
+            $statusPertandinganData = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
                 $query->where('id_sesi', $sesi);
             }, function ($query) {
                 $query->whereNull('id_sesi');
-            })->first()->status ?? "pending";
+            })->first();
+            $statusPertandingan = $statusPertandinganData->status ?? "pending";
             $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
             $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
 
@@ -594,6 +595,11 @@ class JuriController extends Controller
                         'tendanganb' => $tendanganb,
                         'tendanganm' => $tendanganm,
                         'infoKelas' => "Kelas $infoKelas | $infoKategori",
+                        'infoGender' => $pesertaBiru->gender,
+                        'keteranganTanding' => str_replace('-', ' ', trim(strtoupper(
+
+                            (($statusPertandinganData->keterangan ?? '') != 'N/a' && ($statusPertandinganData->keterangan ?? '') != '' ? '- ' . $statusPertandinganData->keterangan : '')
+                        ))),
                         'jatuh1' => 0,
                         'binaan1' => 0,
                         'teguran1' => 0,

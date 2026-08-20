@@ -38,6 +38,9 @@
 
         $kelas = Kelas::where('id', $perserta->kelas)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
+        $jadwalSeni = \App\jadwal_group::where('id', $setting->jadwal)->first();
+        $ketSeni = $jadwalSeni ? (($jadwalSeni->keterangan != 'N/a' && $jadwalSeni->keterangan != '') ? strtoupper($jadwalSeni->keterangan) : '') : '';
+        $kondSeni = $jadwalSeni ? (($jadwalSeni->kondisi != 'N/a' && $jadwalSeni->kondisi != '') ? strtoupper($jadwalSeni->kondisi) : '') : '';
     @endphp
     <style>
         .text-green {
@@ -124,7 +127,15 @@
         style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
             <div class="col d-flex justify-content-end align-items-center fs-3">
-                <span class="me-3">{{ $kelas->name }}</span>
+                @if($ketSeni || $kondSeni)
+            <div style="font-size: 1.2em; text-shadow: 2px 2px 4px #000; letter-spacing: 2px;">
+                PARTAI {{ $setting->partai ?? '' }} - {{ str_replace('-', ' ', trim($kondSeni . ' ' . ($ketSeni ? '- ' . $ketSeni : ''))) }}
+            </div>
+        @else
+            <div style="font-size: 1.2em; text-shadow: 2px 2px 4px #000; letter-spacing: 2px;">
+                PARTAI {{ $setting->partai ?? '' }}
+            </div>
+        @endif
             </div>
             <div class="col h100">
                 <div class="container position-relative h100 d-flex justify-content-center fs-3" style="height: 70%;">
@@ -153,11 +164,7 @@
             </div>
         </div>
     </div>
-    <!-- Match Title -->
-    <div class="container-fluid d-flex justify-content-center f-cent fs-3">
-        {{-- ARENA 1 <br>
-        PENYISIHAN DEWASA (4PA) --}}
-    </div>
+    
     <!-- Container Body Content -->
     <div class="container-fluid ">
         <div class="container-fluid ">
@@ -265,11 +272,12 @@
                     <div class="col-8">
                         <div class="row justify-content-center items-center">
                             <div class="col">
-                                <div class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
+                                <div
+                                    class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                                     Time Performance
                                 </div>
                                 <div id="timer1" class="change-text container text-green fw-bold text-center align-middle"
-                                    style="font-size: 14em;">
+                                    style="font-size: 10em;">
                                     03:00
                                 </div>
                             </div>
@@ -278,7 +286,7 @@
                                     Score
                                 </div>
                                 <div id="total_score" class="change-text container text-green fw-bold text-center align-middle"
-                                    style="font-size: 14em;">
+                                    style="font-size: 10em;">
                                     9.2
                                 </div>
                             </div>
@@ -310,10 +318,10 @@
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
     <script>
-        $('#timer1').text('00:00');
+        $('#timer1').text('00:00:00');
         var partai = document.getElementById("partai").getAttribute("name");
         let timerInterval;
-        let currentTime = 0; // Simpan waktu dalam detik
+        let currentTime = 0; // Simpan waktu dalam centiseconds (1/100 detik)
         let timeSaveStatus = false;
         let isPaused = false;
         let StatusCondition = '';
@@ -321,14 +329,15 @@
         let response_current_global = '';
         // function untuk websoket
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        function formatTime(centiseconds) {
+            const minutes = Math.floor(centiseconds / 6000);
+            const secs = Math.floor((centiseconds % 6000) / 100);
+            const ms = centiseconds % 100;
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}:${String(ms).padStart(2, '0')}`;
         }
         function startTimer() {
             if (!isPaused) {
-                currentTime = 0; // Reset waktu ke 00:00 saat start
+                currentTime = 0; // Reset waktu ke 00:00:00 saat start
             }
 
             //$('#timer1').removeClass('text-green');
@@ -340,7 +349,7 @@
                 currentTime++;
                 var Timers = formatTime(currentTime);
                 $('#timer1').text(Timers);
-            }, 1000);
+            }, 10); // Update setiap 10ms = 1 centisecond
         }
 
         function pauseTimer() {
@@ -355,7 +364,7 @@
                     currentTime++;
                     var Timers = formatTime(currentTime);
                     $('#timer1').text(Timers);
-                }, 1000);
+                }, 10);
             }
         }
         function resetTimer() {

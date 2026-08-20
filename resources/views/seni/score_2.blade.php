@@ -228,8 +228,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -260,6 +260,9 @@
             return $newName;
         }
 
+        $jadwalSeni = \App\jadwal_group::where('id', $setting->jadwal)->first();
+        $ketSeni = $jadwalSeni ? (($jadwalSeni->keterangan != 'N/a' && $jadwalSeni->keterangan != '') ? strtoupper($jadwalSeni->keterangan) : '') : '';
+        $kondSeni = $jadwalSeni ? (($jadwalSeni->kondisi != 'N/a' && $jadwalSeni->kondisi != '') ? strtoupper($jadwalSeni->kondisi) : '') : '';
     @endphp
 </head>
 
@@ -268,8 +271,13 @@
     <div class="container-fluid pb-2"
         style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
-            <div class="col d-flex justify-content-end align-items-center fs-3">
-                <span class="me-3 uppercase"> Partai {{ $setting->partai }}</span>
+            <div class="me-2 col d-flex justify-content-end align-items-center fs-3">
+                <span class="uppercase"> partai {{ $setting->partai }} - </span>
+                @if($ketSeni || $kondSeni)
+                    <span class="ms-2">
+                        {{ str_replace('-', ' ', trim($kondSeni . ' ' . ($ketSeni ? '- ' . $ketSeni : ''))) }}
+                    </span>
+                @endif
             </div>
             <div class="col h100">
                 <div class="container position-relative h100 d-flex justify-content-center  fs-3" style="height: 70%;">
@@ -399,15 +407,15 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-8 ">
-                <div class="row justify-content-center items-center ">
+            <div class="col-8">
+                <div class="row justify-content-center items-center">
                     <div class="col">
                         <div
                             class="border border-black shadow-lg bg-green-2 change-bg h-full text-light border-3 rounded text-center px-5 py-3 fs-2">
                             Time Performance
                         </div>
                         <div id="timer1" class="change-text container text-green fw-bold text-center align-middle"
-                            style="font-size: 14em;">
+                            style="font-size: 10em;">
                             03:00
                         </div>
                     </div>
@@ -417,7 +425,7 @@
                             Total Score
                         </div>
                         <div id="total" class="change-text container text-green fw-bold text-center align-middle"
-                            style="font-size: 14em;">
+                            style="font-size: 10em;">
                             9.2
                         </div>
                     </div>
@@ -448,26 +456,27 @@
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        $('#timer1').text('00:00');
+        $('#timer1').text('00:00:00');
         var partai = document.getElementById("partai").getAttribute("name");
         let timerInterval;
         let timeSaveStatus = false;
-        let lastSavedTime = '00:00';
-        let currentTime = 0; // Simpan waktu dalam detik
+        let lastSavedTime = '00:00:00';
+        let currentTime = 0; // Simpan waktu dalam centiseconds (1/100 detik)
         let isPaused = false;
         let StatusCondition = '';
         let intervalId; // Simpan referensi interval
         let response_current_global = '';
         // function untuk websoket
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        function formatTime(centiseconds) {
+            const minutes = Math.floor(centiseconds / 6000);
+            const secs = Math.floor((centiseconds % 6000) / 100);
+            const ms = centiseconds % 100;
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}:${String(ms).padStart(2, '0')}`;
         }
         function startTimer() {
             if (!isPaused) {
-                currentTime = 0; // Reset waktu ke 00:00 saat start
+                currentTime = 0; // Reset waktu ke 00:00:00 saat start
             }
 
             //$('#timer1').removeClass('text-green');
@@ -479,7 +488,7 @@
                 currentTime++;
                 var Timers = formatTime(currentTime);
                 $('#timer1').text(Timers);
-            }, 1000);
+            }, 10); // Update setiap 10ms = 1 centisecond
         }
 
         function pauseTimer() {
@@ -494,7 +503,7 @@
                     currentTime++;
                     var Timers = formatTime(currentTime);
                     $('#timer1').text(Timers);
-                }, 1000);
+                }, 10);
             }
         }
         function resetTimer() {

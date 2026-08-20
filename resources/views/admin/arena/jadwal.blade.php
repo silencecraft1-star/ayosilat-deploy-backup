@@ -340,7 +340,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-center gap-2 p-0">
                                                             <button data-bs-target="#editPeserta" data-bs-toggle="modal"
-                                                                onclick="asignEdit({{ $pesertabiru->id ?? null }}, {{ $pesertamerah->id ?? null }}, {{ $item->partai ?? null }}, {{ $item->id ?? null }}, '{{ $pesertabiru->name ?? null }}', '{{ $pesertamerah->name ?? null }}')"
+                                                                onclick="asignEdit({{ $pesertabiru->id ?? null }}, {{ $pesertamerah->id ?? null }}, {{ $item->partai ?? null }}, {{ $item->id ?? null }}, '{{ $pesertabiru->name ?? null }}', '{{ $pesertamerah->name ?? null }}', '{{ $item->keterangan ?? null }}')"
                                                                 class="btn btn-primary px-3 shadow text-light" @if (!$pesertabiru || !$pesertamerah) disabled @endif>Edit</button>
                                                             @if ($item->status === 'pending')
                                                                 <button
@@ -655,38 +655,46 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col">
-                                        <input type="hidden" value="{{ $sesi }}" name="sesi" />
                                         <div class="fs-5 text-primary">Tim Biru</div>
-                                        <select class="js-example-basic-single" style="width:170px;" name="biru" id="biru">
+                                        <select class="js-example-basic-single" style="width:100%;" name="biru" id="biru">
                                             @foreach ($PesertaAll as $item)
                                                 @php
                                                     $kelas = kelas::where('id', $item->kelas)->value('name');
                                                     $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
                                                 @endphp
-                                                <option>{{ $item->name }} || {{ $kontigen->kontigen ?? ' ' }} ||
+                                                <option value="{{ $item->id }}">{{ $item->name }} ||
+                                                    {{ $kontigen->kontigen ?? ' ' }} ||
                                                     {{ $kelas ?? ' ' }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <!-- <input type="text" name="biru" id="biru" class="form-control" list="peserta-list">
-                                                                                                                                                                                                                                                                                <datalist id="peserta-list">
-                                                                                                                                                                                                                                                                                </datalist> -->
                                     </div>
                                     <div class="col">
-                                        <label for="biru" class="fs-5 text-danger">Tim Merah</label>
-                                        <select class="js-example-basic-single" style="width:170px;" name="merah"
-                                            id="merah">
+                                        <label for="merah" class="fs-5 text-danger">Tim Merah</label>
+                                        <select class="js-example-basic-single" style="width:100%;" name="merah" id="merah">
                                             @foreach ($PesertaAll as $item)
                                                 @php
                                                     $kelas = kelas::where('id', $item->kelas)->value('name');
                                                     $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
                                                 @endphp
-                                                <option>{{ $item->name }} || {{ $kontigen->kontigen ?? ' ' }} ||
+                                                <option value="{{ $item->id }}">{{ $item->name }} ||
+                                                    {{ $kontigen->kontigen ?? ' ' }} ||
                                                     {{ $kelas ?? ' ' }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <!-- <input type="text" name="merah" id="merah" class="form-control" list="peserta-list"> -->
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <div class="fs-5">Keterangan Pertandingan</div>
+                                        <select class="form-control" name="babak-tanding">
+                                            <option value="penyisihan">Penyisihan</option>
+                                            <option value="semi-final">Semi Final</option>
+                                            <option value="final">Final</option>
+                                            <option value="pemasalan">Pemasalan</option>
+                                            <option value="prestasi">Prestasi</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -946,11 +954,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenib"
                                             id="pesertaSenib">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                @php
-                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                @endphp
-                                                                                @endforeach -->
+                                                                                        @php
+                                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                        @endphp
+                                                                                        @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -961,11 +969,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenim"
                                             id="pesertaSenim">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                @php
-                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                @endphp
-                                                                                @endforeach -->
+                                                                                        @php
+                                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                        @endphp
+                                                                                        @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -1153,7 +1161,7 @@
                 $select.val(value).trigger('change');
             }
 
-            function asignEdit(biru, merah, partai, jadwalId, namaBiru, namaMerah) {
+            function asignEdit(biru, merah, partai, jadwalId, namaBiru, namaMerah, keterangan) {
                 //alert(`${biru}, ${merah}, ${namaBiru}, ${namaMerah}`);
 
                 let arena = $('#arenaName').val();
@@ -1166,6 +1174,7 @@
                 $('#id_current_arena').val(arena);
                 $('#id_new_arena').val(arenaId).trigger('change');
                 $('#id_current_session').val(sesi);
+                $('#id_tipe_tanding').val(keterangan).trigger('change');
                 // alert(`${biru} + ${merah}`);
 
                 addAndSelect($('#biruEdit'), biru, namaBiru);

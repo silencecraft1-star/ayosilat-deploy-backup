@@ -161,7 +161,7 @@
                 <div id="idpartai" name="{{ $partai }}" class="grid grid-cols-3 " style="padding: 0px 8vh;">
                     <!-- Judul Turnamen -->
                     <div class="text-neutral-200 text-white font-semibold text-start w-full h-full flex justify-start items-center"
-                        style="font-size: 1.5vh;">
+                        style="font-size: 2.3vh;">
                         {{ $settingData->judul ?? '' }}
                     </div>
                     <div class="h-full my-0 relative hidden w-full lg:flex items-start justify-center">
@@ -267,18 +267,31 @@
                 </div>
             </div>
             <div class="col-span-2 px-3 flex flex-col h-full">
-                <div class="flex flex-col justify-center items-center" style="margin: 2vh 0vh">
+                <div class="flex flex-col justify-center items-center" style="margin: 1vh 0vh">
                     <div style="font-size: 4vh;"
                         class=" font-semibold uppercase text-center  bg-gradient-to-r from-amber-500 to-amber-700 text-transparent bg-clip-text"
                         id="partai">
 
                     </div>
+                    @php
+                        $ketTanding = $cekpartai ? (($cekpartai->keterangan != 'N/a' && $cekpartai->keterangan != '') ? strtoupper($cekpartai->keterangan) : '') : '';
+                        $kondTanding = $cekpartai ? (($cekpartai->kondisi != 'N/a' && $cekpartai->kondisi != '') ? strtoupper($cekpartai->kondisi) : '') : '';
+                    @endphp
+                    <div id="ketTanding" style="font-size: 2.2vh; color: #d97706;"
+                        class="font-bold uppercase text-center mb-1">
+                        @if($ketTanding || $kondTanding)
+                            {{ str_replace('-', ' ', trim($kondTanding . ' ' . ($ketTanding ? '- ' . $ketTanding : ''))) }}
+                        @endif
+                    </div>
                     <div style="font-size: 2vh" class=" font-bold uppercase text-center" id="infoKelas">
+
+                    </div>
+                    <div style="font-size: 2vh" class=" font-bold uppercase text-center" id="infoGender">
 
                     </div>
                     <!-- <img src="{{ asset('/assets/Assets/IPSI.png') }}" class="icon-size-2" alt=""> -->
                 </div>
-                <div style="margin-top: 3vh;">
+                <div style="margin-top: 1vh;">
                     <div class="text-center text-red-800 fw-bold" style="font-size: 2.5vh;">
                         ROUND
                     </div>
