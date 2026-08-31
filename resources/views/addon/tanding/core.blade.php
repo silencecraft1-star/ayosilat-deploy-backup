@@ -179,7 +179,7 @@
     }
 
     function socketScore(response) {
-        //console.log(response);
+        console.log(response);
         if (response.binaan1 == 1) {
             $('#binaan1').attr("src", "../assets/Assets/pointing_hand_red.png")
             $('#binaan2').attr("src", "../assets/Assets/peace_hand.png")

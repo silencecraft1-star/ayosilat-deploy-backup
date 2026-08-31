@@ -177,7 +177,8 @@
                     </div>
                     <div class="flex jusitfy-between">
                         <div class="text-neutral-200 text-white font-semibold text-start w-full h-full flex justify-start items-center"
-                            style="font-size: 2vh;" id="keteranganArena"></div>
+                            style="font-size: 2vh;" id="keteranganArena">
+                            Tanding</div>
                         <!-- Loop Logo -->
                         <div class="hidden lg:grid">
                             <div class="col-span-2 lg:flex flex-row items-center justify-end" style="gap: 1.5vh;">
