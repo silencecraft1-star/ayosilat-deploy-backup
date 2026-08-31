@@ -172,7 +172,7 @@ class GlobalScoreHelper
             $query->where('id_sesi', $sesi);
         }, function ($query) {
             $query->whereNull('id_sesi');
-        })->first()->keterangan ?? "Tanding";
+        })->first()->keterangan ?? "Pemasalan";
         $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
         $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
 

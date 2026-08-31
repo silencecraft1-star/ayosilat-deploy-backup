@@ -295,13 +295,15 @@
             window.location.href = `redirect?arena=${response.arena}&partai=${response.partai}&role=rekapTanding`;
         }
 
+        var keteranganPertandingan = response.keteranganPertandingan.toUpperCase();
+
         //// console.log(timer);
         $('#partai').text(`Partai ${response.partai}`);
         $('#ketTanding').text(response.keteranganTanding);
         $('#infoKelas').text(response.infoKelas);
         $('#namaBiru').text(response.namaBiru);
         $('#namaMerah').text(response.namaMerah);
-        $('#keteranganArena').text(response.keteranganPertandingan);
+        $('#keteranganArena').text(keteranganPertandingan);
         $('#kontigenBiru').text(response.kontigenBiru);
         $('#kontigenMerah').text(response.kontigenMerah);
         $('#jatuh2').text('' + ' ' + response.jatuh1);
