@@ -301,6 +301,7 @@
         $('#infoKelas').text(response.infoKelas);
         $('#namaBiru').text(response.namaBiru);
         $('#namaMerah').text(response.namaMerah);
+        $('#keteranganArena').text(response.keteranganPertandingan);
         $('#kontigenBiru').text(response.kontigenBiru);
         $('#kontigenMerah').text(response.kontigenMerah);
         $('#jatuh2').text('' + ' ' + response.jatuh1);

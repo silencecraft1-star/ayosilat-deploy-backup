@@ -168,6 +168,11 @@ class GlobalScoreHelper
         }, function ($query) {
             $query->whereNull('id_sesi');
         })->first()->status ?? "pending";
+        $keteranganPertandingan = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
+            $query->where('id_sesi', $sesi);
+        }, function ($query) {
+            $query->whereNull('id_sesi');
+        })->first()->keterangan ?? "Tanding";
         $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
         $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
 
@@ -206,11 +211,12 @@ class GlobalScoreHelper
                     'kontigenBiru' => $kontigenBiru,
                     'kontigenMerah' => $kontigenMerah,
                     'statusPertandingan' => $statusPertandingan,
+                    'keteranganPertandingan' => $keteranganPertandingan,
                     'pukulanb' => $pukulanb,
                     'pukulanm' => $pukulanm,
                     'tendanganb' => $tendanganb,
                     'tendanganm' => $tendanganm,
-                    'infoKelas' => "Kelas $infoKelas | $infoKategori",
+                    'infoKelas' => "$infoKelas | $infoKategori",
                     'jatuh1' => 0,
                     'binaan1' => 0,
                     'teguran1' => 0,
