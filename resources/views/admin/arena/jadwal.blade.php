@@ -692,6 +692,7 @@
                                             <option value="penyisihan">Penyisihan</option>
                                             <option value="semi-final">Semi Final</option>
                                             <option value="final">Final</option>
+                                            <option value="juara-tiga">Juara Tiga</option>
                                             <option value="pemasalan">Pemasalan</option>
                                             <option value="prestasi">Prestasi</option>
                                         </select>
@@ -762,20 +763,20 @@
                                         </select>
                                     </div>
                                 </div>
-                                <section>
+                                 <section>
                                     <div class="fs-5 mb-2">
                                         Tipe Pertandingan
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col">
-                                            <div>
-                                                <label for="id_tipe_tanding" class="fs-5">Arena</label>
-                                            </div>
                                             <select class="js-example-basic-single" style="width:100%;" name="tipe_tanding"
                                                 id="id_tipe_tanding">
-                                                <option value="">Standard</option>
+                                                <option value="penyisihan">Penyisihan</option>
                                                 <option value="semi-final">Semi Final</option>
                                                 <option value="final">Final</option>
+                                                <option value="juara-tiga">Juara Tiga</option>
+                                                <option value="pemasalan">Pemasalan</option>
+                                                <option value="prestasi">Prestasi</option>
                                             </select>
                                         </div>
                                     </div>

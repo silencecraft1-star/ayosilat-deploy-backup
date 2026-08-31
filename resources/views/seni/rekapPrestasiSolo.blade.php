@@ -82,6 +82,21 @@
             </div>
         </header>
 
+        @if($jadwal->pemenang && $jadwal->pemenang != 'N/a')
+            @php
+                $winner = $jadwal->pemenang == $pesertabiru->id ? $pesertabiru : $pesertamerah;
+                $winnerColorText = $jadwal->pemenang == $pesertabiru->id ? 'Biru' : 'Merah';
+                $winnerBg = $jadwal->pemenang == $pesertabiru->id ? 'from-blue-700 to-blue-500 shadow-blue-500/50' : 'from-red-700 to-red-500 shadow-red-500/50';
+            @endphp
+            <div id="winnerBanner" class="flex justify-center mb-10">
+                <div class="bg-gradient-to-r {{ $winnerBg }} text-white font-bold py-5 px-16 rounded-full shadow-2xl text-3xl flex items-center gap-4 border-4 border-white animate-pulse">
+                    <span>🏆 PEMENANG:</span>
+                    <span class="uppercase tracking-wide text-yellow-300">{{ $winner->name }}</span>
+                    <span>(SUDUT {{ strtoupper($winnerColorText) }})</span>
+                </div>
+            </div>
+        @endif
+
         <!-- Participant Info Section -->
         <section class="mb-10">
             <div class="grid grid-cols-12 gap-4">
@@ -382,7 +397,7 @@
                                     <div class="text-sm opacity-75 mb-5">{{ $kontigenbiru }}</div>
                                     <div class="score-badge rounded-xl px-4 py-3">
                                         <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
-                                        <div class="text-4xl font-black tabular-nums">{{ round($jadwal->score_biru, 3) }}</div>
+                                        <div class="text-4xl font-black tabular-nums" id="score_biru_modal">{{ round($jadwal->score_biru, 3) }}</div>
                                     </div>
                                     <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
                                         <span>Pilih sebagai Pemenang</span>
@@ -406,7 +421,7 @@
                                     <div class="text-sm opacity-75 mb-5">{{ $kontigenmerah }}</div>
                                     <div class="score-badge rounded-xl px-4 py-3">
                                         <div class="text-xs uppercase opacity-70 mb-1 tracking-widest">Score Akhir</div>
-                                        <div class="text-4xl font-black tabular-nums">{{ round($jadwal->score_merah, 3) }}</div>
+                                        <div class="text-4xl font-black tabular-nums" id="score_merah_modal">{{ round($jadwal->score_merah, 3) }}</div>
                                     </div>
                                     <div class="mt-5 text-sm font-semibold opacity-80 flex items-center justify-center gap-2">
                                         <span>Pilih sebagai Pemenang</span>
@@ -452,6 +467,7 @@
                                 <input type="hidden" value="solo" name="kategori">
                                 <input type="hidden" id="confirm_menang" name="menang">
                                 <input type="hidden" id="confirm_kalah" name="kalah">
+                                <input type="hidden" value="{{ request()->get('name') }}" name="name">
                                 <div class="flex justify-center gap-3">
                                     <button type="button"
                                         class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-xl transition-all border border-gray-200"
@@ -548,11 +564,18 @@
                         
                         $('#score_biru_top').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#score_biru_bot').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
+                        $('#score_biru_modal').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#deviasi_biru').text(response.deviasi_biru);
 
                         $('#score_merah_top').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#score_merah_bot').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
+                        $('#score_merah_modal').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#deviasi_merah').text(response.deviasi_merah);
+
+                        if (response.pemenang && response.pemenang !== 'N/a' && !document.getElementById('winnerBanner')) {
+                            window.location.reload();
+                            return;
+                        }
 
                         if (response.status === 'pending' || response.status === 'proses') {
                             if (isDewan) {
@@ -569,11 +592,18 @@
                         
                         $('#score_biru_top').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#score_biru_bot').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
+                        $('#score_biru_modal').text(parseFloat(parseFloat(response.score_biru).toFixed(3)));
                         $('#deviasi_biru').text(response.deviasi_biru);
 
                         $('#score_merah_top').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#score_merah_bot').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
+                        $('#score_merah_modal').text(parseFloat(parseFloat(response.score_merah).toFixed(3)));
                         $('#deviasi_merah').text(response.deviasi_merah);
+
+                        if (response.pemenang && response.pemenang !== 'N/a' && !document.getElementById('winnerBanner')) {
+                            window.location.reload();
+                            return;
+                        }
 
                         setTimeout(checkStatus, 1000);
                     }

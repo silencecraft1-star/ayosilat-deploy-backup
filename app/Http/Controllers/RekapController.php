@@ -270,32 +270,35 @@ class RekapController extends Controller
         if ($settingData->status != "finish") {
             return response()->json([
                 'isDone' => false,
-                'time' => '00:00',
+                'time' => '00:00:00',
                 'status' => $settingData->status,
                 'jadwal_id' => $settingData->jadwal,
                 'partai' => $settingData->partai,
                 'active_id' => $settingData->biru,
-                'timer_biru' => $jadwalData->timer_biru ?? '00:00',
-                'timer_merah' => $jadwalData->timer_merah ?? '00:00',
+                'timer_biru' => $jadwalData->timer_biru ?? '00:00:00',
+                'timer_merah' => $jadwalData->timer_merah ?? '00:00:00',
                 'score_biru' => $jadwalData->score_biru ?? 0,
                 'score_merah' => $jadwalData->score_merah ?? 0,
                 'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
                 'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
+                'pemenang' => $jadwalData->pemenang ?? 'N/a',
             ], 200);
         } else {
-            $time = $settingData->time ?? "00:00";
+            $time = $settingData->time ?? "00:00:00";
             $jadwal_id = $settingData->jadwal;
             $partai = $settingData->partai;
             $active_id = $settingData->biru;
             $finalTime = [
                 'menit' => "00",
                 'detik' => "00",
+                'ms' => "00",
             ];
 
             if ($time) {
                 $arr = explode(':', $time);
-                $finalTime['menit'] = $arr[0];
-                $finalTime['detik'] = $arr[1];
+                $finalTime['menit'] = $arr[0] ?? '00';
+                $finalTime['detik'] = $arr[1] ?? '00';
+                $finalTime['ms'] = $arr[2] ?? '00';
             }
 
             $settingData->update([
@@ -310,12 +313,13 @@ class RekapController extends Controller
                 'jadwal_id' => $jadwal_id,
                 'partai' => $partai,
                 'active_id' => $active_id,
-                'timer_biru' => $jadwalData->timer_biru ?? '00:00',
-                'timer_merah' => $jadwalData->timer_merah ?? '00:00',
+                'timer_biru' => $jadwalData->timer_biru ?? '00:00:00',
+                'timer_merah' => $jadwalData->timer_merah ?? '00:00:00',
                 'score_biru' => $jadwalData->score_biru ?? 0,
                 'score_merah' => $jadwalData->score_merah ?? 0,
                 'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
                 'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
+                'pemenang' => $jadwalData->pemenang ?? 'N/a',
             ], 200);
         }
     }
@@ -341,11 +345,13 @@ class RekapController extends Controller
                 'status' => 'selesai',
             ]);
 
-            // Redirect kembali ke halaman rekap dengan isDewan
+            $nameParam = $request->has('name') && $request->name ? '&name=' . urlencode($request->name) : '';
+
+            // Redirect kembali ke halaman rekap dengan isDewan dan name
             if ($request->kategori == "tunggal") {
-                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiTunggal&isDewan=true');
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiTunggal&isDewan=true' . $nameParam);
             } else {
-                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiSolo&isDewan=true');
+                return redirect('/redirect?arena=' . $request->arena . '&role=rekapPrestasiSolo&isDewan=true' . $nameParam);
             }
         }
 

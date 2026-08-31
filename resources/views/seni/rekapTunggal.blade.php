@@ -27,9 +27,18 @@
         $perserta = PersertaModel::where('id', $id_user)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen') ?? '';
         $group = jadwal_group::where('biru', $id_user)->where('arena', $arena)->first() ?? jadwal_group::where('merah', $id_user)->where('arena', $arena)->first();
-        $times = explode(':', $group->kondisi);
-        $detik = isset($times[1]) && $times[1] != 'N/a' ? $times[1] : '00';
+        $savedTime = '00:00:00';
+        if ($group) {
+            if ($group->biru == $id_user) {
+                $savedTime = $group->timer_biru ?? $group->kondisi ?? '00:00:00';
+            } else {
+                $savedTime = $group->timer_merah ?? $group->kondisi ?? '00:00:00';
+            }
+        }
+        $times = explode(':', $savedTime);
         $menit = isset($times[0]) && $times[0] != 'N/a' ? $times[0] : '00';
+        $detik = isset($times[1]) && $times[1] != 'N/a' ? $times[1] : '00';
+        $ms = isset($times[2]) && $times[2] != 'N/a' ? $times[2] : '00';
         //$a = "PERFOMANCE EXCEDEED BY 10M BY 10M AREA";
         //$b = "DROPING OF WEAPON, TOUCHING THE FLOOR";
         //$c = "ATTIRE IS NOT ACCORDING TO PRESCRIPTION(TANJAK OR SAMPING FALLS OUT)";
@@ -146,7 +155,7 @@
                     <table class="w-100 table-bordered">
                         <tbody>
                             <tr>
-                                <td class="bg-primary fs-4 p-3 text-white w-50">
+                                <td class="bg-primary fs-4 p-3 text-white" style="width: 35%;">
                                     Time Performance
                                 </td>
                                 <td class="fs-3 text-center bg-white">
@@ -160,6 +169,12 @@
                                         {{ $detik }}
                                     </span>
                                     Detik
+                                </td>
+                                <td class="fs-3 text-center bg-white">
+                                    <span id="ms-text" class="text-primary fs-3">
+                                        {{ $ms }}
+                                    </span>
+                                    Ms
                                 </td>
                             </tr>
                             <tr>
@@ -311,6 +326,7 @@
 
                         $('#menit-text').text(response.time.menit.toString());
                         $('#detik-text').text(response.time.detik.toString());
+                        $('#ms-text').text(response.time.ms ? response.time.ms.toString() : '00');
                     } else {
                         setTimeout(taketimeData, 1000);
                         reloadCount++;

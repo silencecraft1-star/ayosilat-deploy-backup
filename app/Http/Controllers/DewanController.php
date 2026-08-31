@@ -380,20 +380,7 @@ class DewanController extends Controller
 
                 // dd($request->all());
                 // Medali
-                if ($jadwals && $jadwals->keterangan == "semi-final") {
-                    $pesertaKalah = PersertaModel::where('id', $request->input('kalah'))->first();
-
-                    Medali::create([
-                        'name' => "$namaSesi - $ketSesi",
-                        'id_peserta' => $pesertaKalah->id,
-                        'kontigen' => $pesertaKalah->id_kontigen,
-                        'kelas' => $pesertaKalah->kelas,
-                        'kelamin' => $pesertaKalah->gender,
-                        'kategori' => $pesertaKalah->category,
-                        'point' => '2',
-                        'keterangan' => 'tanding',
-                    ]);
-                } else if ($jadwals && $jadwals->keterangan == "final") {
+                if ($jadwals && $jadwals->keterangan == "final") {
                     $pesertaKalah = PersertaModel::where('id', $request->input('kalah'))->first();
                     $pesertaMenang = PersertaModel::where('id', $request->input('menang'))->first();
 
@@ -416,6 +403,19 @@ class DewanController extends Controller
                         'kelamin' => $pesertaKalah->gender,
                         'kategori' => $pesertaKalah->category,
                         'point' => '3',
+                        'keterangan' => 'tanding',
+                    ]);
+                } else if ($jadwals && $jadwals->keterangan == "juara-tiga") {
+                    $pesertaMenang = PersertaModel::where('id', $request->input('menang'))->first();
+
+                    Medali::create([
+                        'name' => "$namaSesi - $ketSesi",
+                        'id_peserta' => $pesertaMenang->id,
+                        'kontigen' => $pesertaMenang->id_kontigen,
+                        'kelas' => $pesertaMenang->kelas,
+                        'kelamin' => $pesertaMenang->gender,
+                        'kategori' => $pesertaMenang->category,
+                        'point' => '2',
                         'keterangan' => 'tanding',
                     ]);
                 }

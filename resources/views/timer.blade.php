@@ -16,7 +16,7 @@
 
         @php
             use App\Setting;
-            $btnStatus = Setting::where('arena', $arena)->first();
+            $btnStatus = Setting::where('arena', $arena)->whereNotNull('judul')->first() ?? Setting::where('arena', $arena)->first();
         @endphp
         <div class="contaner-fluid bg-danger-subtle text-danger text-center d-none" id="stopwatch">Tekan Stopwatch!
         </div>
@@ -38,9 +38,9 @@
         <div class="container-fluid px-4 mb-4">
             <select class="custom-select w-100 p-0 border-3 border-primary fs-5" id="input-continent"
                 style="height: 50px;">
-                <option value="1">Babak 1</option>
-                <option value="2">Babak 2</option>
-                <option value="3">Babak 3</option>
+                <option value="1" {{ ($btnStatus->babak ?? '1') == '1' ? 'selected' : '' }}>Babak 1</option>
+                <option value="2" {{ ($btnStatus->babak ?? '1') == '2' ? 'selected' : '' }}>Babak 2</option>
+                <option value="3" {{ ($btnStatus->babak ?? '1') == '3' ? 'selected' : '' }}>Babak 3</option>
             </select>
         </div>
         @if($btnStatus->status === "")
@@ -194,6 +194,7 @@
                     method: 'GET',
                     success: function (response) {
                         console.log(response.data);
+                        reload();
                     }
                 });
             });
@@ -208,7 +209,7 @@
     <!-- Include other scripts if needed -->
 
     <!-- Your other scripts here -->
-  
+
 </body>
 
 </html>
