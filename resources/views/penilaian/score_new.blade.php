@@ -285,7 +285,7 @@
 
                     <!-- <img src="{{ asset('/assets/Assets/IPSI.png') }}" class="icon-size-2" alt=""> -->
                 </div>
-                <div style="margin-top: 4vh;">
+                <div style="margin-top: 7vh;">
                     <div class="text-center text-red-800 fw-bold" style="font-size: 2.5vh;">
                         ROUND
                     </div>
