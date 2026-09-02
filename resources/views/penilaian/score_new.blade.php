@@ -177,7 +177,7 @@
                     </div>
                     <div class="flex jusitfy-between">
                         <div class="text-neutral-200 text-white uppercase font-semibold text-start w-full h-full flex justify-start items-center"
-                            style="font-size: 2vh;" id="keteranganArena">
+                            style="font-size: 2.3vh;" id="keteranganArena">
                             Tanding</div>
                         <!-- Loop Logo -->
                         <div class="hidden lg:grid">
@@ -285,7 +285,7 @@
 
                     <!-- <img src="{{ asset('/assets/Assets/IPSI.png') }}" class="icon-size-2" alt=""> -->
                 </div>
-                <div style="margin-top: 1vh;">
+                <div style="margin-top: 2vh;">
                     <div class="text-center text-red-800 fw-bold" style="font-size: 2.5vh;">
                         ROUND
                     </div>
