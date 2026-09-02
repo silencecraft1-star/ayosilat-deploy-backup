@@ -176,7 +176,7 @@
                         </div>
                     </div>
                     <div class="flex jusitfy-between">
-                        <div class="text-neutral-200 text-white font-semibold text-start w-full h-full flex justify-start items-center"
+                        <div class="text-neutral-200 text-white uppercase font-semibold text-start w-full h-full flex justify-start items-center"
                             style="font-size: 2vh;" id="keteranganArena">
                             Tanding</div>
                         <!-- Loop Logo -->
@@ -365,6 +365,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-span-4 md:mb-0 h-full">
                 <div class="grid h-full grid-cols-1">
                     <div class="grid grid-cols-3 mb-3 " style="gap: 1vh;">

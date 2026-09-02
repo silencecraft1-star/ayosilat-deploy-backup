@@ -594,7 +594,7 @@ class JuriController extends Controller
                         'pukulanm' => $pukulanm,
                         'tendanganb' => $tendanganb,
                         'tendanganm' => $tendanganm,
-                        'infoKelas' => "Kelas $infoKelas | $infoKategori",
+                        'infoKelas' => "$infoKelas | $infoKategori",
                         'infoGender' => $pesertaBiru->gender,
                         'keteranganTanding' => str_replace('-', ' ', trim(strtoupper(
 
