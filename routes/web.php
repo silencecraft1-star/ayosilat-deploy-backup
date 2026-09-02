@@ -85,6 +85,15 @@ Route::middleware(['auth.custom'])->group(function () {
                 $status = 'admin';
                 return view('admin.kontigen', compact('status'));
             });
+            Route::get('/kontigen/{id}/peserta', function ($id) {
+                $status = 'admin';
+                $kontigen = \App\KontigenModel::find($id);
+                $pesertaIds = \App\PersertaModel::where('id_kontigen', $id)->pluck('id');
+                $emas = \App\Medali::whereIn('id_peserta', $pesertaIds)->where('point', 5)->count();
+                $perak = \App\Medali::whereIn('id_peserta', $pesertaIds)->where('point', 3)->count();
+                $perunggu = \App\Medali::whereIn('id_peserta', $pesertaIds)->where('point', 2)->count();
+                return view('admin.kontigen_peserta', compact('status', 'kontigen', 'emas', 'perak', 'perunggu'));
+            });
             Route::post('/add-kontigen', 'AdminController@modifyKontigen')->name('admin.modifyKontigen');
             Route::get('/juri', function () {
                 $status = 'admin';
@@ -140,6 +149,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/sse', 'JuriController@stream');
     Route::post('/search-peserta', 'AdminController@searchPeserta');
     Route::post('/search-peserta-full', 'AdminController@searchPesertaFull');
+    Route::post('/search-peserta-kontigen', 'AdminController@searchPesertaKontingen');
     Route::get('/call-data', 'JuriController@data');
     Route::get('/take-timer-data', 'RekapController@takeTimer');
     Route::get('/rekapseni', 'RekapController@senirekap');

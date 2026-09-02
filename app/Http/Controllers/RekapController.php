@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\arena;
 use App\Medali;
 use App\PersertaModel;
 use App\SesiModel;
@@ -66,16 +67,19 @@ class RekapController extends Controller
 
             // Create Medali with safety checks
             if ($peserta) {
-                Medali::create([
-                    'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
-                    'id_peserta' => $peserta->id,
-                    'kontigen' => $peserta->id_kontigen,
-                    'kelas' => $peserta->kelas,
-                    'kelamin' => $peserta->gender,
-                    'kategori' => $peserta->category,
-                    'point' => $request->score,
-                    'keterangan' => "Selesai",
-                ]);
+                $medaliExists = Medali::where('id_peserta', $peserta->id)->exists();
+                if (!$medaliExists) {
+                    Medali::create([
+                        'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
+                        'id_peserta' => $peserta->id,
+                        'kontigen' => $peserta->id_kontigen,
+                        'kelas' => $peserta->kelas,
+                        'kelamin' => $peserta->gender,
+                        'kategori' => $peserta->category,
+                        'point' => $request->score,
+                        'keterangan' => "seni",
+                    ]);
+                }
             }
 
             // $setting->update([
@@ -163,7 +167,7 @@ class RekapController extends Controller
 
             if ($selected == "merah" && $data) {
                 $namaSesi = SesiModel::where('id', $settingData->sesi)->first();
-                $ketSesi = $data->keterangan ?? "Seni";
+                $ketSesi = arena::where('id', $settingData->arena)->first()->name ?? "Seni";
                 $selectedParticipant = $data->merah;
 
                 if ($selectedParticipant == $request->input('kalah')) {
@@ -187,16 +191,24 @@ class RekapController extends Controller
                 if (!$isDiskualified) {
                     $peserta = PersertaModel::where('id', $selectedParticipant)->first();
                     if ($peserta) {
-                        Medali::create([
-                            'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
-                            'id_peserta' => $selectedParticipant,
-                            'kontigen' => $peserta->id_kontigen,
-                            'kelas' => $peserta->kelas,
-                            'kelamin' => $peserta->gender,
-                            'kategori' => $peserta->category,
-                            'point' => $medalis,
-                            'keterangan' => "Selesai",
-                        ]);
+                        $existingMedali = Medali::where('id_peserta', $selectedParticipant)->first();
+                        if ($existingMedali) {
+                            $existingMedali->update([
+                                'point' => $medalis,
+                                'keterangan' => 'seni'
+                            ]);
+                        } else {
+                            Medali::create([
+                                'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
+                                'id_peserta' => $selectedParticipant,
+                                'kontigen' => $peserta->id_kontigen,
+                                'kelas' => $peserta->kelas,
+                                'kelamin' => $peserta->gender,
+                                'kategori' => $peserta->category,
+                                'point' => $medalis,
+                                'keterangan' => "seni",
+                            ]);
+                        }
                     }
                 }
 
@@ -226,16 +238,24 @@ class RekapController extends Controller
                 if (!$isDiskualified) {
                     $peserta = PersertaModel::where('id', $selectedParticipant)->first();
                     if ($peserta) {
-                        Medali::create([
-                            'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
-                            'id_peserta' => $selectedParticipant,
-                            'kontigen' => $peserta->id_kontigen,
-                            'kelas' => $peserta->kelas,
-                            'kelamin' => $peserta->gender,
-                            'kategori' => $peserta->category,
-                            'point' => $medalis,
-                            'keterangan' => "Selesai",
-                        ]);
+                        $existingMedali = Medali::where('id_peserta', $selectedParticipant)->first();
+                        if ($existingMedali) {
+                            $existingMedali->update([
+                                'point' => $medalis,
+                                'keterangan' => 'seni'
+                            ]);
+                        } else {
+                            Medali::create([
+                                'name' => ($namaSesi->nama ?? 'Sesi') . " - $ketSesi",
+                                'id_peserta' => $selectedParticipant,
+                                'kontigen' => $peserta->id_kontigen,
+                                'kelas' => $peserta->kelas,
+                                'kelamin' => $peserta->gender,
+                                'kategori' => $peserta->category,
+                                'point' => $medalis,
+                                'keterangan' => "seni",
+                            ]);
+                        }
                     }
                 }
             }

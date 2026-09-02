@@ -23,6 +23,9 @@
         $dataJuri = juri::where('id', $id_juri)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
         $scores = score::where('id_perserta', $id_perserta)->get();
+        
+        $jadwalData = \App\jadwal_group::where('id', $setting->jadwal)->first();
+        $categoryData = \App\category::where('id', $perserta->category)->first();
 
         $namaJuri = explode(' ', $dataJuri->name);
         $namaJuri = "$namaJuri[0] $namaJuri[2]";
@@ -32,10 +35,16 @@
 
 <body>
     <!-- Match Info Section -->
-    <div class="d-flex justify-content-center f-cent fs-5 mt-3">
-        <div class="mid-header-text text-center">
-            {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}}
+    <div class="d-flex flex-column align-items-center mt-3">
+        <div class="mid-header-text text-center fw-bold fs-5 mb-2">
+            {{$arenaNama[0]}}
+        </div>
+        <div class="d-flex justify-content-center flex-wrap gap-2 text-center mb-2">
+            <span class="badge bg-dark fs-6 px-3 py-2">Partai {{ $setting->partai ?? '-' }}</span>
+            <span class="badge bg-success fs-6 px-3 py-2">{{ ucfirst($jadwalData->keterangan ?? 'Pemasalan') }}</span>
+            <span class="badge bg-primary fs-6 px-3 py-2">{{ $dataKelas->name ?? '-' }}</span>
+            <span class="badge bg-info fs-6 px-3 py-2">{{ $categoryData->name ?? '-' }}</span>
+            <span class="badge bg-secondary fs-6 px-3 py-2">{{ ucfirst($perserta->gender ?? '-') }}</span>
         </div>
     </div>
     <!-- Mid Section -->

@@ -275,10 +275,16 @@
         }
     @endphp
     <!-- Match Info Section -->
-    <div class="d-flex justify-content-center ">
-        <div class="mid-header-text text-center">
-            {{$arenaNama[0]}} <br />
-            Partai {{$partai}}
+    <div class="d-flex flex-column align-items-center mt-3">
+        <div class="mid-header-text text-center fs-5 fw-bold mb-2">
+            {{$arenaNama[0]}}
+        </div>
+        <div class="d-flex justify-content-center flex-wrap gap-2 text-center mb-3">
+            <span class="badge bg-dark fs-6 px-3 py-2">Partai {{ $partai }}</span>
+            <span class="badge bg-success fs-6 px-3 py-2">{{ ucfirst($jadwal->keterangan ?? 'Pemasalan') }}</span>
+            <span class="badge bg-primary fs-6 px-3 py-2">{{ $kelas->name ?? '-' }}</span>
+            <span class="badge bg-info fs-6 px-3 py-2">{{ $category ?? '-' }}</span>
+            <span class="badge bg-secondary fs-6 px-3 py-2">{{ ucfirst($perserta->gender ?? '-') }}</span>
         </div>
     </div>
     <!-- Player Info Section -->

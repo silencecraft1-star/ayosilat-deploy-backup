@@ -1232,6 +1232,146 @@ class AdminController extends Controller
         ]);
     }
 
+    public function searchPesertaKontingen(Request $request)
+    {
+        $draw = $request->input('draw');
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+        $searchValue = $request->input('search.value', '');
+        $idKontigen = $request->input('id_kontigen');
+
+        $query = PersertaModel::where('id_kontigen', $idKontigen);
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                // Search in peserta name
+                $q->where('name', 'LIKE', '%' . $searchValue . '%')
+                    // Search in kelas
+                    ->orWhereHas('kelas', function ($kelasQuery) use ($searchValue) {
+                        $kelasQuery->where('name', 'LIKE', '%' . $searchValue . '%');
+                    })
+                    // Search in category
+                    ->orWhereHas('category', function ($categoryQuery) use ($searchValue) {
+                        $categoryQuery->where('name', 'LIKE', '%' . $searchValue . '%');
+                    });
+            });
+        }
+
+        // Get total records count
+        $totalRecords = PersertaModel::where('id_kontigen', $idKontigen)->count();
+
+        // Get filtered records count
+        $filteredRecords = $query->count();
+
+        // Get paginated results
+        $searchResult = $query->skip($start)->take($length)->get();
+
+        $finalResult = [];
+        foreach ($searchResult as $index => $item) {
+            $kelas = kelas::where('id', $item->kelas)->first()->name ?? "Non";
+            $kategori = category::where('id', $item->category)->first()->name ?? "Non";
+
+            // Determine Medali
+            $medali = \App\Medali::where('id_peserta', $item->id)->first();
+            $medaliText = 'Belum/Tidak Ada';
+            if ($medali) {
+                if ($medali->point == 5) {
+                    $medaliText = '<span class="badge bg-warning text-dark">Emas</span>';
+                } elseif ($medali->point == 3) {
+                    $medaliText = '<span class="badge bg-secondary">Perak</span>';
+                } elseif ($medali->point == 2) {
+                    $medaliText = '<span class="badge bg-danger">Perunggu</span>';
+                }
+            }
+
+            $finalResult[] = [
+                'index' => $start + $index + 1,
+                'id' => $item->id,
+                'name' => $item->name,
+                'kelas' => $kelas,
+                'category' => $kategori,
+                'medali' => $medaliText,
+            ];
+        }
+
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $finalResult
+        ]);
+    }
+
+    public function searchPesertaMedali(Request $request)
+    {
+        $draw = $request->input('draw');
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+        $searchValue = $request->input('search.value', '');
+        $filterKategori = $request->input('filter_kategori');
+        $filterKelas = $request->input('filter_kelas');
+        $filterKontigen = $request->input('filter_kontigen');
+
+        $query = \App\Medali::query();
+
+        if ($filterKategori) {
+            $query->where('kategori', $filterKategori);
+        }
+        if ($filterKelas) {
+            $query->where('kelas', $filterKelas);
+        }
+        if ($filterKontigen) {
+            $query->where('kontigen', $filterKontigen);
+        }
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $pesertaIds = PersertaModel::where('name', 'LIKE', '%' . $searchValue . '%')->pluck('id');
+                $q->whereIn('id_peserta', $pesertaIds);
+            });
+        }
+
+        $totalRecords = \App\Medali::count();
+        $filteredRecords = $query->count();
+
+        $searchResult = $query->skip($start)->take($length)->get();
+
+        $finalResult = [];
+        foreach ($searchResult as $index => $med) {
+            $peserta = PersertaModel::where('id', $med->id_peserta)->first();
+            $kontigenModel = KontigenModel::where('id', $med->kontigen)->first();
+            $kelasModel = kelas::where('id', $med->kelas)->first();
+            $kategoriModel = category::where('id', $med->kategori)->first();
+
+            $medaliText = '-';
+            if ($med->point == 5) {
+                $medaliText = '<span class="badge bg-warning text-dark">Emas 🥇</span>';
+            } elseif ($med->point == 3) {
+                $medaliText = '<span class="badge bg-secondary text-white">Perak 🥈</span>';
+            } elseif ($med->point == 2) {
+                $medaliText = '<span class="badge bg-danger text-white">Perunggu 🥉</span>';
+            }
+
+            $finalResult[] = [
+                'index' => $start + $index + 1,
+                'name' => $peserta->name ?? '-',
+                'kontigen' => $kontigenModel->kontigen ?? '-',
+                'kelas' => $kelasModel->name ?? '-',
+                'kategori' => $kategoriModel->name ?? '-',
+                'keterangan' => $med->name ?? '-',
+                'medali' => $medaliText,
+            ];
+        }
+
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $finalResult
+        ]);
+    }
+
+
 
     /**
      * Display the specified resource.

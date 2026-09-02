@@ -115,12 +115,16 @@
     <section>
         <!-- Kontigen and Player Info Section -->
         <div class="lg:grid lg:grid-cols-5 px-6 mb-4">
-            <div class="col-span-2">
+            <div class="col-span-2 flex items-center justify-start gap-4">
+                <div
+                    class="border-4 border-blue-600 rounded-full p-2 w-16 h-16 flex items-center justify-center bg-white flex-shrink-0">
+                    <img src="{{ asset('assets/Assets/karate.png') }}" class="w-10" alt="Tim Biru">
+                </div>
                 <div class="text-start">
-                    <div id="kontigen-biru" class="text-blue-600 text-2xl font-semibold uppercase">
+                    <div id="kontigen-biru" class="text-gray-500 text-sm font-bold uppercase">
                         {{$kontigenBiru->kontigen}}
                     </div>
-                    <div id="nama-biru" class="text-2xl uppercase">{{ $tim_birus->name }}</div>
+                    <div id="nama-biru" class="text-blue-500 text-2xl font-bold uppercase">{{ $tim_birus->name }}</div>
                 </div>
             </div>
             <div class="col-span-1 items-center justify-center">
@@ -129,14 +133,33 @@
                         class="text-4xl font-semibold uppercase text-center mb-3 bg-gradient-to-r from-amber-500 to-amber-700 text-transparent bg-clip-text">
                         Partai <span id="partai-label">{{ $setting->partai }}</span>
                     </div>
+                    @php
+                        $infoKeterangan = $jadwalData->keterangan ?? 'Pemasalan';
+                        $kelasInfo = \App\kelas::where('id', $tim_merahs->kelas)->first();
+                        $kategoriInfo = \App\category::where('id', $tim_merahs->category)->first();
+                    @endphp
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <span id="info-keterangan"
+                            class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ ucfirst($infoKeterangan) }}</span>
+                        <span id="info-kelas"
+                            class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ $kelasInfo->name ?? '-' }}</span>
+                        <span id="info-kategori"
+                            class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ $kategoriInfo->name ?? '-' }}</span>
+                        <span id="info-gender"
+                            class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ ucfirst($tim_merahs->gender ?? '-') }}</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-span-2">
+            <div class="col-span-2 flex items-center justify-end gap-4">
                 <div class="text-end">
-                    <div id="kontigen-merah" class="text-red-600 text-2xl font-semibold uppercase">
+                    <div id="kontigen-merah" class="text-gray-500 text-sm font-bold uppercase">
                         {{$kontigenMerah->kontigen}}
                     </div>
-                    <div id="nama-merah" class="text-2xl uppercase">{{ $tim_merahs->name }}</div>
+                    <div id="nama-merah" class="text-red-500 text-2xl font-bold uppercase">{{ $tim_merahs->name }}</div>
+                </div>
+                <div
+                    class="border-4 border-red-600 rounded-full p-2 w-16 h-16 flex items-center justify-center bg-white flex-shrink-0">
+                    <img src="{{ asset('assets/Assets/karate (1).png') }}" class="w-10" alt="Tim Merah">
                 </div>
             </div>
         </div>
@@ -993,6 +1016,16 @@
                 $('#kontigen-merah').text(data.kontigenMerah);
                 $('#nama-biru').text(data.namaBiru);
                 $('#nama-merah').text(data.namaMerah);
+
+                // Update match info badges
+                if (data.partai) $('#partai-label').text(data.partai);
+                if (data.keteranganPertandingan) $('#info-keterangan').text(data.keteranganPertandingan);
+                if (data.infoKelas) {
+                    var parts = data.infoKelas.split(' | ');
+                    if (parts[0]) $('#info-kelas').text(parts[0]);
+                    if (parts[1]) $('#info-kategori').text(parts[1]);
+                }
+                if (data.infoGender) $('#info-gender').text(data.infoGender);
 
                 // Update untuk tabel pemenang
                 $('#table-nama-biru').text(data.namaBiru);

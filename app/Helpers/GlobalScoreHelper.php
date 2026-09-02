@@ -217,6 +217,7 @@ class GlobalScoreHelper
                     'tendanganb' => $tendanganb,
                     'tendanganm' => $tendanganm,
                     'infoKelas' => "$infoKelas | $infoKategori",
+                    'infoGender' => $pesertaMerah->gender ?? '-',
                     'jatuh1' => 0,
                     'binaan1' => 0,
                     'teguran1' => 0,

@@ -280,8 +280,19 @@
             <!-- Arena/Match Info -->
             <div class="arena-info">
                 <div class="arena-name text-uppercase">{{ $arenaData->name ?? 'ARENA' }}</div>
-                <div id="partai" class="match-number">Partai {{ $data['partai'] ?? '-' }}</div>
-                <div class="team-kontigen" style="color: #333; margin-bottom: 5px;">{{ $infoKategori }}</div>
+                <div class="d-flex flex-wrap justify-content-center gap-1 mt-2 mb-2">
+                    <span class="badge bg-dark fs-6" id="partai">Partai {{ $data['partai'] ?? '-' }}</span>
+                    <span class="badge bg-success fs-6" id="info-keterangan">{{ $data['keteranganPertandingan'] ?? 'Pemasalan' }}</span>
+                    @php
+                        $parts = explode(' | ', $infoKategori);
+                        $gender = trim($parts[0] ?? '-');
+                        $kelas = trim(str_replace('Kelas', '', $parts[1] ?? '-'));
+                        $kategori = '-'; // We don't have this in initial kp load easily, but JS will update it
+                    @endphp
+                    <span class="badge bg-primary fs-6" id="info-kelas">{{ $kelas }}</span>
+                    <span class="badge bg-info fs-6" id="info-kategori">{{ $kategori }}</span>
+                    <span class="badge bg-secondary fs-6" id="info-gender">{{ $gender }}</span>
+                </div>
                 <div class="round-indicator">BABAK <span id="babak">{{ $currentRound }}</span></div>
             </div>
 
@@ -434,6 +445,14 @@
             $('#namam').text(data.namaMerah);
             $('#kontigenb').text(data.kontigenBiru);
             $('#kontigenm').text(data.kontigenMerah);
+
+            if (data.keteranganPertandingan) $('#info-keterangan').text(data.keteranganPertandingan);
+            if (data.infoKelas) {
+                var parts = data.infoKelas.split(' | ');
+                if (parts[0]) $('#info-kelas').text(parts[0]);
+                if (parts[1]) $('#info-kategori').text(parts[1]);
+            }
+            if (data.infoGender) $('#info-gender').text(data.infoGender);
         }
 
         function websocket() {

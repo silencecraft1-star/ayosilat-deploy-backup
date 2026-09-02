@@ -39,6 +39,13 @@
             $nomorjuri = "3";
         }
 
+        $jadwalData = \App\jadwal_group::where('id', $setting->jadwal)->first();
+        $kelasData = \App\kelas::where('id', $tim_merahs->kelas)->first();
+        $categoryData = \App\category::where('id', $tim_merahs->category)->first();
+        $infoKeterangan = $jadwalData->keterangan ?? 'Pemasalan';
+        $infoKelas = $kelasData->name ?? '-';
+        $infoKategori = $categoryData->name ?? '-';
+        $infoGender = $tim_merahs->gender ?? '-';
     @endphp
 </head>
 
@@ -82,6 +89,17 @@
             </div>
         </div>
     </section>
+
+    <!-- Match Info Bar -->
+    <div class="mx-5 mt-2 mb-2">
+        <div class="d-flex justify-content-center flex-wrap gap-2 text-center">
+            <span class="badge bg-dark fs-6 px-3 py-2" id="info-partai">Partai {{ $setting->partai }}</span>
+            <span class="badge bg-success fs-6 px-3 py-2" id="info-keterangan">{{ ucfirst($infoKeterangan) }}</span>
+            <span class="badge bg-primary fs-6 px-3 py-2" id="info-kelas">{{ $infoKelas }}</span>
+            <span class="badge bg-info fs-6 px-3 py-2" id="info-kategori">{{ $infoKategori }}</span>
+            <span class="badge bg-secondary fs-6 px-3 py-2" id="info-gender">{{ ucfirst($infoGender) }}</span>
+        </div>
+    </div>
 
     <!-- Scorering  -->
     <section id="scorering" class=" mx-5 d-flex mb-3">
@@ -854,6 +872,16 @@
 
             $('#name_biru').text(data.namaBiru);
             $('#name_merah').text(data.namaMerah);
+
+            // Update match info bar
+            if (data.partai) $('#info-partai').text('Partai ' + data.partai);
+            if (data.keteranganPertandingan) $('#info-keterangan').text(data.keteranganPertandingan);
+            if (data.infoKelas) {
+                var parts = data.infoKelas.split(' | ');
+                if (parts[0]) $('#info-kelas').text(parts[0]);
+                if (parts[1]) $('#info-kategori').text(parts[1]);
+            }
+            if (data.infoGender) $('#info-gender').text(data.infoGender);
         }
 
         // Loop melalui semua tombol dan tambahkan event listener
