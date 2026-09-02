@@ -282,18 +282,7 @@
                         $ketTanding = $cekpartai ? (($cekpartai->keterangan != 'N/a' && $cekpartai->keterangan != '') ? strtoupper($cekpartai->keterangan) : '') : '';
                         $kondTanding = $cekpartai ? (($cekpartai->kondisi != 'N/a' && $cekpartai->kondisi != '') ? strtoupper($cekpartai->kondisi) : '') : '';
                     @endphp
-                    <div id="ketTanding" style="font-size: 2.2vh; color: #d97706;"
-                        class="font-bold uppercase text-center mb-1">
-                        @if($ketTanding || $kondTanding)
-                            {{ str_replace('-', ' ', trim($kondTanding . ' ' . ($ketTanding ? '- ' . $ketTanding : ''))) }}
-                        @endif
-                    </div>
-                    <div style="font-size: 2vh" class=" font-bold uppercase text-center" id="infoKelas">
 
-                    </div>
-                    <div style="font-size: 2vh" class=" font-bold uppercase text-center" id="infoGender">
-
-                    </div>
                     <!-- <img src="{{ asset('/assets/Assets/IPSI.png') }}" class="icon-size-2" alt=""> -->
                 </div>
                 <div style="margin-top: 1vh;">

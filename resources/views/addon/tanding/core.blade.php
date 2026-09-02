@@ -295,7 +295,8 @@
             window.location.href = `redirect?arena=${response.arena}&partai=${response.partai}&role=rekapTanding`;
         }
 
-        var keteranganPertandingan = `${response.keteranganPertandingan} || ${response.infoKelas} || ${response.infoGender}`;
+        var keteranganPertandingan = `${response.keteranganPertandingan ?? "Tanding"} | ${response.infoKelas} | ${response.infoGender}`;
+
 
         //// console.log(timer);
         $('#partai').text(`Partai ${response.partai}`);
@@ -801,7 +802,7 @@
                     updateScoreColors(response.score1, response.score2, totalPoint1, totalPoint2);
 
 
-                    var keteranganPertandingan = `${response.keteranganPertandingan} || ${response.infoKelas} || ${response.infoGender}`;
+                    var keteranganPertandingan = `${response.keteranganPertandingan ?? "Tanding"} | ${response.infoKelas} | ${response.infoGender}`;
 
                     if (response.statusPertandingan == "finish") {
                         window.location.href = `redirect?arena=${arena}&partai=${partai}&role=rekapTanding`;
