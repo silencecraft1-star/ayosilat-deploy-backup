@@ -71,7 +71,7 @@
 
         .icon-size-2 {
             width: auto;
-            height: 17vh;
+            height: 15vh;
         }
 
         .img-stroke {
