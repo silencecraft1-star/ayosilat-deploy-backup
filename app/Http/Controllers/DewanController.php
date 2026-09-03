@@ -405,7 +405,7 @@ class DewanController extends Controller
                         'point' => '3',
                         'keterangan' => 'tanding',
                     ]);
-                } else if ($jadwals && $jadwals->keterangan == "juara-tiga") {
+                } else if ($jadwals && $jadwals->keterangan == "semi-final") {
                     $pesertaMenang = PersertaModel::where('id', $request->input('menang'))->first();
 
                     Medali::create([

@@ -30,8 +30,6 @@ class jadwalImport implements ToCollection
             //     break;
             // }
 
-
-
             if ($index >= 0) {
                 $partai = $row[1];
 
@@ -42,7 +40,9 @@ class jadwalImport implements ToCollection
                 $pemenangBiru = null;
                 $pemenangMerah = null;
 
-                //Cek Apakah Kontigen
+                $keterangan = $row[5] ?? 'penyisihan';
+
+                //Cek Apakah Partai
                 if (str_contains($rowMerah, "PEMENANG PARTAI") || str_contains($rowMerah, "Pemenang Partai") || str_contains($rowMerah, "pemenang partai") || str_contains($rowMerah, "Pemenang partai")) {
                     $explodeMerah = explode(" ", $rowMerah)[2];
 
@@ -78,6 +78,7 @@ class jadwalImport implements ToCollection
                         'id_sesi' => $this->sesi ?? null,
                         'arena' => $this->arena,
                         'status' => 'pending',
+                        'keterangan' => $keterangan,
                         'tipe' => 'tanding'
                     ]);
                 }
