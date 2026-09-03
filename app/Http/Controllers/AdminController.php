@@ -17,6 +17,7 @@ use App\jadwal_group;
 use App\pending_tanding;
 use App\PersertaModel;
 use App\SesiModel;
+use App\Medali;
 use App\kelas;
 use App\KontigenModel;
 use App\category;
@@ -745,6 +746,7 @@ class AdminController extends Controller
             KontigenModel::truncate();
             // Setting::where('keterangan', '!=', 'admin-setting')->delete();
             kelas::truncate();
+            Medali::truncate();
             pending_tanding::truncate();
             score::truncate();
             category::truncate();
