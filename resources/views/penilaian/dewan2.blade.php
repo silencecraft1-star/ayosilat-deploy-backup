@@ -90,12 +90,12 @@
         <div class="w-full bg-blue-600 mb-3 shadow-lg shadow-gray-400 py-2">
             <div class="lg:grid lg:grid-cols-3 h-full py-1">
                 <div class="flex items-center justify-center lg:justify-start lg:ms-5 lg:mb-0">
-                    <button class="
+                    <!-- <button class="
                     bg-slate-300 shadow-lg shadow-gray-600 px-10 py-2 rounded 
                     hover:px-11 hover:py-3 hover:bg-slate-400 hover:shadow-transparent 
                     transition-all active:bg-slate-600 w-full lg:w-40 mx-10 lg:mx-0">
                         <a href="{{ url('login-juri') }}">Log Out</a>
-                    </button>
+                    </button> -->
                 </div>
                 <div class="flex items-center justify-center h-100 text-5xl text-white mb-3 lg:mb-0">
                     {{ $arena->name }}
@@ -138,7 +138,7 @@
                         $kelasInfo = \App\kelas::where('id', $tim_merahs->kelas)->first();
                         $kategoriInfo = \App\category::where('id', $tim_merahs->category)->first();
                     @endphp
-                    <div class="flex flex-wrap justify-center gap-2">
+                    <div class="flex uppercase text-uppercase flex-wrap justify-center gap-2">
                         <span id="info-keterangan"
                             class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ ucfirst($infoKeterangan) }}</span>
                         <span id="info-kelas"

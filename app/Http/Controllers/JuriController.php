@@ -992,6 +992,7 @@ class JuriController extends Controller
                 $partaiFinal = $setting->partai;
 
                 $pesertaBiru = PersertaModel::where('id', $setting->biru)->first();
+                $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
                 $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first()->kontigen;
                 $namaBiru = $pesertaBiru->name;
                 if (!empty($data)) {
@@ -999,6 +1000,8 @@ class JuriController extends Controller
                         'current' => $currentPlaying,
                         'nama' => $namaBiru,
                         'id_peserta' => $pesertaBiru->id,
+                        'gender' => $pesertaBiru->gender,
+                        'kelas' => $kelas->name,
                         'kontigen' => $kontigenBiru,
                         'attack1' => 0,
                         'attack2' => 0,
@@ -1156,6 +1159,8 @@ class JuriController extends Controller
                         'current' => $currentPlaying,
                         'id_peserta' => $pesertaBiru->id,
                         'nama' => $namaBiru,
+                        'gender' => $pesertaBiru->gender,
+                        'kelas' => $kelas->name,
                         'kontigen' => $kontigenBiru,
                         'actual1' => 9.9,
                         'actual2' => 9.9,

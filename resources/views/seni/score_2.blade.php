@@ -228,8 +228,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -284,7 +284,7 @@
                     <img src="../../../assets/Assets/header_ayosilat_black.png" alt=""
                         style="width: 20em; height: 2em;">
                     <div class="text-on-image h100 w100 d-flex text-white justify-content-center ">
-                        PENCAK SILAT
+                        <span class="ms-3">{{ $dataArena->name }}</span>
                     </div>
 
                     {{-- <div class="text-on-image h100 w100 d-flex justify-content-center ">
@@ -298,7 +298,9 @@
                     <div class="container-fluid h100">
                         <div class="row h100">
                             <div class="col-10 d-flex justify-content-start align-items-center fs-3">
-                                <span class="ms-3">{{ $dataArena->name }}</span>
+                                <span class="ms-3" id="keteranganArena">
+                                    T.Tangkos | Pa
+                                </span>
                             </div>
                             <div class="col-2 d-flex justify-content-end align-items-center gap-4">
                                 <img src="{{ asset("/assets/Assets/uploads/$imgData1") }}" alt="" style="width: 60px;">
@@ -889,9 +891,12 @@
                             $('#nama').text(result);
                         }
 
+                        var ketArena = `${response.kelas} | ${response.gender}`;
+
                         //$('#nama').text(response.nama);
                         $('#id_perserta').attr('name', response.id_peserta);
                         $('#kontigen').text(response.kontigen);
+                        $("#keteranganArena").text(ketArena);
                         $('#actual1').text(response.actual1);
                         $('#actual2').text(response.actual2);
                         $('#actual3').text(response.actual3);

@@ -144,7 +144,6 @@
                     <div class="text-on-image h100 w100 d-flex justify-content-center text-white">
                         {{ $dataArena->name }}
                     </div>
-                    <!-- PENCAK SILAT -->
                 </div>
             </div>
             <div class="col">
@@ -152,7 +151,9 @@
                     <div class="container-fluid h100">
                         <div class="row h100">
                             <div class="col-10 d-flex justify-content-start align-items-center fs-3">
-                                <span class="ms-3 ">{{ Trim($dataArena->name) }}</span>
+                                <span class="ms-3" id="keteranganArena">
+                                    T.Tangkoss | Pa
+                                </span>
                             </div>
                             <div class="col-2 d-flex justify-content-end align-items-center py-2">
                                 <img src="{{ asset("/assets/Assets/uploads/$imgData1") }}" alt="" style="width: 50px;">
@@ -174,7 +175,7 @@
                     <div class="fs-4">
                         Nama Peserta :
                     </div>
-                    <div class="text-green change-text fw-bold" style="font-size: 3em;" id="nama">
+                    <div class="text-green uppercase text-uppercase change-text fw-bold" style="font-size: 3em;" id="nama">
                         {{ $perserta->name }}
                     </div>
                 </div>
@@ -182,7 +183,7 @@
                     <div class="text-end fs-4">
                         : Kontingen
                     </div>
-                    <div class="text-end fw-bold change-text text-green" style="font-size: 3em;" id="kontigen">
+                    <div class="text-end uppercase text-uppercase fw-bold change-text text-green" style="font-size: 3em;" id="kontigen">
                         {{ $kontigen }}
                     </div>
                 </div>
@@ -641,8 +642,11 @@
                             $(".change-text").addClass('text-green');
                         }
 
+                        var ketArena = `${response.kelas} | ${response.gender}`;
+
                         $('#nama').text(response.nama);
                         $('#id_perserta').attr('name', response.id_peserta);
+                        $('#keteranganArena').text(ketArena);
                         $('#kontigen').text(response.kontigen);
                         $('#soulfullness1').text(response.soulfullness1);
                         $('#soulfullness2').text(response.soulfullness2);
