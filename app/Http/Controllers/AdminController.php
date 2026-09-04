@@ -751,7 +751,7 @@ class AdminController extends Controller
             score::truncate();
             category::truncate();
             jadwal_group::truncate();
-            return response()->json(["status" => 'success', 'message' => 'success clear data']);
+            return redirect()->back()->with('Success', 'Success Clear Data');
         } else {
             return response()->json(["status" => 'failed', 'message' => 'Password Salah']);
         }

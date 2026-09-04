@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use App\category;
 use App\PersertaModel;
@@ -22,11 +23,11 @@ class Perserta implements ToCollection
                 continue;
             }
             //dd($data);
-            $name = $item[0];
-            $gender = $item[2];
-            $kontigen = $item[1];
-            $kelas = $item[4];
-            $category = $item[3];
+            $name = Str::of($item[0])->trim()->toString();
+            $gender = Str::of($item[2])->trim()->toString();
+            $kontigen = Str::of($item[1])->trim()->toString();
+            $kelas = Str::of($item[4])->trim()->toString();
+            $category = Str::of($item[3])->trim()->toString();
             $check_kelas = kelas::where('name', $kelas)->first();
             if (empty($check_kelas)) {
                 kelas::create(
