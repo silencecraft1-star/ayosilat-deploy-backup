@@ -228,8 +228,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        window.history.b        ack();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                window.history.b        ack();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -272,12 +272,8 @@
         style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
             <div class="me-2 col d-flex justify-content-end align-items-center fs-3">
-                <span class="uppercase"> partai {{ $setting->partai }} - </span>
-                @if($ketSeni || $kondSeni)
-                    <span class="ms-2">
-                        {{ str_replace('-', ' ', trim($kondSeni . ' ' . ($ketSeni ? '- ' . $ketSeni : ''))) }}
-                    </span>
-                @endif
+                <span class="uppercase" id="detailArena"> partai {{ $setting->partai }}</span>
+
             </div>
             <div class="col h100">
                 <div class="container position-relative h100 d-flex justify-content-center  fs-3" style="height: 70%;">
@@ -318,7 +314,7 @@
             <div>
                 <div class="text-dark fs-2">Nama Peserta : </div>
                 @if($dataKelas->name == "REGU")
-                    <div class="" id="parentRegu">
+                    <div class="uppercase text-uppercase" id="parentRegu">
                         @foreach($pesertaRegu as $item)
                             <div class="fs-1 text-green" id="nama">
                                 {{ nameFormat($item->name) }}
@@ -326,14 +322,15 @@
                         @endforeach
                     </div>
                 @else
-                    <div class=" text-green fw-bold change-text" style="font-size: 3em;" id="nama">
+                    <div class="uppercase text-uppercase text-green fw-bold change-text" style="font-size: 3em;" id="nama">
                         {{ $perserta->name }}
                     </div>
                 @endif
             </div>
             <div>
                 <div class="text-dark text-end fs-2">: Kontingen</div>
-                <div class="fs-1 text-end text-green fw-bold change-text" style="font-size: 3em;" id="kontigen">
+                <div class="uppercase text-uppercase fs-1 text-end text-green fw-bold change-text"
+                    style="font-size: 3em;" id="kontigen">
                     {{ $kontigen }}
                 </div>
             </div>
@@ -896,6 +893,7 @@
                         //$('#nama').text(response.nama);
                         $('#id_perserta').attr('name', response.id_peserta);
                         $('#kontigen').text(response.kontigen);
+                        $('#detailArena').text(response.detailArena);
                         $("#keteranganArena").text(ketArena);
                         $('#actual1').text(response.actual1);
                         $('#actual2').text(response.actual2);

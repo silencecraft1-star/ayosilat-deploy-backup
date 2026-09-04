@@ -995,9 +995,11 @@ class JuriController extends Controller
                 $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
                 $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first()->kontigen;
                 $namaBiru = $pesertaBiru->name;
+                $keteranganJadwal = $jadwalGanda->keterangan ? "- $jadwalGanda->keterangan" : "";
                 if (!empty($data)) {
                     $response = [
                         'current' => $currentPlaying,
+                        'detailPartai' => "$setting->partai $keteranganJadwal",
                         'nama' => $namaBiru,
                         'id_peserta' => $pesertaBiru->id,
                         'gender' => $pesertaBiru->gender,
@@ -1154,9 +1156,12 @@ class JuriController extends Controller
                     }
                 }
 
+                $keteranganJadwalTunggal = $jadwalTunggal->keterangan ? "- $jadwalTunggal->keterangan" : "";
+
                 if (!empty($data)) {
                     $response = [
                         'current' => $currentPlaying,
+                        'detailArena' => "$partaiFinal $keteranganJadwalTunggal",
                         'id_peserta' => $pesertaBiru->id,
                         'nama' => $namaBiru,
                         'gender' => $pesertaBiru->gender,

@@ -127,15 +127,9 @@
         style="color: #F5F5F5; background: linear-gradient(to right, #000000, #a7a7a7ff, #000000);">
         <div class="row " style="height: 100%;">
             <div class="col d-flex justify-content-end align-items-center fs-3">
-                @if($ketSeni || $kondSeni)
-            <div style="font-size: 1.2em; text-shadow: 2px 2px 4px #000; letter-spacing: 2px;">
-                PARTAI {{ $setting->partai ?? '' }} - {{ str_replace('-', ' ', trim($kondSeni . ' ' . ($ketSeni ? '- ' . $ketSeni : ''))) }}
-            </div>
-        @else
-            <div style="font-size: 1.2em; text-shadow: 2px 2px 4px #000; letter-spacing: 2px;">
-                PARTAI {{ $setting->partai ?? '' }}
-            </div>
-        @endif
+                <div style="font-size: 1.2em; text-shadow: 2px 2px 4px #000; letter-spacing: 2px;" id="detailPartai">
+                    PARTAI {{ $setting->partai ?? '' }} - {{ str_replace('-', ' ', trim($kondSeni . ' ' . ($ketSeni ? '- ' . $ketSeni : ''))) }}
+                </div>
             </div>
             <div class="col h100">
                 <div class="container position-relative h100 d-flex justify-content-center fs-3" style="height: 70%;">
@@ -645,6 +639,7 @@
                         var ketArena = `${response.kelas} | ${response.gender}`;
 
                         $('#nama').text(response.nama);
+                        $('#detailPartai').text(response.detailPartai);
                         $('#id_perserta').attr('name', response.id_peserta);
                         $('#keteranganArena').text(ketArena);
                         $('#kontigen').text(response.kontigen);
