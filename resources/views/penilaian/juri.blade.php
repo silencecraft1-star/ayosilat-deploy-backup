@@ -57,7 +57,7 @@
     </div> -->
     <div class="col juri d-flex flex-column w-full justify-content-center align-items-center">
         <h1>{{$idColomName}}</h1>
-        <span>{{$setting->judul}}</span>
+        <span>{{$setting->judul}}</span><button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary mt-2"><i class="bi bi-arrows-fullscreen"></i> Full Screen</button>
     </div>
 
     <!-- JURI ARENA -->
@@ -951,6 +951,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script> --}}
+<script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>

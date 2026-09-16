@@ -40,7 +40,7 @@
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
         <div>
-            {{$arenaNama[0]}} <br />
+            {{$arenaNama[0]}}<button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary ms-3"><i class="bi bi-arrows-fullscreen"></i> Full Screen</button> <br />
             {{$arenaNama[1]}}
         </div>
         <!-- Player Info Section -->
@@ -528,6 +528,7 @@
         });
     </script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
+<script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>

@@ -90,15 +90,11 @@
         <div class="w-full bg-blue-600 mb-3 shadow-lg shadow-gray-400 py-2">
             <div class="lg:grid lg:grid-cols-3 h-full py-1">
                 <div class="flex items-center justify-center lg:justify-start lg:ms-5 lg:mb-0">
-                    <!-- <button class="
-                    bg-slate-300 shadow-lg shadow-gray-600 px-10 py-2 rounded 
+                    <button onclick="toggleFullScreen()" class="bg-slate-300 shadow-lg shadow-gray-600 px-10 py-2 rounded 
                     hover:px-11 hover:py-3 hover:bg-slate-400 hover:shadow-transparent 
                     transition-all active:bg-slate-600 w-full lg:w-40 mx-10 lg:mx-0">
-                        <a href="{{ url('login-juri') }}">Log Out</a>
-                    </button> -->
-                </div>
-                <div class="flex items-center justify-center h-100 text-5xl text-white mb-3 lg:mb-0">
-                    {{ $arena->name }}
+                        Full Screen
+                    </button>
                 </div>
                 <div class="lg:flex lg:justify-end h-full lg:me-5 hidden">
                     <div class="h-full flex items-center flex-wrap gap-2">
@@ -1551,6 +1547,7 @@
             WebSocket();
         </script>
 
+        <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>

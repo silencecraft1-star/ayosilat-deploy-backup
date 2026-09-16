@@ -46,9 +46,11 @@
             $arenaNama = explode('||', $setting->judul);
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
-        <div>
+        <div class="my-2">
             {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}}
+            {{$arenaNama[1]}} <br />
+            <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary"><i
+                    class="bi bi-arrows-fullscreen"></i> Full Screen</button>
         </div>
         <!-- Player Info Section -->
         <div class="container-fluid px-4">
@@ -475,6 +477,7 @@
         websocket();
     </script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
+    <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>

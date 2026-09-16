@@ -39,6 +39,10 @@
         <div class="mid-header-text text-center fw-bold fs-5 mb-2">
             {{$arenaNama[0]}}
         </div>
+        <div class="my-2">
+            <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary "><i
+                    class="bi bi-arrows-fullscreen"></i> Full Screen</button>
+        </div>
         <div class="d-flex justify-content-center flex-wrap gap-2 text-center mb-2">
             <span class="badge bg-dark fs-6 px-3 py-2">Partai {{ $setting->partai ?? '-' }}</span>
             <span class="badge bg-success fs-6 px-3 py-2">{{ ucfirst($jadwalData->keterangan ?? 'Pemasalan') }}</span>
@@ -258,6 +262,7 @@
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
 
 
+    <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>

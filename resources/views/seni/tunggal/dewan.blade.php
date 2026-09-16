@@ -49,7 +49,13 @@
         @endphp
         <div class="flex flex-col">
             <div>
-                {{$arenaNama[0]}} <br />
+                {{$arenaNama[0]}}
+            </div>
+
+            <div class="my-2">
+                <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary ms-3"><i
+                        class="bi bi-arrows-fullscreen"></i> Full Screen</button>
+
             </div>
 
             <div class="flex">
@@ -485,6 +491,7 @@
     </script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
 
+    <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
 </html>
