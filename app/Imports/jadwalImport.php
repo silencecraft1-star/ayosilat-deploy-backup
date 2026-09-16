@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\KontigenModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use App\jadwal_group;
 use App\PersertaModel;
@@ -31,16 +32,16 @@ class jadwalImport implements ToCollection
             // }
 
             if ($index >= 0) {
-                $partai = $row[1];
+                $partai = Str::of($row[1])->trim()->toString();
 
                 //row 3 = merah row 5 = biru
-                $rowBiru = $row[3];
-                $rowMerah = $row[4];
+                $rowBiru = Str::of($row[3])->trim()->toString();
+                $rowMerah = Str::of($row[4])->trim()->toString();
 
                 $pemenangBiru = null;
                 $pemenangMerah = null;
 
-                $keterangan = $row[5] ?? 'penyisihan';
+                $keterangan = Str::of($row[5])->trim()->toString() ?? 'penyisihan';
 
                 //Cek Apakah Partai
                 if (str_contains($rowMerah, "PEMENANG PARTAI") || str_contains($rowMerah, "Pemenang Partai") || str_contains($rowMerah, "pemenang partai") || str_contains($rowMerah, "Pemenang partai")) {

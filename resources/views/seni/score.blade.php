@@ -21,8 +21,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                                                                                                                                window.history.back();
-                                                                                                                                                                                                                                                                                            </script>';
+                                                                                                                                                                                                                                                                                                        window.history.back();
+                                                                                                                                                                                                                                                                                                    </script>';
             exit();
         }
 
@@ -159,7 +159,7 @@
             </div>
         </div>
     </div>
-        
+
     <!-- Container Body Content -->
     <div class="container-fluid ">
         <div class="container-fluid ">
@@ -401,8 +401,8 @@
 
                         if (arena_id == data.arena && data.tipe == 'notif') {
                             console.log(data);
-                             $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-white text-success');
-                            
+                            $(`[name='${data.id_juri}']`).removeClass('bg-success bg-warning text-white text-success');
+
                             // For Solo, all blinks are now smooth orange fades
                             $(`[name='${data.id_juri}']`).addClass('bg-orange-blink');
 
@@ -412,7 +412,7 @@
                                 let resetColor = 'bg-green-2';
                                 if (response_current_global == "biru") resetColor = 'bg-blue-2';
                                 else if (response_current_global == "merah") resetColor = 'bg-red-2';
-                                
+
                                 $(`[name='${data.id_juri}']`).addClass(resetColor);
                                 if (!$(`[name='${data.id_juri}']`).hasClass('median-highlight')) {
                                     $(`[name='${data.id_juri}']`).addClass('text-white');
@@ -566,42 +566,42 @@
                         //    Math.pow((parseFloat(juri6) - average), 2) + Math.pow((parseFloat(juri7) - average),
                         //        2) + Math.pow((parseFloat(juri8) - average), 2);
                         var deviation = Math.sqrt(deviations / jumlahJuri);
-                            // Save original order before findMedian sorts the array
-                            var all_juri_original = [...all_juri];
-                            var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
-                            var hasScore = false;
+                        // Save original order before findMedian sorts the array
+                        var all_juri_original = [...all_juri];
+                        var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
+                        var hasScore = false;
 
-                            // Highlight juror(s) that contributed to the median
+                        // Highlight juror(s) that contributed to the median
                             (function() {
                                 var sorted = all_juri_original.map(function(val, idx) {
-                                    return { val: parseFloat(val), idx: idx + 1 };
-                                });
+                                return { val: parseFloat(val), idx: idx + 1 };
+                            });
                                 sorted.sort(function(a, b) { return a.val - b.val; });
-                                var mid = Math.floor(sorted.length / 2);
-                                var medianIndices = [];
-                                if (sorted.length % 2 === 0) {
-                                    medianIndices = [sorted[mid - 1].idx, sorted[mid].idx];
-                                } else {
-                                    medianIndices = [sorted[mid].idx];
-                                }
-                                for (var j = 1; j <= jumlahJuri; j++) {
-                                    $('#total' + j).removeClass('median-highlight').addClass('text-white');
-                                }
-                                
-                                for (let k = 0; k < jumlahJuri; k++) {
-                                    let val = parseFloat(all_juri_original[k]);
-                                    if (val !== 9.90 && val !== 9.10 && val !== 0.00) {
-                                        hasScore = true;
-                                        break;
-                                    }
-                                }
+                            var mid = Math.floor(sorted.length / 2);
+                            var medianIndices = [];
+                            if (sorted.length % 2 === 0) {
+                                medianIndices = [sorted[mid - 1].idx, sorted[mid].idx];
+                            } else {
+                                medianIndices = [sorted[mid].idx];
+                            }
+                            for (var j = 1; j <= jumlahJuri; j++) {
+                                $('#total' + j).removeClass('median-highlight').addClass('text-white');
+                            }
 
-                                if (hasScore) {
-                                    medianIndices.forEach(function(idx) {
-                                        $('#total' + idx).addClass('median-highlight').removeClass('text-white');
-                                    });
+                            for (let k = 0; k < jumlahJuri; k++) {
+                                let val = parseFloat(all_juri_original[k]);
+                                if (val !== 9.90 && val !== 9.10 && val !== 0.00) {
+                                    hasScore = true;
+                                    break;
                                 }
-                            })();
+                            }
+
+                            if (hasScore) {
+                                    medianIndices.forEach(function(idx) {
+                                    $('#total' + idx).addClass('median-highlight').removeClass('text-white');
+                                });
+                            }
+                        })();
 
                         // if (response.status != "pause") {
                         //     if (response.time != 0) {
@@ -684,23 +684,23 @@
                         $('#medianscore').text(final_median_display);
                         $('#deviationscore').text(deviation);
                         StatusCondition = response.status;
-                            if (response.status == "finished" || response.status == "finish") {
-                                const send = {
-                                    id_user: id,
-                                    arena: arena,
-                                    time: formatTime(currentTime),
-                                    score: total_score,
-                                    deviation: deviation
-                                }
-    
-                                rekap(send);
-                                if(response.keterangan_jadwal !== "pemasalan") {
-                                    const params = new URLSearchParams(window.location.search);
-                                    const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
-                                    window.location.href = `redirect?arena=${arena}&role=rekapPrestasiSolo${isDewan}`;
-                                }
+                        if (response.status == "finished" || response.status == "finish") {
+                            const send = {
+                                id_user: id,
+                                arena: arena,
+                                time: formatTime(currentTime),
+                                score: total_score,
+                                deviation: deviation
                             }
-                            
+
+                            rekap(send);
+                                if(response.keterangan_jadwal !== "pemasalan") {
+                                const params = new URLSearchParams(window.location.search);
+                                const isDewan = params.get('isDewan') ? '&isDewan=true' : '';
+                                window.location.href = `redirect?arena=${arena}&role=rekapPrestasiSolo${isDewan}`;
+                            }
+                        }
+
 
                         if ((response.status == 'taking-time' || response.status == 'diskualify') && timeSaveStatus == false) {
                             let currentRunningTime = $('#timer1').text();

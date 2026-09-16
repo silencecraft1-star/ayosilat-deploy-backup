@@ -428,19 +428,17 @@ class DewanController extends Controller
                 //     $conditionPending['id_sesi'] = $request->sesi;    
                 // }
 
-                $pemenangPendingBiru = jadwal_group::where('arena', $request->arena)
-                    ->when($sesi ?? null, function ($query, $sesi) {
-                        $query->where('id_sesi', $sesi);
-                    }, function ($query) {
-                        $query->whereNull('id_sesi');
-                    })->where('biru', "[$partai]")
+                $pemenangPendingBiru = jadwal_group::where('biru', "[$partai]")
                     ->first();
-                $pemenangPendingMerah = jadwal_group::where('arena', $request->arena)
-                    ->when($sesi ?? null, function ($query, $sesi) {
-                        $query->where('id_sesi', $sesi);
-                    }, function ($query) {
-                        $query->whereNull('id_sesi');
-                    })->where('merah', "[$partai]")
+                // $pemenangPendingMerah = jadwal_group::where('arena', $request->arena)
+                //     ->when($sesi ?? null, function ($query, $sesi) {
+                //         $query->where('id_sesi', $sesi);
+                //     }, function ($query) {
+                //         $query->whereNull('id_sesi');
+                //     })->where('merah', "[$partai]")
+                //     ->first();
+
+                $pemenangPendingMerah = jadwal_group::where('merah', "[$partai]")
                     ->first();
 
                 if ($pemenangPendingBiru) {

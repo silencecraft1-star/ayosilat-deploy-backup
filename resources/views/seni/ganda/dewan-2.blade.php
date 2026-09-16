@@ -36,12 +36,12 @@
             $id_perserta = $perserta->id;
             $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
             $kontigem = KontigenModel::where('id', $persertam->id_kontigen)->value('kontigen');
-            $arenaNama = explode( '||', $setting->judul);
+            $arenaNama = explode('||', $setting->judul);
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
         <div>
             {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}} 
+            {{$arenaNama[1]}}
         </div>
         <!-- Player Info Section -->
         <div class="container-fluid px-4">
@@ -82,7 +82,7 @@
                 </thead>
                 <tbody class="text-start">
                     <tr>
-                        
+
                         @php
                             $status = str_replace(' ', '', $a);
                         @endphp
@@ -308,7 +308,7 @@
                         @endif
                     </tr>
                     <tr>
-                      
+
                         @php
                             $status = str_replace(' ', '', $d);
                         @endphp
@@ -461,12 +461,12 @@
                     <tr>
                         {{-- <td colspan="2" class="text-end">Total Pengurangan :</td>
                         @php
-                            $score = score::where('status', 'seni_minus')
-                                ->where('id_perserta', $id_perserta)
-                                ->where('arena', $arena)
-                                ->where('partai', $partai)
-                                ->sum('score');
-                            $score = number_format($score, 2);
+                        $score = score::where('status', 'seni_minus')
+                        ->where('id_perserta', $id_perserta)
+                        ->where('arena', $arena)
+                        ->where('partai', $partai)
+                        ->sum('score');
+                        $score = number_format($score, 2);
                         @endphp
                         <td class="align-middle text-center text-danger fw-bold">-{{ $score }}</td> --}}
                     </tr>
@@ -489,13 +489,13 @@
         var tombolDenganKelas = document.querySelectorAll('.btn-data');
 
         // Loop melalui semua tombol dan tambahkan event listener
-        tombolDenganKelas.forEach(function(tombol) {
-            tombol.addEventListener('click', function() {
+        tombolDenganKelas.forEach(function (tombol) {
+            tombol.addEventListener('click', function () {
                 var nameAttribute = this.getAttribute('name'); // Mendapatkan nilai atribut "name"
 
                 // Membagi nilai atribut "name" menjadi objek JavaScript
                 var data = {};
-                nameAttribute.split(' ').forEach(function(item) {
+                nameAttribute.split(' ').forEach(function (item) {
                     var parts = item.split(':');
                     data[parts[0]] = parts[1];
                 });
@@ -505,13 +505,13 @@
 
                 // Lanjutkan dengan kode pengiriman permintaan POST jika diperlukan
                 fetch('{{ route('dewan.store') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
                     .then(response => response.json())
                     .then(data => {
                         // Lakukan sesuatu dengan respons dari server (opsional)

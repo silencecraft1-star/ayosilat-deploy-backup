@@ -23,7 +23,7 @@
         $dataJuri = juri::where('id', $id_juri)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
         $scores = score::where('id_perserta', $id_perserta)->get();
-        
+
         $jadwalData = \App\jadwal_group::where('id', $setting->jadwal)->first();
         $categoryData = \App\category::where('id', $perserta->category)->first();
 
