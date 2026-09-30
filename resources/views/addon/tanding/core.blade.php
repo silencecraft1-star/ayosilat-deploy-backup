@@ -180,6 +180,34 @@
 
     function socketScore(response) {
         console.log(response);
+
+        if (response.selisih_20) {
+            // Determine winner
+            let winnerName, winnerKontigen, winnerCorner, scoreBiru, scoreMerah;
+            scoreBiru = parseFloat(response.score1);
+            scoreMerah = parseFloat(response.score2);
+
+            if (scoreBiru > scoreMerah) {
+                winnerName = response.namaBiru;
+                winnerKontigen = response.kontigenBiru;
+                winnerCorner = 'biru';
+            } else {
+                winnerName = response.namaMerah;
+                winnerKontigen = response.kontigenMerah;
+                winnerCorner = 'merah';
+            }
+
+            $('#wasit-winner-name').text(winnerName);
+            $('#wasit-winner-kontigen').text(winnerKontigen);
+            $('#wasit-winner-corner').removeClass('corner-biru corner-merah')
+                .addClass('corner-' + winnerCorner)
+                .text('Sudut ' + winnerCorner.charAt(0).toUpperCase() + winnerCorner.slice(1));
+            $('#wasit-score-final').text(scoreBiru + ' - ' + scoreMerah);
+
+            $('#wasit-menghentikan-overlay').addClass('active');
+        } else {
+            $('#wasit-menghentikan-overlay').removeClass('active');
+        }
         if (response.binaan1 == 1) {
             $('#binaan1').attr("src", "../assets/Assets/pointing_hand_red.png")
             $('#binaan2').attr("src", "../assets/Assets/peace_hand.png")
@@ -801,7 +829,30 @@
                     // Update Score Colors using the unified helper
                     updateScoreColors(response.score1, response.score2, totalPoint1, totalPoint2);
 
-
+                    // Check selisih > 20
+                    if (response.selisih_20) {
+                        let sB = parseFloat(response.score1);
+                        let sM = parseFloat(response.score2);
+                        let wName, wKontigen, wCorner;
+                        if (sB > sM) {
+                            wName = response.namaBiru;
+                            wKontigen = response.kontigenBiru;
+                            wCorner = 'biru';
+                        } else {
+                            wName = response.namaMerah;
+                            wKontigen = response.kontigenMerah;
+                            wCorner = 'merah';
+                        }
+                        $('#wasit-winner-name').text(wName);
+                        $('#wasit-winner-kontigen').text(wKontigen);
+                        $('#wasit-winner-corner').removeClass('corner-biru corner-merah')
+                            .addClass('corner-' + wCorner)
+                            .text('Sudut ' + wCorner.charAt(0).toUpperCase() + wCorner.slice(1));
+                        $('#wasit-score-final').text(sB + ' - ' + sM);
+                        $('#wasit-menghentikan-overlay').addClass('active');
+                    } else {
+                        $('#wasit-menghentikan-overlay').removeClass('active');
+                    }
                     var keteranganPertandingan = `${response.keteranganPertandingan ?? "Tanding"} | ${response.infoKelas} | ${response.infoGender}`;
 
                     if (response.statusPertandingan == "finish") {

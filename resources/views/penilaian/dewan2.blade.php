@@ -997,7 +997,7 @@
                                     $(`#babak2`).css('background-image', 'linear-gradient(to right, transparent, transparent)');
                                 }
 
-                                assignScore(data);
+                                assignScore(data); if (data.selisih_20) { $('.bt-notif, .btn-primary, .btn-danger, .btn-warning, .btn-secondary').prop('disabled', true); } else { $('.bt-notif, .btn-primary, .btn-danger, .btn-warning, .btn-secondary').prop('disabled', false); }
                             }
 
                         })

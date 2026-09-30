@@ -29,6 +29,7 @@ storage/logs/laravel.log
 storage/
 public/css
 /public/css
-/public
+/public/js
+/public/assets/Assets/uploads
 /storage/logs/*
 !/storage/logs/.gitignore

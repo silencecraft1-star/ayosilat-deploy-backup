@@ -357,6 +357,8 @@ class GlobalScoreHelper
 
                 }
 
+                $response['selisih_20'] = abs($response['score1'] - $response['score2']) > 20;
+
                 if ($tipe == null) {
                     event(new ScoreEvent($response));
                 }

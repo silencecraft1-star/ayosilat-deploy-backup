@@ -704,6 +704,11 @@
                             }
 
                             assignData(data);
+                            if (data.selisih_20) {
+                                $('.btnSkill1, .btnSkill2, .btn-jatuhan, .bt-notif').prop('disabled', true);
+                            } else {
+                                $('.btnSkill1, .btnSkill2, .btn-jatuhan, .bt-notif').prop('disabled', false);
+                            }
                         }
 
                     })

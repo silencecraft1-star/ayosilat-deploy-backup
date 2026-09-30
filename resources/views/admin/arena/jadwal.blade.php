@@ -55,26 +55,33 @@
         $pollingModel = PollingModel::where('id_arena', $arena)->get();
         $currentSesi = $sesi ? SesiModel::where('id', $sesi)->first() : null;
         $kelasSeni = kelas::get();
-        $data_perserta = $sesi
-            ? jadwal_group::where('tipe', 'tanding')
-                ->where('id_sesi', $sesi)
-                ->where('arena', $arena)
-                ->orderByRaw('CAST(partai as unsigned) ASC')
-                ->get()
-            : jadwal_group::where('tipe', 'tanding')
-                ->whereNull('id_sesi')
-                ->where('arena', $arena)
-                ->orderByRaw('CAST(partai as unsigned) ASC')
-                ->get();
+        $perPage = request()->input('per_page', 20);
+        $search = request()->input('search');
 
-        // $total_pertandingan = jadwal_group::where('arena', $arena)->count();
-        // $finish_pertandingan = jadwal_group::where('arena', $arena)->where('status', 'finish')->count();
-        $data_jadwal = $sesi
-            ? jadwal_group::where('arena', $arena)
-                ->where('id_sesi', $sesi)
-                ->orderByRaw('CAST(partai as unsigned) ASC')
-                ->get()
-            : jadwal_group::where('arena', $arena)->orderByRaw('CAST(partai as unsigned) ASC')->get();
+        $tandingQuery = jadwal_group::where('tipe', 'tanding')
+            ->where('arena', $arena)
+            ->when($sesi, function ($q) use ($sesi) {
+                return $q->where('id_sesi', $sesi);
+            }, function ($q) {
+                return $q->whereNull('id_sesi');
+            })
+            ->orderByRaw('CAST(partai as unsigned) ASC');
+
+        if (!empty($search)) {
+            $tandingQuery->where(function ($q) use ($search) {
+                $q->where('partai', 'like', "%{$search}%")
+                  ->orWhere('kondisi', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhereIn('biru', function ($sub) use ($search) {
+                      $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereIn('merah', function ($sub) use ($search) {
+                      $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $data_perserta = $tandingQuery->paginate($perPage)->withQueryString();
 
         //$kelasall = kelas::get();
         $PesertaAll = PersertaModel::take(30)->get();
@@ -235,6 +242,30 @@
                                         </div>
                                     </div>
                                 @endif
+                                <form method="GET" action="/redirect" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                    <input type="hidden" name="arena" value="{{ $arena }}">
+                                    <input type="hidden" name="role" value="arena-jadwal">
+                                    @if ($sesi)
+                                        <input type="hidden" name="sesi" value="{{ $sesi }}">
+                                    @endif
+                                    <div class="input-group" style="max-width: 350px;">
+                                        <input type="text" name="search" class="form-control shadow-sm" placeholder="Cari partai / atlet / status..." value="{{ request('search') }}">
+                                        <button class="btn btn-primary shadow-sm" type="submit">Cari</button>
+                                        @if (request('search'))
+                                            <a href="/redirect?arena={{ $arena }}&role=arena-jadwal{{ $sesi ? '&sesi='.$sesi : '' }}{{ request('per_page') ? '&per_page='.request('per_page') : '' }}" class="btn btn-outline-secondary shadow-sm">Reset</a>
+                                        @endif
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <label class="text-muted text-nowrap mb-0 fw-semibold">Tampilkan:</label>
+                                        <select name="per_page" class="form-select form-select-sm shadow-sm" style="width: auto;" onchange="this.form.submit()">
+                                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                            <option value="20" {{ (!request('per_page') || request('per_page') == 20) ? 'selected' : '' }}>20</option>
+                                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                        </select>
+                                        <span class="text-muted text-nowrap">data / halaman</span>
+                                    </div>
+                                </form>
                                 <div class="table-responsive">
                                     <table id="datatable" class="table table-bordered shadow" style="width: 100%;">
                                         <thead class="text-center">
@@ -309,33 +340,19 @@
                                                 <tr class="{{ $rowClass }}">
                                                     <td class="text-center">{{ $item->partai }}</td>
                                                     <td>{{ $kelas }} <br /> {{ $kategori }} </td>
-                                                    <td class="fw-bold text-primary">
+                                                    <td class="fw-bold text-white bg-primary">
                                                         {{ $pesertabiru->name ?? (olahTunggu($item->biru) ?? '') }}
                                                         <br>
-                                                        <span class="text-dark">
+                                                        <span class="text-white">
                                                             {{ $kontigenBiru }}
                                                         </span>
                                                     </td>
-                                                    <td class="fw-bold text-danger">
+                                                    <td class="fw-bold text-white bg-danger">
                                                         {{ $pesertamerah->name ?? (olahTunggu($item->merah) ?? '') }}
                                                         <br>
-                                                        <span class="text-dark">
+                                                        <span class="text-white">
                                                             {{ $kontigenMerah }}
                                                         </span>
-                                                    </td>
-                                                    <td class="fw-bold text-primary text-center">{{ $item->score_biru }}</td>
-                                                    <td class="fw-bold text-danger text-center">{{ $item->score_merah }}</td>
-                                                    @php
-                                                        $pemenang = PersertaModel::where('id', $item->pemenang)->value(
-                                                            'name',
-                                                        );
-                                                    @endphp
-                                                    <td class="h-100 px-0 py-0 w-25">
-                                                        <div class="container form-group p-0 ">
-                                                            kondisi : {{ $item->kondisi }}
-                                                            <br>
-                                                            pemenang : <span class="text-success">{{ $pemenang ?? 'N/a' }}</span>
-                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center gap-2 p-0">
@@ -363,6 +380,21 @@
                                                                 Hapus </button>
                                                         </div>
                                                     </td>
+                                                    <td class="fw-bold text-primary text-center">{{ $item->score_biru }}</td>
+                                                    <td class="fw-bold text-danger text-center">{{ $item->score_merah }}</td>
+                                                    @php
+                                                        $pemenang = PersertaModel::where('id', $item->pemenang)->value(
+                                                            'name',
+                                                        );
+                                                    @endphp
+                                                    <td class="h-100 px-0 py-0 w-25">
+                                                        <div class="container form-group p-0 ">
+                                                            kondisi : {{ $item->kondisi }}
+                                                            <br>
+                                                            pemenang : <span class="text-success">{{ $pemenang ?? 'N/a' }}</span>
+                                                        </div>
+                                                    </td>
+
                                                 </tr>
                                                 {{-- <tr>
                                                     <td colspan="2"></td>
@@ -380,6 +412,15 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                                    <div class="text-muted">
+                                        Menampilkan <strong>{{ $data_perserta->firstItem() ?? 0 }}</strong> sampai <strong>{{ $data_perserta->lastItem() ?? 0 }}</strong> dari <strong>{{ $data_perserta->total() }}</strong> jadwal
+                                        (Halaman <strong>{{ $data_perserta->currentPage() }}</strong> dari <strong>{{ $data_perserta->lastPage() }}</strong>)
+                                    </div>
+                                    <div>
+                                        {{ $data_perserta->links('pagination::bootstrap-5') }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -763,7 +804,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                 <section>
+                                <section>
                                     <div class="fs-5 mb-2">
                                         Tipe Pertandingan
                                     </div>
@@ -955,11 +996,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenib"
                                             id="pesertaSenib">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                        @php
-                                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                        @endphp
-                                                                                        @endforeach -->
+                                                                                                @php
+                                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                                @endphp
+                                                                                                @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -970,11 +1011,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenim"
                                             id="pesertaSenim">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                        @php
-                                                                                            $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                            $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                        @endphp
-                                                                                        @endforeach -->
+                                                                                                @php
+                                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                                @endphp
+                                                                                                @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -1190,7 +1231,12 @@
             }
 
             $(document).ready(function () {
-                let table = new DataTable('#datatable');
+                let table = new DataTable('#datatable', {
+                    paging: false,
+                    info: false,
+                    searching: false,
+                    ordering: false
+                });
                 let table3 = new DataTable('.datatable');
                 // let table2 = new DataTable('#datatable-2');
                 if ($('#arenaType').val() === 'Tanding') {
