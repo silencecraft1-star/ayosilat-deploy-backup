@@ -114,8 +114,8 @@
         .wasit-overlay .wasit-card {
             position: relative;
             width: 88vw;
-            max-width: 1000px;
-            padding: 3.5vh 3vw 4vh 3vw;
+            max-width: 850px;
+            padding: 2.5vh 3vw 3vh 3vw;
             border-radius: 22px;
             border: 3.5px solid #e52929;
             background: radial-gradient(circle at 50% 35%, #9b0b0e 0%, #750305 60%, #4a0002 100%);
@@ -133,16 +133,6 @@
             transform: scale(1) translateY(0);
         }
 
-        .wasit-card .wmp-warning-icon {
-            position: absolute;
-            top: 3.5vh;
-            left: 3.5vw;
-            width: 7vh;
-            max-width: 62px;
-            height: auto;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
-        }
-
         .wasit-card .wmp-logo-wrap {
             display: flex;
             align-items: center;
@@ -153,22 +143,22 @@
         }
 
         .wasit-card .wmp-logo-img {
-            height: 22vh;
-            max-height: 170px;
+            height: 25vh;
+            max-height: 300px;
             width: auto;
-            max-width: 48vw;
+            max-width: 55vw;
             object-fit: contain;
-            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.7));
         }
 
         .wasit-card .wasit-winner-label {
             font-family: 'Poppins Regular', Arial, sans-serif;
-            font-size: 2.1vh;
+            font-size: 1.6vh;
             font-weight: 800;
-            color: #ffffff;
+            color: #e2e8f0;
             text-transform: uppercase;
-            letter-spacing: 0.35em;
-            margin-bottom: 1.2vh;
+            letter-spacing: 0.25em;
+            margin-bottom: 0.8vh;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
@@ -176,7 +166,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 1.5vh;
+            margin-bottom: 1vh;
         }
 
         .wasit-card .wasit-winner-corner {
@@ -184,10 +174,10 @@
             align-items: center;
             justify-content: center;
             font-family: 'Arial Black', Arial, sans-serif;
-            font-size: 2.8vh;
+            font-size: 2.1vh;
             font-weight: 900;
-            padding: 0.8vh 3.8vh;
-            border-radius: 12px;
+            padding: 0.6vh 2.8vh;
+            border-radius: 8px;
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -209,32 +199,32 @@
         .wasit-card .wasit-winner-name {
             font-family: 'Arial Black', Impact, sans-serif;
             font-style: italic;
-            font-size: 5vh;
+            font-size: 3.2vh;
             font-weight: 900;
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             line-height: 1.15;
             text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.5);
-            margin-bottom: 0.5vh;
+            margin-bottom: 0.3vh;
         }
 
         .wasit-card .wasit-winner-kontigen {
             font-family: 'Arial Black', 'Poppins Regular', sans-serif;
             font-style: italic;
-            font-size: 2.3vh;
+            font-size: 1.8vh;
             font-weight: 800;
             color: #f1f5f9;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.8);
-            margin-bottom: 1.8vh;
+            margin-bottom: 1vh;
         }
 
         .wasit-card .wasit-score-final {
             font-family: 'Arial Black', Impact, sans-serif;
             font-style: italic;
-            font-size: 7.2vh;
+            font-size: 4vh;
             font-weight: 900;
             color: #facc15;
             letter-spacing: 0.08em;
@@ -244,7 +234,7 @@
                 -2px -2px 0px #000,
                 2px -2px 0px #000,
                 -2px 2px 0px #000,
-                0 5px 12px rgba(0, 0, 0, 0.9);
+                0 4px 10px rgba(0, 0, 0, 0.9);
         }
     </style>
     @php
@@ -816,7 +806,7 @@
     <div id="wasit-menghentikan-overlay" class="wasit-overlay">
         <div class="wasit-card">
             <div class="wmp-logo-wrap">
-                <img src="{{ asset('assets/Assets/wmp_icon.png') }}" alt="WMP" class="wmp-logo-img">
+                <img src="{{ asset('assets/Assets/wmp.png') }}" alt="WMP" class="wmp-logo-img">
             </div>
             <div class="wasit-winner-label">PEMENANG</div>
             <div class="wasit-corner-wrap">

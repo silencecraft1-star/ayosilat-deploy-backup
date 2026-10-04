@@ -12,6 +12,19 @@
 </head>
 
 <body>
+    <!-- Tombol Fullscreen Kiri Atas & Kanan Atas -->
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; left: 10px; z-index: 1050;" title="Full Screen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; right: 10px; z-index: 1050;" title="Full Screen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
     @php
         use App\score;
         use App\Setting;
@@ -279,11 +292,7 @@
         <div class="mid-header-text text-center fs-5 fw-bold mb-2">
             {{$arenaNama[0]}}
         </div>
-        <div class="mb-2">
-            <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary">
-                Full Screen
-            </button>
-        </div>
+
         <div class="d-flex justify-content-center flex-wrap gap-2 text-center mb-3">
             <span class="badge bg-dark fs-6 px-3 py-2">Partai {{ $partai }}</span>
             <span class="badge bg-success fs-6 px-3 py-2">{{ ucfirst($jadwal->keterangan ?? 'Pemasalan') }}</span>

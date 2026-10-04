@@ -381,26 +381,19 @@ class AdminController extends Controller
         $tipeSeni = $request->input('tipe-seni');
         $poll = $request->input('poll');
 
-        $pesertas = PersertaModel::where('id', $biru)->first();
-        $idmerah = PersertaModel::where('id', $merah)->first();
-        $data_seni = PersertaModel::where('id', $biruSeni)->first();
-        $newpeserta = jadwal_group::where('arena', $arena)->get();
-
-
-        // dd($pesertas, $idmerah);
-
-        $count = count($newpeserta);
-        $partai = 0;
-
-        if ($partaiInput) {
-            $partai = $partaiInput;
-        }
-
         if (!empty($tipe) && $tipe == "seni") {
+            if (empty($biruSeni)) {
+                return redirect()->back()->with('error', 'Peserta Biru wajib dipilih pada jadwal seni!');
+            }
+
+            $data_seni = PersertaModel::where('id', $biruSeni)->first();
+            if (!$data_seni) {
+                return redirect()->back()->with('error', 'Data Peserta Biru tidak ditemukan!');
+            }
 
             if ($tipeSeni == "pemasalan") {
                 $datas = [
-                    'kelas' => $kelas ?? $data_seni->kelas,
+                    'kelas' => $kelas ?? ($data_seni ? $data_seni->kelas : null),
                     'id_sesi' => $sesi ?? null,
                     'id_poll' => $poll ?? null,
                     'partai' => $partaiInput,
@@ -417,7 +410,7 @@ class AdminController extends Controller
                 ];
             } else {
                 $datas = [
-                    'kelas' => $kelas ?? $data_seni->kelas,
+                    'kelas' => $kelas ?? ($data_seni ? $data_seni->kelas : null),
                     'id_sesi' => $sesi ?? null,
                     'id_poll' => $poll ?? null,
                     'partai' => $partaiInput,
@@ -434,6 +427,12 @@ class AdminController extends Controller
                 ];
             }
         } else {
+            $pesertas = PersertaModel::where('id', $biru)->first();
+            $idmerah = PersertaModel::where('id', $merah)->first();
+            if (empty($pesertas) || empty($idmerah)) {
+                return redirect()->back()->with('error', 'Peserta Biru dan Merah wajib dipilih pada jadwal tanding!');
+            }
+
             $datas = [
                 'id_sesi' => $sesi ?? null,
                 'kelas' => $pesertas->kelas ?? "Tanding",
@@ -452,7 +451,7 @@ class AdminController extends Controller
         }
         // dd($datas);
         jadwal_group::create($datas);
-        return redirect()->back()->with('success', 'Data saved successfully');
+        return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan');
     }
 
     public function modifySettings(Request $request)
@@ -1066,7 +1065,7 @@ class AdminController extends Controller
 
         jadwal_group::where('id', $idJadwal)->update([
             "id_sesi" => $finalSesi ?? null,
-            "kelas" => $kelasData->kelas,
+            "kelas" => $kelasData ? $kelasData->kelas : null,
             "partai" => $request->input('partai'),
             "merah" => $request->input('merahEdit'),
             "biru" => $request->input('biruEdit'),

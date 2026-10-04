@@ -50,6 +50,19 @@
 </head>
 
 <body>
+    <!-- Tombol Fullscreen Kiri Atas & Kanan Atas -->
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; left: 10px; z-index: 1050;" title="Full Screen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; right: 10px; z-index: 1050;" title="Full Screen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
     <!-- <div class="d-flex justify-start mx-5 mt-3 mb-3">
         <div class="btn1">
             <a href="{{url("/login-juri")}}" style="text-decoration: none;" class="text-dark">Kembali</a>
@@ -57,7 +70,7 @@
     </div> -->
     <div class="col juri d-flex flex-column w-full justify-content-center align-items-center">
         <h1>{{$idColomName}}</h1>
-        <span>{{$setting->judul}}</span><button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary mt-2"><i class="bi bi-arrows-fullscreen"></i> Full Screen</button>
+        <span>{{$setting->judul}}</span>
     </div>
 
     <!-- JURI ARENA -->
@@ -236,7 +249,12 @@
                     <button style="height: 5em;"
                         name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_biru}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_biru:{{$tim_biru}}"
                         class="btnSkill1 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-5 px-lg-5 px-md-5 me-1 shadow border-black">
-                        {{-- <img src="../assets/juri/images/kick.png" style="width: 20px;"> --}}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
                         <span class="ms-1">Hapus Nilai Terakhir</span>
                     </button>
                 </div>
@@ -622,7 +640,12 @@
                             name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_merah}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_merah:{{$tim_merah}}"
                             style="width: 100%; height: 5em;"
                             class="btnSkill2 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-0 px-lg-5 px-md-5 shadow border-black">
-                            {{-- <img src="../assets/juri/images/kick.png" style="width: 20px;"> --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
                             <span class="ms-1">Hapus Nilai Terakhir</span>
                         </button>
                     </div>

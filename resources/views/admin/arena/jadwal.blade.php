@@ -20,11 +20,11 @@
             width: 400px;
         }
 
-        .tr-semi td {
+        .tr-semi td:nth-child(-n+2) {
             background-color: rgb(255, 228, 179) !important;
         }
 
-        .tr-final td {
+        .tr-final td:nth-child(-n+2) {
             background-color: rgb(255, 200, 200) !important;
         }
 
@@ -70,14 +70,14 @@
         if (!empty($search)) {
             $tandingQuery->where(function ($q) use ($search) {
                 $q->where('partai', 'like', "%{$search}%")
-                  ->orWhere('kondisi', 'like', "%{$search}%")
-                  ->orWhere('status', 'like', "%{$search}%")
-                  ->orWhereIn('biru', function ($sub) use ($search) {
-                      $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereIn('merah', function ($sub) use ($search) {
-                      $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('kondisi', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhereIn('biru', function ($sub) use ($search) {
+                        $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereIn('merah', function ($sub) use ($search) {
+                        $sub->select('id')->from('persertas')->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -236,28 +236,36 @@
                                 @if (session('error'))
                                     <div class="mb-3">
                                         <div class="w-full bg-danger-subtle text-danger px-3 py-2 rounded">
-                                            @foreach (session('error') as $message)
-                                                {{ $message }}
-                                            @endforeach
+                                            @if (is_array(session('error')))
+                                                @foreach (session('error') as $message)
+                                                    <div>{{ $message }}</div>
+                                                @endforeach
+                                            @else
+                                                {{ session('error') }}
+                                            @endif
                                         </div>
                                     </div>
                                 @endif
-                                <form method="GET" action="/redirect" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                <form method="GET" action="/redirect"
+                                    class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                                     <input type="hidden" name="arena" value="{{ $arena }}">
                                     <input type="hidden" name="role" value="arena-jadwal">
                                     @if ($sesi)
                                         <input type="hidden" name="sesi" value="{{ $sesi }}">
                                     @endif
                                     <div class="input-group" style="max-width: 350px;">
-                                        <input type="text" name="search" class="form-control shadow-sm" placeholder="Cari partai / atlet / status..." value="{{ request('search') }}">
+                                        <input type="text" name="search" class="form-control shadow-sm"
+                                            placeholder="Cari partai / atlet / status..." value="{{ request('search') }}">
                                         <button class="btn btn-primary shadow-sm" type="submit">Cari</button>
                                         @if (request('search'))
-                                            <a href="/redirect?arena={{ $arena }}&role=arena-jadwal{{ $sesi ? '&sesi='.$sesi : '' }}{{ request('per_page') ? '&per_page='.request('per_page') : '' }}" class="btn btn-outline-secondary shadow-sm">Reset</a>
+                                            <a href="/redirect?arena={{ $arena }}&role=arena-jadwal{{ $sesi ? '&sesi=' . $sesi : '' }}{{ request('per_page') ? '&per_page=' . request('per_page') : '' }}"
+                                                class="btn btn-outline-secondary shadow-sm">Reset</a>
                                         @endif
                                     </div>
                                     <div class="d-flex align-items-center gap-2">
                                         <label class="text-muted text-nowrap mb-0 fw-semibold">Tampilkan:</label>
-                                        <select name="per_page" class="form-select form-select-sm shadow-sm" style="width: auto;" onchange="this.form.submit()">
+                                        <select name="per_page" class="form-select form-select-sm shadow-sm"
+                                            style="width: auto;" onchange="this.form.submit()">
                                             <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                             <option value="20" {{ (!request('per_page') || request('per_page') == 20) ? 'selected' : '' }}>20</option>
                                             <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
@@ -274,10 +282,10 @@
                                                 <th class="bg-light text-center">Kelas</th>
                                                 <th class="bg-light text-center">Sudut Biru</th>
                                                 <th class="bg-light text-center">Sudut Merah</th>
+                                                <th class="bg-light text-center">Status</th>
                                                 <th class="bg-light text-center">Skor</th>
                                                 <th class="bg-light text-center">Skor</th>
                                                 <th class="bg-light text-center">Kondisi Menang</th>
-                                                <th class="bg-light text-center">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-center align-middle">
@@ -415,8 +423,11 @@
                                 </div>
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
                                     <div class="text-muted">
-                                        Menampilkan <strong>{{ $data_perserta->firstItem() ?? 0 }}</strong> sampai <strong>{{ $data_perserta->lastItem() ?? 0 }}</strong> dari <strong>{{ $data_perserta->total() }}</strong> jadwal
-                                        (Halaman <strong>{{ $data_perserta->currentPage() }}</strong> dari <strong>{{ $data_perserta->lastPage() }}</strong>)
+                                        Menampilkan <strong>{{ $data_perserta->firstItem() ?? 0 }}</strong> sampai
+                                        <strong>{{ $data_perserta->lastItem() ?? 0 }}</strong> dari
+                                        <strong>{{ $data_perserta->total() }}</strong> jadwal
+                                        (Halaman <strong>{{ $data_perserta->currentPage() }}</strong> dari
+                                        <strong>{{ $data_perserta->lastPage() }}</strong>)
                                     </div>
                                     <div>
                                         {{ $data_perserta->links('pagination::bootstrap-5') }}
@@ -515,7 +526,7 @@
                                                                     <td class="text-center">{{ $loop->index + 1 }}</td>
                                                                     <td class="text-center">{{ $subitem->partai }}</td>
                                                                     <td>{{ $kelas }}</td>
-                                                                    <td class="">{{ $item->name ?? 'Data tidak ditemukan' }}</td>
+                                                                    <td class="">{{ $item->name ?? 'Peserta belum dipilih' }}</td>
                                                                     {{-- <td class="">{{$category}}</td> --}}
                                                                     <td class="text-danger text-center">{{ $subitem->score_biru }}</td>
                                                                     <td class="text-primary text-center">{{ $subitem->timer_biru }}</td>
@@ -532,7 +543,7 @@
                                                                                     class="btn btn-data btn-danger px-3 shadow text-light mx-1">Merah</button>
                                                                             @else
                                                                                 <button
-                                                                                    name="keterangan:jadwal_seni id:{{ $subitem->id }} sesi:{{ $sesi }} poll:{{ $pollId }} p:{{ $item->id }} partai:{{ $subitem->partai }} status:proses arena:{{ $arena }}"
+                                                                                    name="keterangan:jadwal_seni id:{{ $subitem->id }} sesi:{{ $sesi }} poll:{{ $pollId }} p:{{ $item ? $item->id : ($subitem->biru ?? '') }} partai:{{ $subitem->partai }} status:proses arena:{{ $arena }}"
                                                                                     class="btn btn-data btn-primary px-3 shadow text-light mx-1">Ganti</button>
                                                                             @endif
                                                                             <button
@@ -627,7 +638,7 @@
                                                                                     class="btn btn-data btn-danger px-3 shadow text-light mx-1">Merah</button>
                                                                             @else
                                                                                 <button
-                                                                                    name="keterangan:jadwal_seni id:{{ $subitem->id }} sesi:{{ $sesi }} poll:{{ $pollId }} p:{{ $item->id }} partai:{{ $subitem->partai }} status:proses arena:{{ $arena }}"
+                                                                                    name="keterangan:jadwal_seni id:{{ $subitem->id }} sesi:{{ $sesi }} poll:{{ $pollId }} p:{{ $item ? $item->id : ($subitem->biru ?? '') }} partai:{{ $subitem->partai }} status:proses arena:{{ $arena }}"
                                                                                     class="btn btn-data btn-primary px-3 shadow text-light mx-1">Ganti</button>
                                                                             @endif
                                                                             <button
@@ -983,25 +994,28 @@
                             <div class="container-fluid">
                                 <div class="row mb-3">
                                     <div class="col">
-                                        <label for="partaiId">Partai</label>
-                                        <input type="number" name="partai" id="partaiId" class="form-control">
+                                        <label for="partaiId">Partai <span class="text-danger">*</span></label>
+                                        <input type="number" name="partai" id="partaiId" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col">
                                         {{-- Seni Add --}}
-                                        <div class="fs-5">Nama Peserta Biru</div>
+                                        <div class="fs-5">Nama Peserta Biru <span class="text-danger fw-bold">*Wajib diisi</span></div>
                                         <input type="hidden" value="{{ $sesi }}" name="sesi" />
                                         <input type="hidden" value="seni" name="tipe" />
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenib"
                                             id="pesertaSenib">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                                @php
-                                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                                @endphp
-                                                                                                @endforeach -->
+                                                                                                            @php
+                                                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                                            @endphp
+                                                                                                            @endforeach -->
                                         </select>
+                                        <div id="pesertaSenibError" class="text-danger small mt-1 d-none">
+                                            * Peserta Biru wajib dipilih sebelum menyimpan jadwal seni!
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1011,11 +1025,11 @@
                                         <select class="js-select2 " style="width: 100%;" name="pesertaSenim"
                                             id="pesertaSenim">
                                             <!-- @foreach ($PesertaAll as $item)
-                                                                                                @php
-                                                                                                    $kelas = kelas::where('id', $item->kelas)->first()->name;
-                                                                                                    $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
-                                                                                                @endphp
-                                                                                                @endforeach -->
+                                                                                                            @php
+                                                                                                                $kelas = kelas::where('id', $item->kelas)->first()->name;
+                                                                                                                $kontigen = KontigenModel::where('id', $item->id_kontigen)->first();
+                                                                                                            @endphp
+                                                                                                            @endforeach -->
                                         </select>
                                     </div>
                                 </div>
@@ -1355,6 +1369,24 @@
                     $('.plain-select2').select2({
                         dropdownParent: $('#addPesertaSeni')
                     });
+                }
+            });
+
+            // Validasi modal addPesertaSeni agar peserta biru wajib diisi
+            $('#addPesertaSeni form').on('submit', function (e) {
+                let biru = $('#pesertaSenib').val();
+                if (!biru) {
+                    e.preventDefault();
+                    $('#pesertaSenibError').removeClass('d-none');
+                    alert('Peserta Biru wajib dipilih pada jadwal seni!');
+                    return false;
+                }
+                $('#pesertaSenibError').addClass('d-none');
+            });
+
+            $('#pesertaSenib').on('change', function () {
+                if ($(this).val()) {
+                    $('#pesertaSenibError').addClass('d-none');
                 }
             });
 
