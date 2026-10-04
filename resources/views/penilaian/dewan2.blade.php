@@ -88,7 +88,7 @@
     <!-- Header Section -->
     <section>
         <div class="w-full bg-blue-600 mb-3 shadow-lg shadow-gray-400 py-2">
-            <div class="flex  justify-between py-1 px-3">
+            <div class="flex  justify-between items-center py-1 px-3">
                 <button onclick="toggleFullScreen()"
                     class="bg-slate-200 hover:bg-slate-300 text-dark font-medium shadow px-4 py-2 rounded transition-all active:bg-slate-400 d-inline-flex align-items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -98,6 +98,9 @@
                     </svg>
                     Full Screen
                 </button>
+                <div class="text-white text-2xl">
+                    {{ $arena->name }}
+                </div>
                 <div class="lg:flex lg:justify-end  hidden">
                     <div class="h-full flex items-center flex-wrap gap-2">
                         <img src="{{ asset("/assets/Assets/uploads/$imgData1") }}" class="size-12 " alt="">
