@@ -1,9 +1,9 @@
 <nav class="sidebar">
   <div class="sidebar-header">
-    <a href="/admin/panel" class="sidebar-brand">
+    <a href="/admin/panel" class="sidebar-brand" style="min-width: 130px; display: inline-block;">
       Ayo<span>Silat</span>
     </a>
-    <div class="sidebar-toggler not-active">
+    <div class="sidebar-toggler not-active" style="width: 24px; height: 24px;">
       <span></span>
       <span></span>
       <span></span>

@@ -1,14 +1,12 @@
 @if (Session::has('alert.config') || Session::has('alert.delete'))
     @if (config('sweetalert.animation.enable'))
-        <link rel="stylesheet" href="{{ config('sweetalert.animatecss') }}">
+        <link rel="stylesheet" href="{{ Str::startsWith(config('sweetalert.animatecss'), 'http') ? asset('assets/plugins/animate-css/animate.min.css') : asset(config('sweetalert.animatecss')) }}">
     @endif
 
-    @if (config('sweetalert.theme') != 'default')
-        <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-{{ config('sweetalert.theme') }}" rel="stylesheet">
-    @endif
+    <link rel="stylesheet" href="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.css') }}">
 
     @if (config('sweetalert.alwaysLoadJS') === false && config('sweetalert.neverLoadJS') === false)
-        <script src="{{ $cdn ?? asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+        <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
     @endif
     <script>
         @if (Session::has('alert.delete'))

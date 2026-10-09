@@ -33,3 +33,5 @@ public/css
 /public/assets/Assets/uploads
 /storage/logs/*
 !/storage/logs/.gitignore
+/graphify-out
+/.planning

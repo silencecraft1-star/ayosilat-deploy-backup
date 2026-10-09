@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-5.3.7/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Entry</title>
     <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
     <style>
@@ -113,6 +112,7 @@
 </head>
 
 <body class="poppins-regular">
+    @include('addon.connection-indicator')
 
     @php
         use App\Setting;
@@ -147,8 +147,8 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-grow flex flex-col p-4 md:p-8">
-        <div class="w-full max-w-7xl mx-auto gold-border bg-white rounded-lg overflow-hidden shadow-2xl flex flex-col">
+    <div class="flex-grow flex flex-col px-4 md:px-6 py-3 md:py-4 w-full">
+        <div class="w-full gold-border bg-white rounded-lg overflow-hidden shadow-2xl flex flex-col">
             <!-- Table Headers with per-cell border -->
             <div class="grid grid-cols-12 table-header text-2xl md:text-4xl cell-border-b">
                 <div class="col-span-4 flex items-center justify-center cell-border-r py-4">

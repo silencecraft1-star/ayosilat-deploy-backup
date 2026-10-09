@@ -33,10 +33,44 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <!-- end common css -->
 
+    <style>
+        /* Anti-Layout Shift (CLS) Critical Styles */
+        .sidebar {
+            width: 240px;
+            min-width: 240px;
+        }
+        .sidebar-header .sidebar-brand {
+            min-width: 130px;
+            display: inline-block;
+        }
+        .sidebar .link-icon, [data-feather] {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .navbar .sidebar-toggler {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .navbar .nav-link img {
+            width: 30px;
+            height: 30px;
+            aspect-ratio: 1 / 1;
+        }
+    </style>
+
     @stack('style')
 </head>
 
 <body data-base-url="{{ url('/') }}">
+    @include('addon.connection-indicator')
 
     <script src="{{ asset('assets/js/spinner.js') }}"></script>
 

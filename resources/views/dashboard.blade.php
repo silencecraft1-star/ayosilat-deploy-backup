@@ -262,7 +262,7 @@
         <div class="d-flex flex-column">
           <a href="javascript:;" class="d-flex align-items-center border-bottom pb-3">
             <div class="me-3">
-              <img src="{{ url('https://via.placeholder.com/35x35') }}" class="rounded-circle wd-35" alt="user">
+              <img src="{{ asset('assets/images/user.png') }}" class="rounded-circle wd-35" alt="user">
             </div>
             <div class="w-100">
               <div class="d-flex justify-content-between">
@@ -274,7 +274,7 @@
           </a>
           <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
             <div class="me-3">
-              <img src="{{ url('https://via.placeholder.com/35x35') }}" class="rounded-circle wd-35" alt="user">
+              <img src="{{ asset('assets/images/user.png') }}" class="rounded-circle wd-35" alt="user">
             </div>
             <div class="w-100">
               <div class="d-flex justify-content-between">
@@ -286,7 +286,7 @@
           </a>
           <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
             <div class="me-3">
-              <img src="{{ url('https://via.placeholder.com/35x35') }}" class="rounded-circle wd-35" alt="user">
+              <img src="{{ asset('assets/images/user.png') }}" class="rounded-circle wd-35" alt="user">
             </div>
             <div class="w-100">
               <div class="d-flex justify-content-between">
@@ -298,7 +298,7 @@
           </a>
           <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
             <div class="me-3">
-              <img src="{{ url('https://via.placeholder.com/35x35') }}" class="rounded-circle wd-35" alt="user">
+              <img src="{{ asset('assets/images/user.png') }}" class="rounded-circle wd-35" alt="user">
             </div>
             <div class="w-100">
               <div class="d-flex justify-content-between">
@@ -310,7 +310,7 @@
           </a>
           <a href="javascript:;" class="d-flex align-items-center border-bottom py-3">
             <div class="me-3">
-              <img src="{{ url('https://via.placeholder.com/35x35') }}" class="rounded-circle wd-35" alt="user">
+              <img src="{{ asset('assets/images/user.png') }}" class="rounded-circle wd-35" alt="user">
             </div>
             <div class="w-100">
               <div class="d-flex justify-content-between">
