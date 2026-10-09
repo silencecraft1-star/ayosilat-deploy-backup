@@ -433,7 +433,7 @@
             var arena_id = $('#arenaid').attr('name');
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
-                    console.log("Terhubung ke Soketi!");
+                    console.log("Terhubung ke Layanan Notif!");
                 });
                 // Listen for the JuriEvent containing the updated score data
                 Echo.channel('juri-channel')

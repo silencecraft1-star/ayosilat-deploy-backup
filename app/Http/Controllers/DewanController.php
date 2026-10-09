@@ -304,7 +304,9 @@ class DewanController extends Controller
                 'partai' => $settingData->partai ?? null,
             ];
             Score::create($data);
-            return response()->json(['message' => 'Data berhasil dihapus']);
+            $helper->sendTunggalData($arena);
+            $helper->sendSoloData($arena);
+            return response()->json(['message' => 'Data berhasil disimpan']);
         } elseif ($keterangan === "senidewansc") {
             $data = score::where('keterangan', $status)
                 ->where('id_perserta', $id_perserta)
@@ -316,7 +318,11 @@ class DewanController extends Controller
                 ->where('partai', $settingData->partai ?? null)
                 ->where('arena', $arena ?? null)
                 ->first();
-            $data->delete();
+            if ($data) {
+                $data->delete();
+            }
+            $helper->sendTunggalData($arena);
+            $helper->sendSoloData($arena);
             return response()->json(['message' => 'Data berhasil dihapus']);
         } elseif ($keterangan === "minus") {
 
@@ -494,6 +500,10 @@ class DewanController extends Controller
                 $helper->sendTandingScore($request->arena, $sesi ?? null, $partai ?? null, null, "jadwal");
                 $helper->sendDewanData($arena);
                 $helper->sendPendingData($request->arena, $sesi ?? null, $partai ?? null, $settingData);
+                $helper->sendTunggalScore($request->arena);
+                $helper->sendSoloScore($request->arena);
+                $helper->sendTunggalData($request->arena);
+                $helper->sendSoloData($request->arena);
             }
 
             return response()->json(['message' => 'Data berhasil ']);
@@ -551,6 +561,8 @@ class DewanController extends Controller
 
                 $helper->sendTunggalScore($arena);
                 $helper->sendSoloScore($arena);
+                $helper->sendTunggalData($arena);
+                $helper->sendSoloData($arena);
             }
             // jadwal_group::where('partai', $partai)->update(['status' => $status]);
             // $helper->sendTandingScore($arena, $settingData->sesi ?? null, $settingData->partai);

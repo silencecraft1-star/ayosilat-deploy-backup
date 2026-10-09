@@ -12,6 +12,19 @@
 </head>
 
 <body>
+    <!-- Tombol Fullscreen Kiri Atas & Kanan Atas -->
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; left: 10px; z-index: 1050;" title="Full Screen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
+    <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; right: 10px; z-index: 1050;" title="Full Screen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Full Screen
+    </button>
     <div class="container-fluid f-cent fs-4 mt-3">
         <!-- Match Info Section -->
         @php
@@ -40,7 +53,7 @@
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
         <div>
-            {{$arenaNama[0]}}<button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary ms-3"><i class="bi bi-arrows-fullscreen"></i> Full Screen</button> <br />
+            {{$arenaNama[0]}} <br />
             {{$arenaNama[1]}}
         </div>
         <!-- Player Info Section -->

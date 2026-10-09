@@ -688,18 +688,208 @@ class GlobalScoreHelper
         }
     }
 
+    public function getSeniData($arena, $kt = 'ganda')
+    {
+        $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+
+        if (!$settingData) {
+            return null;
+        }
+
+        $currentPlaying = null;
+        $cekBiru = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('biru', $settingData->biru)->where('partai', $settingData->partai)->first();
+        $cekMerah = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('merah', $settingData->biru)->where('partai', $settingData->partai)->first();
+
+        if ($cekBiru) {
+            $currentPlaying = "biru";
+        }
+        if ($cekMerah) {
+            $currentPlaying = "merah";
+        }
+
+        $partai = $settingData->partai;
+        $id = $settingData->biru;
+
+        $data = score::where('id_perserta', $id)->where('partai', $partai)->where('arena', $arena)->get();
+        $dewan = $data->where('status', 'seni_minus')->sum('score');
+        $jadwalGanda = jadwal_group::where('id', $settingData->jadwal)->first();
+
+        $pesertaBiru = PersertaModel::where('id', $settingData->biru)->first();
+        if (!$pesertaBiru) {
+            return null;
+        }
+
+        $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
+        $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first();
+        $namaBiru = $pesertaBiru->name;
+        $keteranganJadwal = ($jadwalGanda && $jadwalGanda->keterangan) ? "- $jadwalGanda->keterangan" : "";
+
+        $response = [
+            'current' => $currentPlaying,
+            'detailPartai' => "{$settingData->partai} {$keteranganJadwal}",
+            'nama' => $namaBiru,
+            'id_peserta' => $pesertaBiru->id,
+            'gender' => $pesertaBiru->gender,
+            'kelas' => $kelas ? $kelas->name : '',
+            'kontigen' => $kontigenBiru ? $kontigenBiru->kontigen : '',
+            'attack1' => 0,
+            'attack2' => 0,
+            'attack3' => 0,
+            'attack4' => 0,
+            'attack5' => 0,
+            'attack6' => 0,
+            'attack7' => 0,
+            'attack8' => 0,
+            'soulfullness1' => 0,
+            'soulfullness2' => 0,
+            'soulfullness3' => 0,
+            'soulfullness4' => 0,
+            'soulfullness5' => 0,
+            'soulfullness6' => 0,
+            'soulfullness7' => 0,
+            'soulfullness8' => 0,
+            'firmness1' => 0,
+            'firmness2' => 0,
+            'firmness3' => 0,
+            'firmness4' => 0,
+            'firmness5' => 0,
+            'firmness6' => 0,
+            'firmness7' => 0,
+            'firmness8' => 0,
+            'dewan' => (float)$dewan,
+            'time' => $settingData->time,
+            'status' => $settingData->status,
+            'keterangan_jadwal' => ($jadwalGanda && $jadwalGanda->keterangan) ? $jadwalGanda->keterangan : 'pemasalan',
+        ];
+
+        foreach ($data as $item) {
+            for ($i = 1; $i <= 8; $i++) {
+                $juriField = 'juri_' . $i;
+                if ($item->id_juri === $settingData->$juriField) {
+                    if ($item->keterangan === "attack") {
+                        $response['attack' . $i] = (float)$item->score;
+                    } elseif ($item->keterangan === "firmness") {
+                        $response['firmness' . $i] = (float)$item->score;
+                    } elseif ($item->keterangan === "soulfullness") {
+                        $response['soulfullness' . $i] = (float)$item->score;
+                    }
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    public function getTunggalData($arena)
+    {
+        $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+
+        if (!$settingData) {
+            return null;
+        }
+
+        $currentPlaying = null;
+        $cekBiru = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('biru', $settingData->biru)->where('partai', $settingData->partai)->first();
+        $cekMerah = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('merah', $settingData->biru)->where('partai', $settingData->partai)->first();
+
+        if ($cekBiru) {
+            $currentPlaying = "biru";
+        }
+        if ($cekMerah) {
+            $currentPlaying = "merah";
+        }
+
+        $partai = $settingData->partai;
+        $pesertaBiru = PersertaModel::where('id', $settingData->biru)->first();
+        if (!$pesertaBiru) {
+            return null;
+        }
+
+        $data = score::where('id_perserta', $pesertaBiru->id)->where('partai', $partai)->where('arena', $arena)->get();
+        $dewan = $data->where('status', 'seni_minus')->sum('score');
+        $jadwalTunggal = jadwal_group::where('id', $settingData->jadwal)->first();
+
+        $partaiFinal = $settingData->partai;
+        $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
+        $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first();
+        $namaBiru = $pesertaBiru->name;
+
+        if ($kelas && $kelas->name == "REGU") {
+            $dataRegu = PersertaModel::where('id_kontigen', $pesertaBiru->id_kontigen)->get();
+            $pesertaRegu = '';
+            foreach ($dataRegu as $item) {
+                $pesertaRegu .= "$item->name,";
+            }
+            $namaBiru = $pesertaRegu;
+        }
+
+        $keteranganJadwalTunggal = ($jadwalTunggal && $jadwalTunggal->keterangan) ? "- $jadwalTunggal->keterangan" : "";
+
+        $response = [
+            'current' => $currentPlaying,
+            'detailArena' => "$partaiFinal $keteranganJadwalTunggal",
+            'id_peserta' => $pesertaBiru->id,
+            'nama' => $namaBiru,
+            'gender' => $pesertaBiru->gender,
+            'kelas' => $kelas ? $kelas->name : '',
+            'kontigen' => $kontigenBiru ? $kontigenBiru->kontigen : '',
+            'actual1' => 9.9,
+            'actual2' => 9.9,
+            'actual3' => 9.9,
+            'actual4' => 9.9,
+            'actual5' => 9.9,
+            'actual6' => 9.9,
+            'actual7' => 9.9,
+            'actual8' => 9.9,
+            'flwo1' => 0,
+            'flwo2' => 0,
+            'flwo3' => 0,
+            'flwo4' => 0,
+            'flwo5' => 0,
+            'flwo6' => 0,
+            'flwo7' => 0,
+            'flwo8' => 0,
+            'dewan' => number_format($dewan, 2),
+            'time' => $settingData->time,
+            'status' => $settingData->status,
+            'keterangan_jadwal' => ($jadwalTunggal && $jadwalTunggal->keterangan) ? $jadwalTunggal->keterangan : 'pemasalan',
+        ];
+
+        foreach ($data as $item) {
+            for ($i = 1; $i <= 8; $i++) {
+                $juriField = 'juri_' . $i;
+                if ($item->id_juri === $settingData->$juriField) {
+                    if ($item->keterangan === "next") {
+                        $response['actual' . $i] = 9.90 - ($item->score / 100);
+                    } elseif ($item->keterangan === "flwo") {
+                        $response['flwo' . $i] = (float)$item->score;
+                    }
+                }
+            }
+        }
+
+        return $response;
+    }
+
     public function sendTunggalData($arena)
     {
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
 
-        $data = score::where('arena', $arena)->where('partai', $setting->partai)->where('id_perserta', $setting->biru)->where('status', 'point_tunggal')->get();
+        if (!$setting) {
+            return;
+        }
+
+        $response = $this->getTunggalData($arena);
 
         $datas = [
             'arena' => $arena,
             'partai' => $setting->partai,
             'sesi' => $setting->sesi ?? null,
             'tipe' => 'data',
-            'data' => $data
+            'response' => $response
         ];
 
         event(new TunggalEvent($datas));
@@ -707,14 +897,20 @@ class GlobalScoreHelper
 
     public function sendTunggalScore($arena)
     {
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+
+        if (!$setting) {
+            return;
+        }
+
         $peserta = PersertaModel::where('id', $setting->biru)->first();
-        $kontigen = KontigenModel::where('id', $peserta->id_kontigen)->first();
+        $kontigen = $peserta ? KontigenModel::where('id', $peserta->id_kontigen)->first() : null;
 
         $infos = [
-            'id' => $peserta->id,
-            'name' => $peserta->name,
-            'kontigen' => $kontigen->kontigen,
+            'id' => $peserta ? $peserta->id : null,
+            'name' => $peserta ? $peserta->name : '',
+            'kontigen' => $kontigen ? $kontigen->kontigen : '',
         ];
 
         $datas = [
@@ -730,14 +926,20 @@ class GlobalScoreHelper
 
     public function sendSoloScore($arena)
     {
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+
+        if (!$setting) {
+            return;
+        }
+
         $peserta = PersertaModel::where('id', $setting->biru)->first();
-        $kontigen = KontigenModel::where('id', $peserta->id_kontigen)->first();
+        $kontigen = $peserta ? KontigenModel::where('id', $peserta->id_kontigen)->first() : null;
 
         $infos = [
-            'id' => $peserta->id,
-            'name' => $peserta->name,
-            'kontigen' => $kontigen->kontigen,
+            'id' => $peserta ? $peserta->id : null,
+            'name' => $peserta ? $peserta->name : '',
+            'kontigen' => $kontigen ? $kontigen->kontigen : '',
         ];
 
         $datas = [
@@ -753,35 +955,28 @@ class GlobalScoreHelper
 
     public function sendDewanTunggal($arena)
     {
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
-
-        $data = score::where('arena', $arena)->where('partai', $setting->partai)->where('id_perserta', $setting->biru)->where('status', 'seni_minus')->get();
-
-        $datas = [
-            'arena' => $arena,
-            'partai' => $setting->partai,
-            'sesi' => $setting->sesi ?? null,
-            'tipe' => 'data',
-            'data' => $data
-        ];
-
-        event(new TunggalEvent($datas));
+        $this->sendTunggalData($arena);
     }
 
     public function sendSoloData($arena)
     {
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
 
-        $data = score::where('arena', $arena)->where('partai', $setting->partai)->where('id_perserta', $setting->biru)->where('status', 'point_solo')->get();
+        if (!$setting) {
+            return;
+        }
+
+        $response = $this->getSeniData($arena, 'ganda');
 
         $datas = [
             'arena' => $arena,
             'partai' => $setting->partai,
             'sesi' => $setting->sesi ?? null,
             'tipe' => 'data',
-            'data' => $data
+            'response' => $response
         ];
 
-        event(new TunggalEvent($datas));
+        event(new SoloEvent($datas));
     }
 }

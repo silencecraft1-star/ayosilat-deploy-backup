@@ -85,19 +85,21 @@
 </style>
 
 <body>
+    @include('addon.connection-indicator')
     <!-- Header Section -->
     <section>
         <div class="w-full bg-blue-600 mb-3 shadow-lg shadow-gray-400 py-2">
             <div class="flex  justify-between items-center py-1 px-3">
                 <button onclick="toggleFullScreen()"
                     class="bg-slate-200 hover:bg-slate-300 text-dark font-medium shadow px-4 py-2 rounded transition-all active:bg-slate-400 d-inline-flex align-items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path
                             d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
                     </svg>
                     Full Screen
                 </button>
+
                 <div class="text-white text-2xl">
                     {{ $arena->name }}
                 </div>
@@ -947,6 +949,7 @@
             </div>
         </div>
         <div id="IDarena" name="{{$id_arena}}" class="d-none"></div>
+        <div id="arenaid" name="{{$id_arena}}" class="d-none"></div>
         <input type="hidden" name="{{ $tim_biru }}" id="id_biru">
         <input type="hidden" name="{{ $tim_merah }}" id="id_merah">
         @include('addon.tanding.reload');
@@ -966,10 +969,12 @@
                 merah: { binaan: {{ $bina_babak_merah }}, teguran: {{ $teguran_babak_merah }} }
             };
 
+
+
             function WebSocket() {
                 if (window.Echo) {
                     window.Echo.connector.pusher.connection.bind('connected', function () {
-                        console.log("Terhubung ke Soketi!");
+                        console.log("Terhubung ke Layanan Notif!");
                     });
                     Echo.channel('dewan-channel')
                         .listen('DewanEvent', (datas) => {

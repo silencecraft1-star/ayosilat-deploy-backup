@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ asset('assets/dewanJuri/dewan.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-5.3.7/css/bootstrap.min.css') }}">
     <title>Dewan</title>
     @php
         use App\score;
@@ -38,13 +37,14 @@
 </style>
 
 <body>
+    @include('addon.connection-indicator')
     <div class="header-body">
         <div class="container px-0 mx-0 d-flex gap-2">
             <button class="header-button-kembali">
                 <a href="{{ url('/login-juri') }}" style="text-decoration: none;" class="text-dark">Log Out</a>
             </button>
             <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                 </svg>
                 Full Screen
@@ -508,11 +508,8 @@
                 </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+        <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
         <script>
             // Temukan semua tombol dengan kelas "btn btn-primary button-blue" atau "btn btn-primary btn btn-secondary button-blue-delete"
             var tombolDenganKelas = document.querySelectorAll('.button-blue, .button-blue-delete , .button-red');
