@@ -121,6 +121,7 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('/arena', 'AdminController@arena');
     });
     Route::prefix('tanding')->group(function () {
+        Route::post('juri/ping', 'JuriController@ping')->name('juri.ping');
         Route::resource('juri', JuriController::class);
         Route::resource('dewan', DewanController::class);
         Route::get('/', function () {

@@ -962,295 +962,24 @@ class JuriController extends Controller
             }
             return response()->json(['data' => $data]);
         } elseif ($tipe === "seni") {
-            $kt = $request->input('kt');
-            $id = $request->input('id');
+            $kt = $request->input('kt', 'ganda');
             $arena = $request->input('arena');
-            $settingData = Setting::where('arena', $arena)->first();
-
-            $currentPlaying = null;
-
-            //temporary
-            $cekBiru = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('biru', $settingData->biru)->where('partai', $settingData->partai)->first();
-            $cekMerah = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('merah', $settingData->biru)->where('partai', $settingData->partai)->first();
-
-            if ($cekBiru) {
-                $currentPlaying = "biru";
+            $helper = new GlobalScoreHelper();
+            $response = $helper->getSeniData($arena, $kt);
+            if ($response) {
+                return response()->json($response, 200);
+            } else {
+                return response()->json(['message' => 'No data available'], 404);
             }
-
-            if ($cekMerah) {
-                $currentPlaying = "merah";
-            }
-
-            $partai = $settingData->partai;
-            $id_juri = $request->input('juri');
-            if ($kt == "ganda") {
-                $data = score::where('id_perserta', $id)->where('partai', $partai)->where('arena', $arena)->get();
-                $dewan = $data->where('status', 'seni_minus')->sum('score');
-                $setting = Setting::where('arena', $request->input('arena'))->first();
-                $jadwalGanda = jadwal_group::where('id', $setting->jadwal)->first();
-
-                $partaiFinal = $setting->partai;
-
-                $pesertaBiru = PersertaModel::where('id', $setting->biru)->first();
-                $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
-                $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first()->kontigen;
-                $namaBiru = $pesertaBiru->name;
-                $keteranganJadwal = $jadwalGanda->keterangan ? "- $jadwalGanda->keterangan" : "";
-                if (!empty($data)) {
-                    $response = [
-                        'current' => $currentPlaying,
-                        'detailPartai' => "$setting->partai $keteranganJadwal",
-                        'nama' => $namaBiru,
-                        'id_peserta' => $pesertaBiru->id,
-                        'gender' => $pesertaBiru->gender,
-                        'kelas' => $kelas->name,
-                        'kontigen' => $kontigenBiru,
-                        'attack1' => 0,
-                        'attack2' => 0,
-                        'attack3' => 0,
-                        'attack4' => 0,
-                        'attack5' => 0,
-                        'attack6' => 0,
-                        'attack7' => 0,
-                        'attack8' => 0,
-                        'soulfullness1' => 0,
-                        'soulfullness2' => 0,
-                        'soulfullness3' => 0,
-                        'soulfullness4' => 0,
-                        'soulfullness5' => 0,
-                        'soulfullness6' => 0,
-                        'soulfullness7' => 0,
-                        'soulfullness8' => 0,
-                        'firmness1' => 0,
-                        'firmness2' => 0,
-                        'firmness3' => 0,
-                        'firmness4' => 0,
-                        'firmness5' => 0,
-                        'firmness6' => 0,
-                        'firmness7' => 0,
-                        'firmness8' => 0,
-                        'dewan' => 0,
-                        'time' => $setting->time,
-                        'status' => $setting->status,
-                        'keterangan_jadwal' => $jadwalGanda->keterangan ?? 'pemasalan',
-                    ];
-                    $response['dewan'] += $dewan;
-                    foreach ($data as $item) {
-                        if ($item->id_juri === $setting->juri_1) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack1'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness1'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness1'] = $item->score;
-                            }
-
-                        } elseif ($item->id_juri === $setting->juri_2) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack2'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness2'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness2'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_3) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack3'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness3'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness3'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_4) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack4'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness4'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness4'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_5) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack5'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness5'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness5'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_6) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack6'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness6'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness6'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_7) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack7'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness7'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness7'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_8) {
-                            if ($item->keterangan === "attack") {
-                                $response['attack8'] = $item->score;
-                            } elseif ($item->keterangan === "firmness") {
-                                $response['firmness8'] = $item->score;
-                            } elseif ($item->keterangan === "soulfullness") {
-                                $response['soulfullness8'] = $item->score;
-                            }
-                        }
-                    }
-                    return response()->json($response, 200);
-                } else {
-                    return response()->json(['message' => 'No data available'], 404);
-                }
-            }
-            // return response()->json($respone);
         } elseif ($tipe === "seni_tunggal") {
-            $kt = $request->input('kt');
-            $id = $request->input('id');
-            $id_juri = $request->input('juri');
-            $settingData = Setting::where('arena', $request->input('arena'))->first();
-            $currentPlaying = null;
-
-            //temporary
-            $cekBiru = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('biru', $settingData->biru)->where('partai', $settingData->partai)->first();
-            $cekMerah = jadwal_group::where('arena', $arena)->where('keterangan', 'prestasi')->where('merah', $settingData->biru)->where('partai', $settingData->partai)->first();
-
-            if ($cekBiru) {
-                $currentPlaying = "biru";
+            $arena = $request->input('arena');
+            $helper = new GlobalScoreHelper();
+            $response = $helper->getTunggalData($arena);
+            if ($response) {
+                return response()->json($response, 200);
+            } else {
+                return response()->json(['message' => 'No data available'], 404);
             }
-
-            if ($cekMerah) {
-                $currentPlaying = "merah";
-            }
-
-            $arena = $settingData->arena;
-            $partai = $settingData->partai;
-            if ($kt == "tunggal") {
-                $setting = Setting::where('arena', $request->input('arena'))->first();
-                $pesertaBiru = PersertaModel::where('id', $setting->biru)->first();
-                $data = score::where('id_perserta', $pesertaBiru->id)->where('partai', $partai)->where('arena', $arena)->get();
-                $dewan = $data->where('status', 'seni_minus')->sum('score');
-                $jadwalTunggal = jadwal_group::where('id', $setting->jadwal)->first();
-
-                $partaiFinal = $setting->partai;
-
-                $kelas = kelas::where('id', $pesertaBiru->kelas)->first();
-
-                $id = $pesertaBiru->id;
-                $kontigenBiru = KontigenModel::where('id', $pesertaBiru->id_kontigen)->first()->kontigen;
-                $namaBiru = $pesertaBiru->name;
-
-                $isRegu = false;
-                if ($kelas->name == "REGU") {
-                    $pesertaRegu = '';
-                    $dataRegu = PersertaModel::where('id_kontigen', $pesertaBiru->id_kontigen)->get();
-
-                    $isRegu = true;
-                    foreach ($dataRegu as $item) {
-                        $pesertaRegu .= "$item->name,";
-                    }
-                }
-
-                $keteranganJadwalTunggal = $jadwalTunggal->keterangan ? "- $jadwalTunggal->keterangan" : "";
-
-                if (!empty($data)) {
-                    $response = [
-                        'current' => $currentPlaying,
-                        'detailArena' => "$partaiFinal $keteranganJadwalTunggal",
-                        'id_peserta' => $pesertaBiru->id,
-                        'nama' => $namaBiru,
-                        'gender' => $pesertaBiru->gender,
-                        'kelas' => $kelas->name,
-                        'kontigen' => $kontigenBiru,
-                        'actual1' => 9.9,
-                        'actual2' => 9.9,
-                        'actual3' => 9.9,
-                        'actual4' => 9.9,
-                        'actual5' => 9.9,
-                        'actual6' => 9.9,
-                        'actual7' => 9.9,
-                        'actual8' => 9.9,
-                        'flwo1' => 0,
-                        'flwo2' => 0,
-                        'flwo3' => 0,
-                        'flwo4' => 0,
-                        'flwo5' => 0,
-                        'flwo6' => 0,
-                        'flwo7' => 0,
-                        'flwo8' => 0,
-                        'dewan' => 0,
-                        'time' => $setting->time,
-                        'status' => $setting->status,
-                        'keterangan_jadwal' => $jadwalTunggal->keterangan ?? 'pemasalan',
-                    ];
-                    $response['dewan'] = number_format($dewan, 2);
-                    foreach ($data as $item) {
-                        if ($item->id_juri === $setting->juri_1) {
-                            if ($item->keterangan === "next") {
-                                $response['actual1'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo1'] = $item->score;
-                            }
-
-                        } elseif ($item->id_juri === $setting->juri_2) {
-                            if ($item->keterangan === "next") {
-                                $response['actual2'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo2'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_3) {
-                            if ($item->keterangan === "next") {
-                                $response['actual3'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo3'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_4) {
-                            if ($item->keterangan === "next") {
-                                $response['actual4'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo4'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_5) {
-                            if ($item->keterangan === "next") {
-                                $response['actual5'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo5'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_6) {
-                            if ($item->keterangan === "next") {
-                                $response['actual6'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo6'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_7) {
-                            if ($item->keterangan === "next") {
-                                $response['actual7'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo7'] = $item->score;
-                            }
-                        } elseif ($item->id_juri === $setting->juri_8) {
-                            if ($item->keterangan === "next") {
-                                $response['actual8'] = 9.90 - ($item->score / 100);
-                            } elseif ($item->keterangan === "flwo") {
-                                $response['flwo8'] = $item->score;
-                            }
-                        }
-                    }
-
-                    // jadwal_group::where('arena', $arena)->where('partai', $partai)->where('merah', $id)->update([
-
-                    // ])
-                    return response()->json($response, 200);
-                } else {
-                    return response()->json(['message' => 'No data available'], 404);
-                }
-            }
-            // return response()->json($respone);
         }
     }
 
@@ -1315,5 +1044,28 @@ class JuriController extends Controller
     public function destroy($id)
     {
         return response()->json(['message' => 'Method not implemented'], 501);
+    }
+
+    /**
+     * Heartbeat presence ping from judge tablets
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ping(Request $request)
+    {
+        $arena = $request->input('arena');
+        $id_juri = $request->input('id_juri');
+        $nomor_juri = $request->input('nomorjuri') ?? $request->input('nomor_juri');
+
+        event(new IndicatorEvent([
+            'type' => 'heartbeat',
+            'arena' => $arena,
+            'id_juri' => $id_juri,
+            'nomorjuri' => $nomor_juri,
+            'timestamp' => now()->timestamp,
+        ]));
+
+        return response()->json(['status' => 'pong', 'time' => now()->timestamp]);
     }
 }

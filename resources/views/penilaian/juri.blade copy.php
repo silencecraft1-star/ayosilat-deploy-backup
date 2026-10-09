@@ -610,7 +610,7 @@
         function websocket() {
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
-                    console.log("Terhubung ke Soketi!");
+                    console.log("Terhubung ke Layanan Notif!");
                 });
                 Echo.channel('verification-channel')
                     .listen('VerificationEvent', (datas) => {

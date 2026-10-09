@@ -14,13 +14,13 @@
 <body>
     <!-- Tombol Fullscreen Kiri Atas & Kanan Atas -->
     <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; left: 10px; z-index: 1050;" title="Full Screen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
         </svg>
         Full Screen
     </button>
     <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; right: 10px; z-index: 1050;" title="Full Screen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
         </svg>
         Full Screen
@@ -477,7 +477,7 @@
             // var arena_id = document.getElementById('arenaId').getAttribute('name');
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
-                    console.log("Terhubung ke Soketi!");
+                    console.log("Terhubung ke Layanan Notif!");
                 });
                 Echo.channel('tunggal-channel')
                     .listen('TunggalEvent', (datas) => {
@@ -545,38 +545,24 @@
                     data[parts[0]] = parts[1];
                 });
 
-                // $('button').prop('disabled', true);
-
-                // Sekarang, Anda memiliki data dalam bentuk objek
-                // console.log(data);
-
-                // Lanjutkan dengan kode pengiriman permintaan POST jika diperlukan
-                fetch('{{ route('juri.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // console.log(data);
-                        reload();
-                        // $('button').prop('disabled', false);
-                    })
-                    .catch(error => {
-                        // Tangani kesalahan jika ada
-                    });
-
-                function reload() {
-                    // window.location.reload();
-                }
-                // setInterval(reload, 800);
+                AyoSilatJudge.submitScore(data, function (res) {
+                    // Berhasil dikirim ke server
+                }, function (err, isQueued) {
+                    // Tersimpan dalam antrean offline jika koneksi putus
+                });
             });
         });
 
         websocket();
+    </script>
+    <script src="{{ asset('assets/js/score-queue.js') }}"></script>
+    <script>
+        AyoSilatJudge.init({
+            arena: "{{ $arena }}",
+            id_juri: "{{ $id_juri }}",
+            csrfToken: "{{ csrf_token() }}",
+            storeUrl: "{{ route('juri.store') }}"
+        });
     </script>
     <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>

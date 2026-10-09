@@ -299,6 +299,7 @@
         $teguran = score::where('keterangan', 'teguran')->where('id_perserta', '2')->count();
         $peringatan = score::where('keterangan', 'peringatan')->where('id_perserta', '2')->count();
     @endphp
+    @include('addon.connection-indicator')
     <!-- Header Content -->
     <header>
         <div class="d-none" name="{{ $babak }}" id="babakid"></div>
@@ -795,14 +796,8 @@
         </div>
     </div>
 
-    {{--
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
-    {{--
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script> --}}
     <div id="wasit-menghentikan-overlay" class="wasit-overlay">
         <div class="wasit-card">
             <div class="wmp-logo-wrap">

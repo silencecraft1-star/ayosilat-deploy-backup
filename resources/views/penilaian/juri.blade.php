@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pencak Silat</title>
     <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-5.3.7/css/bootstrap.min.css') }}">
-    {{--
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    --}}
     <link rel="stylesheet" href="../assets/juri/style3.css">
     @php
         use App\score;
@@ -52,13 +48,13 @@
 <body>
     <!-- Tombol Fullscreen Kiri Atas & Kanan Atas -->
     <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; left: 10px; z-index: 1050;" title="Full Screen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
         </svg>
         Full Screen
     </button>
     <button onclick="toggleFullScreen()" class="btn btn-sm btn-outline-secondary shadow-sm position-fixed" style="top: 10px; right: 10px; z-index: 1050;" title="Full Screen">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
         </svg>
         Full Screen
@@ -249,7 +245,7 @@
                     <button style="height: 5em;"
                         name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_biru}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_biru:{{$tim_biru}}"
                         class="btnSkill1 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-5 px-lg-5 px-md-5 me-1 shadow border-black">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -640,7 +636,7 @@
                             name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_merah}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_merah:{{$tim_merah}}"
                             style="width: 100%; height: 5em;"
                             class="btnSkill2 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-0 px-lg-5 px-md-5 shadow border-black">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                 <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -680,7 +676,7 @@
             let arena = $('#IDarena').attr('name');
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
-                    console.log("Terhubung ke Soketi!");
+                    console.log("Terhubung ke Layanan Notif!");
                 });
                 Echo.channel('verification-channel')
                     .listen('VerificationEvent', (datas) => {
@@ -932,53 +928,40 @@
 
                 $('button').prop('disabled', true);
 
-                // Sekarang, Anda memiliki data dalam bentuk objek
-                console.log(data);
-                // Lanjutkan dengan kode pengiriman permintaan POST jika diperlukan
-                fetch('{{ route('juri.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then(response => {
-                        setTimeout(() => {
-                            $('button').prop('disabled', false);
-                        }, 300);
+                AyoSilatJudge.submitScore(data, function (res) {
+                    setTimeout(() => {
+                        $('button').prop('disabled', false);
+                    }, 300);
 
-                        if (currentModal != "") {
-                            $(`#${currentModal}`).modal('hide');
-                            currentModal = "";
-                        }
-                        // reload();
-                    })
-                    .then(data => {
-                        console.log(data);
-                    })
-                    .catch(error => {
-                        // Tangani kesalahan jika ada
-                        //reload();
-                    });
-                // reload();
-                function reload() {
-                    window.location.reload();
-                }
-                // setInterval(reload, 800);
+                    if (currentModal != "") {
+                        $(`#${currentModal}`).modal('hide');
+                        currentModal = "";
+                    }
+                }, function (err, isQueued) {
+                    setTimeout(() => {
+                        $('button').prop('disabled', false);
+                    }, 300);
+
+                    if (currentModal != "") {
+                        $(`#${currentModal}`).modal('hide');
+                        currentModal = "";
+                    }
+                });
             });
         });
-        function reload() {
-            // window.location.reload();
-        }
 
         websocket();
     </script>
+    <script src="{{ asset('assets/js/score-queue.js') }}"></script>
+    <script>
+        AyoSilatJudge.init({
+            arena: "{{ $id_arena }}",
+            id_juri: "{{ $id_juri }}",
+            csrfToken: "{{ csrf_token() }}",
+            storeUrl: "{{ route('juri.store') }}"
+        });
+    </script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
-    {{--
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script> --}}
 <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
 </body>
 
