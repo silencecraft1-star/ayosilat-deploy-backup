@@ -413,21 +413,164 @@
             var Timers = formatTime(currentTime);
             $('#timer1').text(Timers);
         }
+        function formatScore(val) {
+            if (val === null || val === undefined || val === '' || isNaN(val)) return '0.00';
+            let num = Number(val);
+            // Bulatkan ke 3 digit desimal untuk membuang floating point noise (misal 3.80001 -> 3.8)
+            let rounded = Math.round((num + Number.EPSILON) * 1000) / 1000;
+            let str = rounded.toFixed(3);
+            // Jika digit ke-3 adalah '0', format wajib 2 desimal (3.80)
+            if (str.endsWith('0')) {
+                return rounded.toFixed(2);
+            }
+            return str;
+        }
+
+        function findMedian(arr) {
+            if (!arr || arr.length === 0) return 0;
+            let sorted = arr.map(Number).sort((a, b) => a - b);
+            const middleIndex = Math.floor(sorted.length / 2);
+            if (sorted.length % 2 === 0) {
+                return ((sorted[middleIndex - 1] * 100) + (sorted[middleIndex] * 100)) / 2 / 100;
+            } else {
+                return sorted[middleIndex];
+            }
+        }
+
+        var elemenDiv = document.getElementById("id_perserta");
+        var id = elemenDiv.getAttribute("name");
+        var arenaDiv = document.getElementById("arena");
+        var arena = arenaDiv.getAttribute("name");
+        var jumlahJuri = document.getElementById("totalJuri").getAttribute("name");
+
+        function pad(num, size) {
+            let s = "000000000" + num;
+            return s.substr(s.length - size);
+        }
+
+        function rekap(data) {
+            $.ajax({
+                url: '/rekapseni',
+                method: 'GET',
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        function applyTunggalScore(response) {
+            if (!response) return;
+
+            var all_juri = [];
+            for (let i = 1; i <= jumlahJuri; i++) {
+                let actual = parseFloat(response[`actual${i}`]) || 0;
+                let flwo = parseFloat(response[`flwo${i}`]) || 0;
+                let score = actual + flwo;
+                all_juri.push(score);
+            }
+
+            for (let i = 0; i < jumlahJuri; i++) {
+                $(`#total${i + 1}`).text(formatScore(all_juri[i]));
+            }
+
+            var totalAll = 0;
+            var average = 0;
+            for (let i = 0; i < jumlahJuri; i++) {
+                totalAll += parseFloat(all_juri[i]);
+            }
+            if (jumlahJuri > 0) {
+                average = totalAll / jumlahJuri;
+            }
+
+            var deviations = 0;
+            for (let i = 0; i < jumlahJuri; i++) {
+                deviations += Math.pow((parseFloat(all_juri[i]) - average), 2);
+            }
+            var deviation = jumlahJuri > 0 ? Math.sqrt(deviations / jumlahJuri) : 0;
+            var rawMedian = findMedian(all_juri);
+            var dewanPenalty = parseFloat(response.dewan) || 0;
+            var total_score = parseFloat(rawMedian) - dewanPenalty;
+
+            if (response.nama) {
+                let namaRegu = response.nama.split(',');
+                if (namaRegu.length > 3) {
+                    $('#parentRegu').html('');
+                    namaRegu.forEach((data) => {
+                        $('#parentRegu').append(`
+                            <div class="fs-1 text-green" id="nama">
+                                ${data}
+                            </div>
+                        `);
+                    });
+                } else {
+                    $('#nama').text(response.nama);
+                }
+            }
+            if (response.kontigen) $('#kontigen').text(response.kontigen);
+
+            for (let i = 1; i <= 8; i++) {
+                if (response[`actual${i}`] !== undefined) {
+                    $(`#actual${i}`).text(formatScore(response[`actual${i}`]));
+                }
+                if (response[`flwo${i}`] !== undefined) {
+                    $(`#flwo${i}`).text(formatScore(response[`flwo${i}`]));
+                }
+            }
+
+            $('#total').text(formatScore(total_score));
+            $('#dewan').text(dewanPenalty > 0 ? ('-' + formatScore(dewanPenalty)) : formatScore(0));
+            $('#median').text(formatScore(rawMedian));
+            $('#deviation').text(formatScore(deviation));
+
+            if (response.status == "finish") {
+                const send = {
+                    id_user: id,
+                    arena: arena,
+                    time: formatTime(currentTime),
+                    score: formatScore(total_score),
+                    deviation: formatScore(deviation)
+                };
+                rekap(send);
+            }
+
+            if (response.status == 'taking-time' && timeSaveStatus == false) {
+                let currentRunningTime = $('#timer1').text();
+                timeSaveStatus = true;
+                console.log('timer save initialized');
+                $.ajax({
+                    url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${formatScore(total_score)}&deviation=${formatScore(deviation)}`,
+                    method: 'GET',
+                    success: function (res) {
+                        console.log(res);
+                        timeSaveStatus = false;
+                    }
+                });
+            }
+        }
+
+        function calldata() {
+            $.ajax({
+                url: '/call-data/?tipe=seni_tunggal&kt=tunggal&id=' + id + '&arena=' + arena,
+                method: 'GET',
+                success: function (response) {
+                    applyTunggalScore(response);
+                }
+            });
+        }
+
         function websocket() {
             var arena_id = document.getElementById('arena').getAttribute('name');
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
-                    console.log("Terhubung ke Soketi!");
+                    console.log("Terhubung ke Layanan Notif!");
                 });
                 Echo.channel('indicator-channel')
                     .listen('.indicator.triggered', (e) => {
                         const data = e.message;
                         indicator(data);
-                        var reload = JSON.parse(data);
-
                         try {
                             var parsedData = JSON.parse(data);
-
                             if (parsedData.arena === arena_id && parsedData.event === "reload") {
                                 window.location.reload();
                                 console.log("Reload dipicu.");
@@ -439,347 +582,38 @@
                     .error((error) => {
                         console.error('Error:', error);
                     });
-                Echo.channel('timer')
-                    .listen('TimerUpdate', (datas) => {
-                        // console.log(datas);
-                        const actions = datas.action;
-                        var data = actions;
-                        if (datas.arena = arena_id) {
-                            if (data.action === 'start') {
-                                startTimer(); // Mulai timer
-                            }
-                            else if (data.action === 'pause') {
-                                pauseTimer(); // Jeda timer
-                            }
-                            else if (data.action === 'resume') {
-                                resumeTimer(); // Lanjutkan timer
-                            }
-                            else if (data.action === 'stop') {
-                                resetTimer(); // Reset timer
+
+                Echo.channel('tunggal-channel')
+                    .listen('TunggalEvent', (datas) => {
+                        const data = datas.message;
+                        if (arena_id == data.arena) {
+                            if (data.tipe == 'data') {
+                                applyTunggalScore(data.response);
+                            } else if (data.tipe == 'update') {
+                                calldata();
                             }
                         }
+                    });
 
+                Echo.channel('timer')
+                    .listen('TimerUpdate', (datas) => {
+                        const actions = datas.action;
+                        var data = actions;
+                        if (data && data.arena == arena_id) {
+                            if (data.action === 'start') {
+                                startTimer();
+                            } else if (data.action === 'pause') {
+                                pauseTimer();
+                            } else if (data.action === 'resume') {
+                                resumeTimer();
+                            } else if (data.action === 'stop') {
+                                resetTimer();
+                            }
+                        }
                     });
             } else {
                 console.error('Laravel Echo is not initialized.');
             }
-        }
-        // end function untuk websoket
-        function calldata() {
-            //     function findMedian(arr) {
-            //     arr.sort((a, b) => a - b);
-            //     const middleIndex = Math.floor(arr.length / 2);
-
-            //     if (arr.length % 2 === 0) {
-            //         return (arr[middleIndex - 1] + arr[middleIndex]) / 2;
-            //     } else {
-            //         return arr[middleIndex];
-            //     }
-            // } 
-
-            function rekap(data) {
-                $.ajax({
-                    url: '/rekapseni',
-                    method: 'GET',
-                    data: data,
-                    success: function (response) {
-                        console.log(response);
-                    }
-                });
-            }
-
-            function findMedian(arr) {
-                arr.sort((a, b) => a - b);
-                const middleIndex = Math.floor(arr.length / 2);
-                const left = (arr[middleIndex - 1]) * 100;
-                const right = (arr[middleIndex]) * 100;
-                const middle = (left + right) / 2 / 100;
-                if (arr.length % 2 === 0) {
-                    return middle;
-                } else {
-                    return arr[middleIndex];
-                }
-            }
-
-            var elemenDiv = document.getElementById("id_perserta");
-            var id = elemenDiv.getAttribute("name");
-            var arenaDiv = document.getElementById("arena");
-            var arena = arenaDiv.getAttribute("name");
-            var jumlahJuri = document.getElementById("totalJuri").getAttribute("name");
-
-            function pad(num, size) {
-                let s = "000000000" + num;
-                return s.substr(s.length - size);
-            }
-
-            function calculateJuri(response) {
-                let juri = [];
-                let sum = 0;
-
-                for (let i = 1; i <= jumlahJuri; i++) {
-                    let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(2);
-                    juri.push(parseFloat(score));
-                    sum += parseFloat(score);
-                }
-
-                let average = sum / juri.length;
-
-                let deviations = juri.reduce((acc, value) => acc + Math.pow(value - average, 2), 0);
-                let deviation = Math.sqrt(deviations / juri.length);
-
-                let total_score = (findMedian(juri) - parseFloat(response.dewan)).toFixed(2);
-
-                return {
-                    juri,
-                    average,
-                    deviation,
-                    total_score
-                };
-            }
-
-            //function getselisih(inputTime) {
-            //    let now = new Date();
-            //    let nowHours = pad(now.getHours(), 2);
-            //    let nowMinutes = pad(now.getMinutes(), 2);
-            //    let nowSeconds = pad(now.getSeconds(), 2);
-            //
-            //    if (inputTime) {
-            //        let [inputHours, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
-            //
-            //        let inputDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), inputHours, inputMinutes,
-            //            inputSeconds);
-            //
-            //        let differenceInSeconds = Math.abs((now - inputDate) / 1000);
-            //
-            //        let minutes = Math.floor(differenceInSeconds / 60);
-            //        let seconds = Math.floor(differenceInSeconds % 60);
-            //
-            //        return `${pad(minutes, 2)}:${pad(seconds, 2)}`;
-            //    } else {
-            //        return '00:00';
-            //    }
-            //}
-
-            // function getselisih(inputTime) {
-
-            //     let now = new Date();
-            //     let nowHours = pad(now.getHours(), 2);
-            //     let nowMinutes = pad(now.getMinutes(), 2);
-            //     let nowSeconds = pad(now.getSeconds(), 2);
-
-            //     if (inputTime) {
-            //         let [inputHours, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
-
-            //         let inputDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), inputHours, inputMinutes,
-            //             inputSeconds);
-
-            //         let differenceInSeconds = Math.abs((now - inputDate) / 1000);
-
-            //         let minutes = Math.floor(differenceInSeconds / 60);
-            //         let seconds = Math.floor(differenceInSeconds % 60);
-
-            //         return `${pad(minutes, 2)}:${pad(seconds, 2)}`;
-            //     } else {
-            //         return '00:00';
-            //     }
-            // }
-
-            function requestdata() {
-                $.ajax({
-                    url: '/call-data/?tipe=seni_tunggal&kt=tunggal&id=' + id + '&arena=' + arena + '',
-                    method: 'GET',
-                    success: function (response) {
-                        //var juri1 = (parseFloat(response.actual1) + parseFloat(response.flwo1)).toFixed(2);
-                        //var juri2 = (parseFloat(response.actual2) + parseFloat(response.flwo2)).toFixed(2);
-                        //var juri3 = (parseFloat(response.actual3) + parseFloat(response.flwo3)).toFixed(2);
-                        //var juri4 = (parseFloat(response.actual4) + parseFloat(response.flwo4)).toFixed(2);
-                        //var juri5 = (parseFloat(response.actual5) + parseFloat(response.flwo5)).toFixed(2);
-                        //var juri6 = (parseFloat(response.actual6) + parseFloat(response.flwo6)).toFixed(2);
-                        //var juri7 = (parseFloat(response.actual7) + parseFloat(response.flwo7)).toFixed(2);
-                        //var juri8 = (parseFloat(response.actual8) + parseFloat(response.flwo8)).toFixed(2);
-                        //var all_juri = [juri1, juri2, juri4, juri3, juri5, juri6, juri7, juri8];
-                        var all_juri = [];
-
-                        for (let i = 1; i <= jumlahJuri; i++) {
-                            let score = (parseFloat(response[`actual${i}`]) + parseFloat(response[`flwo${i}`])).toFixed(2);
-                            all_juri.push(score);
-                        }
-
-                        for (let i = 0; i < jumlahJuri; i++) {
-                            $(`#total${i + 1}`).text(parseFloat(all_juri[i]).toFixed(2));
-                        }
-
-                        var totalAll = 0;
-                        var average = 0;
-                        for (let i = 0; i < jumlahJuri; i++) {
-                            totalAll += parseFloat(all_juri[i]);
-
-                            let currentIteration = i + 1;
-                            if (currentIteration == jumlahJuri) {
-                                average = totalAll / jumlahJuri;
-                            }
-                        }
-
-                        var deviations = 0;
-                        for (let i = 0; i < jumlahJuri; i++) {
-                            deviations += Math.pow((parseFloat(all_juri[i]) - average), 2);
-                        }
-
-                        //var average = (parseFloat(juri1) + parseFloat(juri2) + parseFloat(juri3) +
-                        //    parseFloat(juri4) + parseFloat(juri5) + parseFloat(juri6) + parseFloat(juri7) +
-                        //    parseFloat(juri8)) / jumlahJuri;
-                        //var deviations = Math.pow((parseFloat(juri1) - average), 2) + Math.pow((parseFloat(
-                        //    juri2) - average), 2) + Math.pow((parseFloat(juri3) - average), 2) + Math.pow((
-                        //    parseFloat(juri4) - average), 2) + Math.pow((
-                        //    parseFloat(juri5) - average), 2) + Math.pow((
-                        //    parseFloat(juri6) - average), 2) + Math.pow((
-                        //    parseFloat(juri7) - average), 2) + Math.pow((
-                        //    parseFloat(juri8) - average), 2);
-                        var deviation = Math.sqrt(deviations / jumlahJuri);
-                        var total_score = (Math.trunc((parseFloat(findMedian(all_juri)) - parseFloat(response.dewan)) * 1000) / 1000);
-                        //console.log(response);
-                        // if (response.status != "pause") {
-                        //     if (response.time != 0) {
-                        //         const timer = getselisih(response.time);
-                        //         $('#timer1').text(timer);
-                        //         localStorage.setItem('waktu', timer);
-                        //     } else {
-                        //         const timer = getselisih();
-                        //         $('#timer1').text(timer);
-                        //     }
-                        // } else {
-                        //     let saved = localStorage.getItem('waktu');
-                        //     $('#timer1').text(saved ?? "pause`");
-                        // }
-
-                        let {
-                            juri: totaldif,
-                            average: averageFinal,
-                            deviation: deviation2,
-                            total_score1: total2
-                        } = calculateJuri(response);
-
-                        // Perbarui tampilan dengan data yang diperbarui
-                        //console.log(all_juri);
-
-                        let namaRegu = response.nama.split(',');
-                        let finalArr = [];
-                        let result;
-
-                        if (namaRegu.length > 3) {
-
-                            $('#parentRegu').html('');
-
-                            namaRegu.forEach((data, index) => {
-
-                                $('#parentRegu').append(`
-                                    <div class="fs-1 text-green" id="nama">
-                                        ${data}
-                                    </div>
-                                `);
-                            })
-                            //namaRegu.forEach((data,index) => {
-                            //   if(data === "") {
-                            //    return;
-                            //   }
-                            //   else {
-                            //    let splitName = data.split(" ");
-
-                            //    let formattedName = data.length > 2 ? `${splitName[0]} ${splitName[1]}` : `${splitName[0]}`; 
-
-                            //    finalArr.push(formattedName);
-                            //   }
-
-                            //});
-
-                            result = finalArr.join(' ,');
-                        }
-                        else {
-                            result = namaRegu;
-                            $('#nama').text(result);
-                        }
-
-                        //$('#nama').text(response.nama);
-                        $('#kontigen').text(response.kontigen);
-                        $('#actual1').text(parseFloat(response.actual1).toFixed(2));
-                        $('#actual2').text(parseFloat(response.actual2).toFixed(2));
-                        $('#actual3').text(parseFloat(response.actual3).toFixed(2));
-                        $('#actual4').text(parseFloat(response.actual4).toFixed(2));
-                        $('#actual5').text(parseFloat(response.actual5).toFixed(2));
-                        $('#actual6').text(parseFloat(response.actual6).toFixed(2));
-                        $('#actual7').text(response.actual7);
-                        $('#actual8').text(response.actual8);
-                        $('#flwo1').text(response.flwo1);
-                        $('#flwo2').text(response.flwo2);
-                        $('#flwo3').text(response.flwo3);
-                        $('#flwo4').text(response.flwo4);
-                        $('#flwo5').text(response.flwo5);
-                        $('#flwo6').text(response.flwo6);
-                        $('#flwo7').text(response.flwo7);
-                        $('#flwo8').text(response.flwo8);
-
-
-                        //$('#total1').text(juri1);
-                        //$('#total2').text(juri2);
-                        //$('#total3').text(juri3);
-                        //$('#total4').text(juri4);
-                        //$('#total5').text(juri5);
-                        //$('#total6').text(juri6);
-                        //$('#total7').text(juri7);
-                        //$('#total8').text(juri8);
-                        $('#total').text(total_score);
-                        $('#dewan').text('-' + response.dewan);
-                        $('#median').text(findMedian(all_juri));
-                        $('#deviation').text(deviation);
-
-                        //console.log(response);
-                        if (response.status == "finish") {
-                            const send = {
-                                id_user: id,
-                                arena: arena,
-                                time: formatTime(currentTime),
-                                score: total_score,
-                                deviation: deviation
-                            }
-
-                            rekap(send);
-                            //clearInterval(intervalId);
-                            // location.reload();
-                        }
-
-                        if (response.status == 'taking-time' && timeSaveStatus == false) {
-                            let currentRunningTime = $('#timer1').text();
-
-                            timeSaveStatus = true;
-                            console.log('timer save initialized');
-                            $.ajax({
-                                url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${total_score}&deviation=${deviation}`,
-                                method: 'GET',
-                                success: function (response) {
-                                    console.log(response);
-                                    timeSaveStatus = false;
-                                }
-                            })
-                        }
-
-                    }
-                });
-
-
-
-                //if(isTimeGreater(currentRunningTime, lastSavedTime) && currentRunningTime != '00:00') {
-                //    lastSavedTime = currentRunningTime;
-                //    
-                //     $.ajax({
-                //        url: `/save-time?time=${currentRunningTime}&arena=${arena}`,
-                //        method: 'GET',
-                //        success: function(response) {
-                //            console.log(`saved Time : ${currentRunningTime}, arena : ${arena}, last Saved : ${lastSavedTime}`);
-                //        }
-                //    })
-                //}
-            }
-            requestdata();
         }
 
         function isTimeGreater(time1, time2) {
@@ -792,9 +626,9 @@
             return totalSeconds1 > totalSeconds2;
         }
 
+        // Inisialisasi WebSocket dan bootstrap data 1x tanpa interval polling
         websocket();
         calldata();
-        setInterval(calldata, 2000);
     </script>
 </body>
 
