@@ -36,6 +36,53 @@
             $imgData2 = $settingData->partai ?? '';
         }
 
+        $plus1 = score::where('status', 'plus')
+            ->where('partai', $partai)
+            ->where('arena', $id_arena)
+            ->where('id_perserta', $tim_biru)
+            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
+                $query->where('id_sesi', $id_sesi);
+            }, function ($query) {
+                $query->whereNull('id_sesi');
+            })
+            ->sum('score');
+        $minus1 = score::where('status', 'minus')
+            ->where('partai', $partai)
+            ->where('arena', $id_arena)
+            ->where('id_perserta', $tim_biru)
+            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
+                $query->where('id_sesi', $id_sesi);
+            }, function ($query) {
+                $query->whereNull('id_sesi');
+            })
+            ->sum('score');
+        $score1 = $plus1 - $minus1;
+
+        $plus2 = score::where('status', 'plus')
+            ->where('partai', $partai)
+            ->where('arena', $id_arena)
+            ->where('id_perserta', $tim_merah)
+            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
+                $query->where('id_sesi', $id_sesi);
+            }, function ($query) {
+                $query->whereNull('id_sesi');
+            })
+            ->sum('score');
+        $minus2 = score::where('status', 'minus')
+            ->where('partai', $partai)
+            ->where('arena', $id_arena)
+            ->where('id_perserta', $tim_merah)
+            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
+                $query->where('id_sesi', $id_sesi);
+            }, function ($query) {
+                $query->whereNull('id_sesi');
+            })
+            ->sum('score');
+        $score2 = $plus2 - $minus2;
+
+        $wmpConfig = \App\Helpers\GlobalScoreHelper::getWmpConfigForMatch($setting, $tim_birus, $tim_merahs);
+        $isInitialWmp = !empty($wmpConfig['is_active']) && (abs($score1 - $score2) >= ($wmpConfig['threshold'] ?? 30));
+
     @endphp
 </head>
 <style>
@@ -526,6 +573,9 @@
     </section>
     <!-- Button Section -->
     <section>
+        <div id="wmp-alert-banner" class="{{ $isInitialWmp ? '' : 'hidden' }} mx-6 mb-4 p-3 bg-red-600 text-white text-center font-bold text-lg rounded shadow-lg animate-pulse uppercase tracking-wide">
+            ⚠️ Wasit Menghentikan Pertandingan (WMP) — Batas Selisih Poin Tercapai! Tombol Aksi Dinonaktifkan. Silakan Selesaikan Pertandingan.
+        </div>
         <div class="lg:grid lg:grid-cols-5 px-6">
             <!-- Button Biru Section -->
             @php
@@ -626,50 +676,7 @@
                     </button>
                 </div>
                 <div class="flex justify-center">
-                    @php
-                        $plus1 = score::where('status', 'plus')
-                            ->where('partai', $partai)
-                            ->where('arena', $id_arena)
-                            ->where('id_perserta', $tim_biru)
-                            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
-                                $query->where('id_sesi', $id_sesi);
-                            }, function ($query) {
-                                $query->whereNull('id_sesi');
-                            })
-                            ->sum('score');
-                        $minus1 = score::where('status', 'minus')
-                            ->where('partai', $partai)
-                            ->where('arena', $id_arena)
-                            ->where('id_perserta', $tim_biru)
-                            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
-                                $query->where('id_sesi', $id_sesi);
-                            }, function ($query) {
-                                $query->whereNull('id_sesi');
-                            })
-                            ->sum('score');
-                        $score1 = $plus1 - $minus1;
-                        $plus2 = score::where('status', 'plus')
-                            ->where('partai', $partai)
-                            ->where('arena', $id_arena)
-                            ->where('id_perserta', $tim_merah)
-                            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
-                                $query->where('id_sesi', $id_sesi);
-                            }, function ($query) {
-                                $query->whereNull('id_sesi');
-                            })
-                            ->sum('score');
-                        $minus2 = score::where('status', 'minus')
-                            ->where('partai', $partai)
-                            ->where('arena', $id_arena)
-                            ->where('id_perserta', $tim_merah)
-                            ->when($jadwalData->id_sesi ?? null, function ($query, $id_sesi) {
-                                $query->where('id_sesi', $id_sesi);
-                            }, function ($query) {
-                                $query->whereNull('id_sesi');
-                            })
-                            ->sum('score');
-                        $score2 = $plus2 - $minus2;
-                    @endphp
+                    {{-- Score calculated at top --}}
                     <table>
                         <tbody>
                             <tr>
@@ -683,10 +690,14 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="flex justify-center mt-3">
+                <div class="flex flex-col items-center justify-center mt-3 gap-2">
                     <button id="showPemenang"
-                        class="bg-green-600 px-3 py-2 text-white rounded hover:bg-green-400 active:bg-green-800 transition-all duration-100">Tentukan
+                        class="{{ $isInitialWmp ? 'hidden' : '' }} bg-green-600 px-3 py-2 text-white rounded hover:bg-green-400 active:bg-green-800 transition-all duration-100">Tentukan
                         Pemenang</button>
+                    <button id="btnSelesaikanPertandingan" type="button"
+                        class="{{ $isInitialWmp ? '' : 'hidden' }} bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-bold px-6 py-3 rounded-lg shadow-lg border-2 border-white animate-bounce transition-all duration-150 text-xl uppercase tracking-wider">
+                        Selesaikan Pertandingan
+                    </button>
                 </div>
             </div>
             @php
@@ -971,6 +982,42 @@
 
 
 
+            var isWmpActive = {{ $isInitialWmp ? 'true' : 'false' }};
+
+            function setWmpState(active) {
+                isWmpActive = !!active;
+                var actionButtons = $('.button-blue, .button-blue-delete, .button-red, .button-red-delete, .button-jatuhan, #btn-veryfication-jatuhan, #btn-veryfication-hukuman');
+
+                if (isWmpActive) {
+                    actionButtons.prop('disabled', true);
+                    actionButtons.addClass('opacity-50 cursor-not-allowed pointer-events-none');
+                    $('#showPemenang').addClass('hidden');
+                    $('#btnSelesaikanPertandingan').removeClass('hidden');
+                    $('#wmp-alert-banner').removeClass('hidden');
+                } else {
+                    actionButtons.removeClass('opacity-50 cursor-not-allowed pointer-events-none');
+                    actionButtons.prop('disabled', false);
+                    updatePenaltyButtons(lastPenaltyCounts);
+                    $('#showPemenang').removeClass('hidden');
+                    $('#btnSelesaikanPertandingan').addClass('hidden');
+                    $('#wmp-alert-banner').addClass('hidden');
+                }
+            }
+
+            $('#btnSelesaikanPertandingan').on('click', function () {
+                let list = $('#listPemenang');
+                list.removeClass('hidden').addClass('block');
+
+                // Otomatis tandai W.M.P
+                $("#status-winner").text("W.M.P");
+                $(".btnmenang").removeClass('bg-amber-400 text-black font-bold').addClass('bg-slate-200');
+                $('.btnmenang[name="W.M.P"]').removeClass('bg-slate-200').addClass('bg-amber-400 text-black font-bold');
+
+                $('html, body').animate({
+                    scrollTop: list.offset().top - 20
+                }, 400);
+            });
+
             function WebSocket() {
                 if (window.Echo) {
                     window.Echo.connector.pusher.connection.bind('connected', function () {
@@ -978,20 +1025,18 @@
                     });
                     Echo.channel('dewan-channel')
                         .listen('DewanEvent', (datas) => {
-                            var data = datas.message;
+                            var data = (datas && datas.message) ? datas.message : datas;
 
                             if (arena == data.arena) {
                                 console.log(data);
                                 assignDewan(data.data, data.babak);
                             }
-                            // alert(JSON.stringify(datas.message));
                         });
                     Echo.channel('score-channel')
                         .listen('ScoreEvent', (datas) => {
-                            var data = datas.message;
+                            var data = (datas && datas.message) ? datas.message : datas;
 
                             if (data.arena == arena) {
-                                // console.log(data);
                                 var idbabak = data.babak;
                                 if (idbabak == 1) {
                                     $(`#babak${idbabak}`).css('background-image', 'linear-gradient(to right, #fb923c, #facc15)');
@@ -1007,7 +1052,9 @@
                                     $(`#babak2`).css('background-image', 'linear-gradient(to right, transparent, transparent)');
                                 }
 
-                                assignScore(data); if (data.selisih_20) { $('.bt-notif, .btn-primary, .btn-danger, .btn-warning, .btn-secondary').prop('disabled', true); } else { $('.bt-notif, .btn-primary, .btn-danger, .btn-warning, .btn-secondary').prop('disabled', false); }
+                                assignScore(data);
+                                var isWmp = !!(data.selisih_20 || data.is_wmp);
+                                setWmpState(isWmp);
                             }
 
                         })
@@ -1194,6 +1241,9 @@
             }
 
             function updatePenaltyButtons(counts) {
+                if (isWmpActive) {
+                    return;
+                }
                 // Blue Peringatan
                 $('.btn-peringatan-biru').prop('disabled', counts.biru.peringatan >= 3);
                 if (counts.biru.peringatan >= 3) {
@@ -1316,7 +1366,12 @@
             });
 
             btnveryfication.forEach(function (btn) {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    if (isWmpActive) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
                     var nameAttribute = this.getAttribute('name'); // Mendapatkan nilai atribut "name"
                     // Membagi nilai atribut "name" menjadi objek JavaScript
                     var data = {};
@@ -1482,7 +1537,13 @@
             });
             // Loop melalui semua tombol dan tambahkan event listener
             tombolDenganKelas.forEach(function (tombol) {
-                tombol.addEventListener('click', function () {
+                tombol.addEventListener('click', function (e) {
+                    if (isWmpActive) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
+
                     var nameAttribute = this.getAttribute('name'); // Mendapatkan nilai atribut "name"
 
                     // Membagi nilai atribut "name" menjadi objek JavaScript
@@ -1510,13 +1571,21 @@
                             // Lakukan sesuatu dengan respons dari server (opsional)
                             console.log(data);
                             // console.log('aa');
-                            $('button').prop('disabled', false);
-                            updatePenaltyButtons(lastPenaltyCounts);
+                            if (isWmpActive) {
+                                setWmpState(true);
+                            } else {
+                                $('button').prop('disabled', false);
+                                updatePenaltyButtons(lastPenaltyCounts);
+                            }
                         })
                         .catch(error => {
                             console.log(error);
-                            $('button').prop('disabled', false);
-                            updatePenaltyButtons(lastPenaltyCounts);
+                            if (isWmpActive) {
+                                setWmpState(true);
+                            } else {
+                                $('button').prop('disabled', false);
+                                updatePenaltyButtons(lastPenaltyCounts);
+                            }
                             // Tangani kesalahan jika ada
                         });
                     // reload();
@@ -1552,6 +1621,10 @@
                         });
                     // setInterval(jadwal, 800);
                 });
+            });
+
+            $(document).ready(function () {
+                setWmpState(isWmpActive);
             });
 
             WebSocket();

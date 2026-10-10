@@ -146,8 +146,8 @@
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
             echo '<script>
-                                                                                                                                                                                        window.history.back();
-                                                                                                                                                                                    </script>';
+                                                                                                                                                                                                window.history.back();
+                                                                                                                                                                                            </script>';
             exit();
         }
 
@@ -268,7 +268,7 @@
                         <td class="" style="font-size: 3em" id="actual{{ $i }}"></td>
                     @endfor
                 </tr>
-                <tr>c
+                <tr>
                     @for ($i = 1; $i <= $totaljuri; $i++)
                         <td class="text-primary fw-bold" style="font-size: 3em" id="flwo{{ $i }}"></td>
                     @endfor
