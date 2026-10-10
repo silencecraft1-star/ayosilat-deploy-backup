@@ -295,7 +295,7 @@
     </div>
     
     <div id=""name="" class="running-text">
-        <img src="../assets/Assets/Ayo Silat.png" alt="" style="width: 70px; background-color: aliceblue; border-radius: 3px; border: 1px solid black;"> 
+        <img src="{{ asset('assets/Assets/garuda-mas.png') }}" alt="" style="width: 70px; background-color: aliceblue; border-radius: 3px; border: 1px solid black;"> 
         <marquee behavior="" direction="Running">
             SH TERATE CUP 1, Ranting Kota, Cabang Kota Kediri Telah Di Mulai || Info Lebih Lanjut kunjungi IG @ayosilat atau menghubungi 0856-4909-2072 || kunjungi ayosilat.com untuk melihat update
         </marquee>

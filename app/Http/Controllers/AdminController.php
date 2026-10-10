@@ -568,38 +568,64 @@ class AdminController extends Controller
 
     public function modifyCategory(Request $request)
     {
-        // $request->validate([
-        //     'nama' => 'required|string|max:255',
-        //     'umur' => 'required',
-        //     'status' => 'required'
-        // ]);
-
         $statusData = $request->input('status');
 
         if ($statusData == "add") {
             $nama = $request->input('nama');
             $umur = $request->input('umur');
+            $perbedaanPoinInput = $request->input('perbedaan_poin');
+            $isWmp = $request->boolean('is_wmp', true);
+
+            if ($perbedaanPoinInput !== null && $perbedaanPoinInput !== '' && is_numeric($perbedaanPoinInput)) {
+                $perbedaanPoin = (int) $perbedaanPoinInput;
+            } else {
+                if (preg_match('/pra[\s\-_]?remaja/i', (string) $nama)) {
+                    $perbedaanPoin = 20;
+                } else {
+                    $perbedaanPoin = 30;
+                }
+            }
 
             $data = [
                 'name' => $nama,
-                'keterangan' => $umur
+                'keterangan' => $umur,
+                'perbedaan_poin' => $perbedaanPoin,
+                'is_wmp' => $isWmp,
             ];
 
             category::create($data);
         } elseif ($statusData == "edit") {
             $nama = $request->input('nama');
             $umur = $request->input('umur');
+            $perbedaanPoinInput = $request->input('perbedaan_poin');
+            $isWmp = $request->boolean('is_wmp');
+
+            if ($perbedaanPoinInput !== null && $perbedaanPoinInput !== '' && is_numeric($perbedaanPoinInput)) {
+                $perbedaanPoin = (int) $perbedaanPoinInput;
+            } else {
+                if (preg_match('/pra[\s\-_]?remaja/i', (string) $nama)) {
+                    $perbedaanPoin = 20;
+                } else {
+                    $perbedaanPoin = 30;
+                }
+            }
 
             $data = [
                 'name' => $nama,
-                'keterangan' => $umur
+                'keterangan' => $umur,
+                'perbedaan_poin' => $perbedaanPoin,
+                'is_wmp' => $isWmp,
             ];
 
             $dataTarget = category::where('id', $request->input('idEdit'))->first();
-            $dataTarget->update($data);
+            if ($dataTarget) {
+                $dataTarget->update($data);
+            }
         } elseif ($statusData == "hapus") {
             $dataTarget = category::where('id', $request->input('idHapus'))->first();
-            $dataTarget->delete();
+            if ($dataTarget) {
+                $dataTarget->delete();
+            }
         }
 
         $status = 'admin';

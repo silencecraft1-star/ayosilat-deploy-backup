@@ -462,7 +462,7 @@
                         </div>
                     </div>
                     <div class="flex justify-center items-center">
-                        <img src="{{ asset('assets/Assets/Ayo Silat.png') }}" class="icon-size-2" alt="">
+                        <img src="{{ asset('assets/Assets/garuda-mas.png') }}" class="icon-size-2" alt="">
                     </div>
                 </div>
             </div>

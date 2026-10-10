@@ -24,6 +24,7 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Range Umur</th>
+                            <th>Selisih Poin WMP</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -33,6 +34,13 @@
                                 <td>{{ $loop->index+1 }}</td>
                                 <td> {{$item->name}}</td>
                                 <td> {{ $item->keterangan }}</td>
+                                <td>
+                                    @if ($item->is_wmp)
+                                        <span class="badge bg-success fs-6">Aktif ({{ $item->perbedaan_poin ?? 30 }} Poin)</span>
+                                    @else
+                                        <span class="badge bg-secondary fs-6">Nonaktif (Tanpa WMP)</span>
+                                    @endif
+                                </td>
                                 <td class="text-end">
                                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{$item->id}}">Edit</button>
                                     <button class="btn btn-danger btn-sm delete-button" data-bs-toggle="modal" data-bs-target="#deleteModal{{$item->id}}">Delete</button>
@@ -73,14 +81,26 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="exampleInputUsername1" class="form-label">Nama</label>
-                                                <input type="text" name="nama" id="nama" class="form-control" id="exampleInputUsername1" autocomplete="off" placeholder="Nama Kelas" value="{{$item->name}}">
+                                                <label for="nama_{{$item->id}}" class="form-label">Nama</label>
+                                                <input type="text" name="nama" id="nama_{{$item->id}}" class="form-control" autocomplete="off" placeholder="Nama Kelas" value="{{$item->name}}">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="exampleInputEmail1" class="form-label">Range Umur</label>
-                                                <input type="text" name="umur" id="umur" class="form-control" id="exampleInputEmail1" placeholder="Umur" value="{{$item->keterangan}}">
-                                                <input type="hidden" name="idEdit" id="idEdit" value="{{$item->id}}">
-                                                <input type="hidden" name="status" id="status" value="edit">
+                                                <label for="umur_{{$item->id}}" class="form-label">Range Umur</label>
+                                                <input type="text" name="umur" id="umur_{{$item->id}}" class="form-control" placeholder="Umur" value="{{$item->keterangan}}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch mb-2">
+                                                    <input type="hidden" name="is_wmp" value="0">
+                                                    <input type="checkbox" class="form-check-input" id="is_wmp_{{$item->id}}" name="is_wmp" value="1" {{ $item->is_wmp ? 'checked' : '' }} onchange="toggleWmpField('{{$item->id}}')">
+                                                    <label class="form-check-label fw-bold" for="is_wmp_{{$item->id}}">Gunakan Batas Selisih Poin WMP</label>
+                                                </div>
+                                                <div id="wmp_group_{{$item->id}}" style="{{ $item->is_wmp ? '' : 'display: none;' }}">
+                                                    <label for="perbedaan_poin_{{$item->id}}" class="form-label">Perbedaan Poin WMP</label>
+                                                    <input type="number" name="perbedaan_poin" id="perbedaan_poin_{{$item->id}}" class="form-control" placeholder="Default: 30 (Pra Remaja: 20)" value="{{$item->perbedaan_poin ?? 30}}" min="1">
+                                                    <small class="text-muted">Batas selisih poin untuk Wasit Menghentikan Pertandingan (Remaja: 30, Pra Remaja: 20, Default: 30)</small>
+                                                </div>
+                                                <input type="hidden" name="idEdit" id="idEdit_{{$item->id}}" value="{{$item->id}}">
+                                                <input type="hidden" name="status" id="status_{{$item->id}}" value="edit">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -117,6 +137,18 @@
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Range Umur</label>
                                 <input type="text" name="umur" id="umur" class="form-control" id="exampleInputEmail1" placeholder="Umur">
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch mb-2">
+                                    <input type="hidden" name="is_wmp" value="0">
+                                    <input type="checkbox" class="form-check-input" id="is_wmp_add" name="is_wmp" value="1" checked onchange="toggleWmpField('add')">
+                                    <label class="form-check-label fw-bold" for="is_wmp_add">Gunakan Batas Selisih Poin WMP</label>
+                                </div>
+                                <div id="wmp_group_add">
+                                    <label for="perbedaan_poin_add" class="form-label">Perbedaan Poin WMP</label>
+                                    <input type="number" name="perbedaan_poin" id="perbedaan_poin_add" class="form-control" placeholder="Default: 30 (Pra Remaja: 20)" value="30" min="1">
+                                    <small class="text-muted">Batas selisih poin untuk Wasit Menghentikan Pertandingan (Remaja: 30, Pra Remaja: 20, Default: 30)</small>
+                                </div>
                                 <input type="hidden" name="status" id="status" value="add">
                             </div>
                     </div>
@@ -140,4 +172,13 @@
     @push('custom-scripts')
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/data-table.js') }}"></script>
+    <script>
+        function toggleWmpField(id) {
+            const checkbox = document.getElementById('is_wmp_' + id);
+            const group = document.getElementById('wmp_group_' + id);
+            if (checkbox && group) {
+                group.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+    </script>
     @endpush

@@ -437,7 +437,7 @@
         <div class="row d-flex flex-column h100">
             <div class="bg-dark-subtle border d-flex justify-content-center align-items-center rounded border-black"
                 style="width: 100px; height: 100%;">
-                <img src="../../../assets/Assets/Ayo Silat.png" alt="" style="width: 80%;">
+                <img src="{{ asset('assets/Assets/garuda-mas.png') }}" alt="" style="width: 80%;">
             </div>
             <div class="h100 d-flex align-items-center px-0">
                 <div class="w100 bg-black d-flex align-items-center" style="height: 55px;">

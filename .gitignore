@@ -35,3 +35,6 @@ public/css
 !/storage/logs/.gitignore
 /graphify-out
 /.planning
+
+AGENTS.md
+GEMINI.md

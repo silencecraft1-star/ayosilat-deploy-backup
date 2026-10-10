@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="header-pict">
-            <img src="../assets/Assets/Ayo Silat.png" alt=""
+            <img src="{{ asset('assets/Assets/garuda-mas.png') }}" alt=""
                 style="width: 150%; height: 50px; margin-left: auto; background-color: rgb(154, 154, 154); border-radius: 5px; border: 1px solid black;">
         </div>
     </div>

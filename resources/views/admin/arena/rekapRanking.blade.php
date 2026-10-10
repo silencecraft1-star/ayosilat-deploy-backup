@@ -52,6 +52,15 @@
             return $b->winner_score <=> $a->winner_score;
         })->values();
 
+        $fmtScore = function($val) {
+            if (!is_numeric($val)) return $val ?? '0.00';
+            $num = round(floatval($val) + 1e-9, 3);
+            $parts = explode('.', sprintf('%.3f', $num));
+            $int = $parts[0];
+            $dec = rtrim($parts[1], '0');
+            if (strlen($dec) < 2) $dec = str_pad($dec, 2, '0');
+            return $int . '.' . $dec;
+        };
     @endphp
     <div class="m-5">
         <!-- Header Info -->
@@ -111,7 +120,7 @@
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$nama}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$kontigen}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300 font-bold text-blue-700">
-                                    {{$items->winner_score}}</td>
+                                    {{$fmtScore($items->winner_score)}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">
                                     {{$items->winner_timer ?? '00:00'}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$items->winner_deviasi ?? '0'}}
@@ -130,8 +139,30 @@
 
         <!-- TABEL PEMASALAN -->
         <div>
-            <div class="text-center mb-3 text-3xl font-bold text-green-800">
-                Ranking Seni - PEMASALAN
+            @php
+                $isPemasalanComplete = (count($dataPemasalan) > 0) && $dataPemasalan->every(function ($item) {
+                    $statusDone = in_array(strtolower($item->status ?? ''), ['selesai', 'finish', 'diskualifikasi']);
+                    $hasScore = ($item->score_biru !== null && $item->score_biru !== '' && floatval($item->score_biru) > 0);
+                    return $statusDone && $hasScore;
+                });
+            @endphp
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-3 gap-2">
+                <div class="text-3xl font-bold text-green-800">
+                    Ranking Seni - PEMASALAN
+                </div>
+                <div>
+                    @if($isPemasalanComplete)
+                        <span class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full border border-green-300 text-sm">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Pool Selesai (Medali Diberikan)
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full border border-amber-300 text-sm">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Pool Belum Tuntas (Menunggu Semua Selesai & Ada Nilai)
+                        </span>
+                    @endif
+                </div>
             </div>
             <div class="overflow-auto shadow-xl rounded">
                 <table class="table-primary w-full rounded shadow-xl">
@@ -140,6 +171,9 @@
                             <th
                                 class="text-center bg-green-600 py-2 text-xl text-neutral-100 px-3 border border-neutral-400">
                                 Ranking</th>
+                            <th
+                                class="text-center bg-green-600 py-2 text-xl text-neutral-100 px-4 border border-neutral-400">
+                                Medali</th>
                             <th
                                 class="text-center bg-green-600 py-2 text-xl text-neutral-100 px-5 border border-neutral-400">
                                 Nama</th>
@@ -168,10 +202,25 @@
                             <tr class="{{ $index % 2 == 0 ? 'bg-white' : 'bg-gray-50' }} hover:bg-green-50 transition-colors">
                                 <td class="text-center border text-xl py-2 border-neutral-300 font-bold text-gray-700">
                                     {{$index + 1}}</td>
+                                <td class="text-center border text-base py-2 border-neutral-300 font-bold">
+                                    @if($isPemasalanComplete)
+                                        @if($index == 0)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-yellow-100 text-yellow-800 border border-yellow-300 shadow-sm">🥇 Emas</span>
+                                        @elseif($index == 1)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-slate-200 text-slate-800 border border-slate-300 shadow-sm">🥈 Perak</span>
+                                        @elseif($index == 2 || $index == 3)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300 shadow-sm">🥉 Perunggu</span>
+                                        @else
+                                            <span class="text-gray-400 text-sm font-normal">-</span>
+                                        @endif
+                                    @else
+                                        <span class="text-gray-400 text-xs italic">Menunggu Pool</span>
+                                    @endif
+                                </td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$nama}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$kontigen}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300 font-bold text-green-700">
-                                    {{$items->score_biru}}</td>
+                                    {{$fmtScore($items->score_biru)}}</td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$items->timer_biru ?? '00:00'}}
                                 </td>
                                 <td class="text-center border text-xl py-2 border-neutral-300">{{$items->deviasi_biru ?? '0'}}
@@ -180,7 +229,7 @@
                         @endforeach
                         @if(count($dataPemasalan) == 0)
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-gray-500">Belum ada data pemasalan</td>
+                                <td colspan="7" class="text-center py-4 text-gray-500">Belum ada data pemasalan</td>
                             </tr>
                         @endif
                     </tbody>

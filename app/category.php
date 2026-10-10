@@ -13,5 +13,11 @@ class category extends Model
         'name',
         'status',
         'keterangan',
+        'perbedaan_poin',
+        'is_wmp',
+    ];
+
+    protected $casts = [
+        'is_wmp' => 'boolean',
     ];
 }

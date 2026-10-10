@@ -26,6 +26,74 @@ use App\Events\IndicatorEvent;
 
 class GlobalScoreHelper
 {
+    /**
+     * Resolusi konfigurasi WMP (status aktif & threshold perbedaan poin) berdasarkan kategori pesilat.
+     *
+     * @param mixed $setting
+     * @param mixed $pesertaBiru
+     * @param mixed $pesertaMerah
+     * @return array ['is_active' => bool, 'threshold' => int]
+     */
+    public static function getWmpConfigForMatch($setting, $pesertaBiru = null, $pesertaMerah = null)
+    {
+        $kategoriId = null;
+        if ($pesertaBiru && !empty($pesertaBiru->category)) {
+            $kategoriId = $pesertaBiru->category;
+        } elseif ($pesertaMerah && !empty($pesertaMerah->category)) {
+            $kategoriId = $pesertaMerah->category;
+        }
+
+        if ($kategoriId) {
+            $category = category::where('id', $kategoriId)->first();
+            if ($category) {
+                // Jika kategori ini secara eksplisit menonaktifkan WMP (is_wmp = false / 0)
+                if (isset($category->is_wmp) && !$category->is_wmp) {
+                    return [
+                        'is_active' => false,
+                        'threshold' => (int) ($category->perbedaan_poin ?? 30),
+                    ];
+                }
+
+                $threshold = 30;
+                if ($category->perbedaan_poin !== null && is_numeric($category->perbedaan_poin) && (int) $category->perbedaan_poin > 0) {
+                    $threshold = (int) $category->perbedaan_poin;
+                } else {
+                    $categoryName = (string) $category->name;
+                    if (preg_match('/pra[\s\-_]?remaja/i', $categoryName)) {
+                        $threshold = 20;
+                    } elseif (preg_match('/remaja/i', $categoryName)) {
+                        $threshold = 30;
+                    }
+                }
+
+                return [
+                    'is_active' => true,
+                    'threshold' => $threshold,
+                ];
+            }
+        }
+
+        return [
+            'is_active' => true,
+            'threshold' => 30,
+        ];
+    }
+
+    /**
+     * Resolusi threshold perbedaan poin WMP (Wasit Menghentikan Pertandingan) berdasarkan kategori pesilat.
+     * Default: 30 poin, Pra Remaja: 20 poin, Remaja: 30 poin.
+     *
+     * @param mixed $setting
+     * @param mixed $pesertaBiru
+     * @param mixed $pesertaMerah
+     * @return int
+     */
+    public static function getWmpThresholdForMatch($setting, $pesertaBiru = null, $pesertaMerah = null)
+    {
+        $config = self::getWmpConfigForMatch($setting, $pesertaBiru, $pesertaMerah);
+        return $config['threshold'];
+    }
+
     public function sendTandingScore($arena, $sesi, $partai, $tipe = null, $keterangan = "score")
     {
         $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
@@ -162,19 +230,30 @@ class GlobalScoreHelper
         }, function ($query) {
             $query->whereNull('id_sesi');
         })->count();
-        //dd($arena, $partaiFinal, $sesi, $setting);
-        $statusPertandingan = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
-            $query->where('id_sesi', $sesi);
-        }, function ($query) {
-            $query->whereNull('id_sesi');
-        })->first()->status ?? "pending";
-        $keteranganPertandingan = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
-            $query->where('id_sesi', $sesi);
-        }, function ($query) {
-            $query->whereNull('id_sesi');
-        })->first()->keterangan ?? "Pemasalan";
-        $infoKelas = kelas::where('id', $pesertaMerah->kelas)->first()->name;
-        $infoKategori = category::where('id', $pesertaMerah->category)->first()->name;
+        $jadwalGroupObj = null;
+        if (!empty($setting->jadwal)) {
+            $jadwalGroupObj = jadwal_group::where('id', $setting->jadwal)->first();
+        }
+        if (!$jadwalGroupObj) {
+            $jadwalGroupObj = jadwal_group::where('arena', $arena)->where('partai', $partaiFinal)->when($sesi ?? null, function ($query, $sesi) {
+                $query->where('id_sesi', $sesi);
+            }, function ($query) {
+                $query->whereNull('id_sesi');
+            })->first();
+        }
+
+        $statusPertandingan = $jadwalGroupObj->status ?? "pending";
+        $keteranganPertandingan = $jadwalGroupObj->keterangan ?? "PENYISIHAN";
+        if (empty($keteranganPertandingan) || strtolower($keteranganPertandingan) === 'pemasalan') {
+            $keteranganPertandingan = "PENYISIHAN";
+        }
+
+        $pesertaRef = $pesertaMerah ?: $pesertaBiru;
+        $kelasRow = ($pesertaRef && $pesertaRef->kelas) ? kelas::where('id', $pesertaRef->kelas)->first() : null;
+        $kategoriRow = ($pesertaRef && $pesertaRef->category) ? category::where('id', $pesertaRef->category)->first() : null;
+        $infoKelas = $kelasRow->name ?? '-';
+        $infoKategori = $kategoriRow->name ?? '-';
+        $infoGender = $pesertaRef->gender ?? '-';
 
 
         if (!empty($setting)) {
@@ -217,7 +296,9 @@ class GlobalScoreHelper
                     'tendanganb' => $tendanganb,
                     'tendanganm' => $tendanganm,
                     'infoKelas' => "$infoKelas | $infoKategori",
-                    'infoGender' => $pesertaMerah->gender ?? '-',
+                    'namaKelas' => $infoKelas,
+                    'namaKategori' => $infoKategori,
+                    'infoGender' => $infoGender,
                     'jatuh1' => 0,
                     'binaan1' => 0,
                     'teguran1' => 0,
@@ -357,7 +438,15 @@ class GlobalScoreHelper
 
                 }
 
-                $response['selisih_20'] = abs($response['score1'] - $response['score2']) > 20;
+                $wmpConfig = self::getWmpConfigForMatch($setting, $pesertaBiru, $pesertaMerah);
+                $wmpThreshold = $wmpConfig['threshold'];
+                $isWmpActive = $wmpConfig['is_active'];
+                $isWmp = $isWmpActive && (abs($response['score1'] - $response['score2']) >= $wmpThreshold);
+
+                $response['selisih_20'] = $isWmp;
+                $response['is_wmp'] = $isWmp;
+                $response['wmp_active'] = $isWmpActive;
+                $response['wmp_threshold'] = $wmpThreshold;
 
                 if ($tipe == null) {
                     event(new ScoreEvent($response));
@@ -383,10 +472,36 @@ class GlobalScoreHelper
             })->get();
 
         $biruData = PersertaModel::where('id', $settingData->biru)->first();
-        $kontigenBiru = KontigenModel::where('id', $biruData->id_kontigen)->first();
+        $kontigenBiru = $biruData ? KontigenModel::where('id', $biruData->id_kontigen)->first() : null;
 
         $merahData = PersertaModel::where('id', $settingData->merah)->first();
-        $kontigenMerah = KontigenModel::where('id', $merahData->id_kontigen)->first();
+        $kontigenMerah = $merahData ? KontigenModel::where('id', $merahData->id_kontigen)->first() : null;
+
+        $jadwalData = null;
+        if (!empty($settingData->jadwal)) {
+            $jadwalData = jadwal_group::where('id', $settingData->jadwal)->first();
+        }
+        if (!$jadwalData) {
+            $jadwalData = jadwal_group::where('arena', $arena)
+                ->where('partai', $settingData->partai)
+                ->when($sesi ?? null, function ($query, $sesi) {
+                    $query->where('id_sesi', $sesi);
+                }, function ($query) {
+                    $query->whereNull('id_sesi');
+                })->first();
+        }
+
+        $keteranganPertandingan = $jadwalData->keterangan ?? 'PENYISIHAN';
+        if (empty($keteranganPertandingan) || strtolower($keteranganPertandingan) === 'pemasalan') {
+            $keteranganPertandingan = 'PENYISIHAN';
+        }
+
+        $refPeserta = $merahData ?: $biruData;
+        $kelasInfo = ($refPeserta && $refPeserta->kelas) ? kelas::where('id', $refPeserta->kelas)->first() : null;
+        $kategoriInfo = ($refPeserta && $refPeserta->category) ? category::where('id', $refPeserta->category)->first() : null;
+        $namaKelas = $kelasInfo->name ?? '-';
+        $namaKategori = $kategoriInfo->name ?? '-';
+        $gender = $refPeserta->gender ?? '-';
 
         $data = [
             'arena' => $arena,
@@ -394,20 +509,25 @@ class GlobalScoreHelper
             'data' => $pendingSend,
             'babak' => $settingData->babak,
             'partai' => $settingData->partai,
+            'keteranganPertandingan' => $keteranganPertandingan,
+            'namaKelas' => $namaKelas,
+            'namaKategori' => $namaKategori,
+            'infoKelas' => "$namaKelas | $namaKategori",
+            'infoGender' => $gender,
             'juri' => [
                 'juri_1' => $settingData->juri_1,
                 'juri_2' => $settingData->juri_2,
                 'juri_3' => $settingData->juri_3,
             ],
             'biru' => [
-                'id' => $biruData->id,
-                'nama' => $biruData->name,
-                'kontigen' => $kontigenBiru->kontigen
+                'id' => $biruData->id ?? '',
+                'nama' => $biruData->name ?? '',
+                'kontigen' => $kontigenBiru->kontigen ?? ''
             ],
             'merah' => [
-                'id' => $merahData->id,
-                'nama' => $merahData->name,
-                'kontigen' => $kontigenMerah->kontigen
+                'id' => $merahData->id ?? '',
+                'nama' => $merahData->name ?? '',
+                'kontigen' => $kontigenMerah->kontigen ?? ''
             ]
         ];
 
@@ -712,7 +832,8 @@ class GlobalScoreHelper
         $id = $settingData->biru;
 
         $data = score::where('id_perserta', $id)->where('partai', $partai)->where('arena', $arena)->get();
-        $dewan = $data->where('status', 'seni_minus')->sum('score');
+        $penaltiesSummary = get_dewan_penalties_summary($id, $arena, $partai);
+        $dewan = $penaltiesSummary['total_score'];
         $jadwalGanda = jadwal_group::where('id', $settingData->jadwal)->first();
 
         $pesertaBiru = PersertaModel::where('id', $settingData->biru)->first();
@@ -758,6 +879,7 @@ class GlobalScoreHelper
             'firmness7' => 0,
             'firmness8' => 0,
             'dewan' => (float)$dewan,
+            'penalties' => $penaltiesSummary['items'],
             'time' => $settingData->time,
             'status' => $settingData->status,
             'keterangan_jadwal' => ($jadwalGanda && $jadwalGanda->keterangan) ? $jadwalGanda->keterangan : 'pemasalan',
@@ -808,7 +930,8 @@ class GlobalScoreHelper
         }
 
         $data = score::where('id_perserta', $pesertaBiru->id)->where('partai', $partai)->where('arena', $arena)->get();
-        $dewan = $data->where('status', 'seni_minus')->sum('score');
+        $penaltiesSummary = get_dewan_penalties_summary($pesertaBiru->id, $arena, $partai);
+        $dewan = $penaltiesSummary['total_score'];
         $jadwalTunggal = jadwal_group::where('id', $settingData->jadwal)->first();
 
         $partaiFinal = $settingData->partai;
@@ -851,7 +974,8 @@ class GlobalScoreHelper
             'flwo6' => 0,
             'flwo7' => 0,
             'flwo8' => 0,
-            'dewan' => number_format($dewan, 2),
+            'dewan' => (float)$dewan,
+            'penalties' => $penaltiesSummary['items'],
             'time' => $settingData->time,
             'status' => $settingData->status,
             'keterangan_jadwal' => ($jadwalTunggal && $jadwalTunggal->keterangan) ? $jadwalTunggal->keterangan : 'pemasalan',
@@ -978,5 +1102,183 @@ class GlobalScoreHelper
         ];
 
         event(new SoloEvent($datas));
+    }
+
+    /**
+     * Hitung resmi skor seni (Solo / Tunggal) dan simpan langsung ke jadwal_group serta Setting
+     * Memastikan data pertandingan seni 100% tersimpan ke jadwal saat Dewan menyelesaikan pertandingan,
+     * tanpa bergantung pada tab monitor/scoreboard eksternal.
+     *
+     * @param int|string $arena
+     * @param string $kategori 'solo'|'tunggal'|'ganda'
+     * @param int|string|null $id_user
+     * @return array|null
+     */
+    public static function calculateAndSaveSeniMatchResult($arena, $kategori = 'solo', $id_user = null)
+    {
+        $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+
+        if (!$settingData) {
+            return null;
+        }
+
+        $jadwal = jadwal_group::where('id', $settingData->jadwal)->first();
+        if (!$jadwal) {
+            return null;
+        }
+
+        $targetUser = $id_user ?? $settingData->biru;
+        $isMerah = ($jadwal->merah == $targetUser);
+
+        // Ambil jumlah juri dari admin-setting (default 4)
+        $settingGlobal = Setting::where('keterangan', 'admin-setting')->first();
+        $juriCount = (int)($settingGlobal->jadwal ?? 4);
+        if ($juriCount < 1) {
+            $juriCount = 4;
+        }
+
+        $isTunggal = (strtolower((string)$kategori) === 'tunggal');
+        $partai = $settingData->partai;
+        $scoresPerJuri = [];
+
+        for ($i = 1; $i <= $juriCount; $i++) {
+            $juriField = 'juri_' . $i;
+            $juriId = $settingData->$juriField;
+
+            if ($isTunggal) {
+                // Tunggal: actual + flwo
+                $actual = score::where('id_perserta', $targetUser)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juriId)
+                    ->where('keterangan', 'actual')
+                    ->value('score');
+                $actual = $actual !== null ? (float)$actual : 9.90;
+
+                $flwo = score::where('id_perserta', $targetUser)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juriId)
+                    ->where('keterangan', 'flwo')
+                    ->value('score');
+                $flwo = $flwo !== null ? (float)$flwo : 0.00;
+
+                $jScore = round($actual + $flwo, 3);
+            } else {
+                // Solo / Ganda: attack + firmness + soulfullness + 9.10
+                $att = score::where('id_perserta', $targetUser)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juriId)
+                    ->where('keterangan', 'attack')
+                    ->value('score') ?? 0;
+                $firm = score::where('id_perserta', $targetUser)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juriId)
+                    ->where('keterangan', 'firmness')
+                    ->value('score') ?? 0;
+                $soul = score::where('id_perserta', $targetUser)
+                    ->where('arena', $arena)
+                    ->where('partai', $partai)
+                    ->where('id_juri', $juriId)
+                    ->where('keterangan', 'soulfullness')
+                    ->value('score') ?? 0;
+
+                $jScore = round((float)$att + (float)$firm + (float)$soul + 9.10, 3);
+            }
+
+            $scoresPerJuri[] = $jScore;
+        }
+
+        // Kalkulasi Median
+        $sortedScores = $scoresPerJuri;
+        sort($sortedScores);
+        $count = count($sortedScores);
+        if ($count > 0) {
+            $mid = (int)floor($count / 2);
+            if ($count % 2 === 0) {
+                $median = ($sortedScores[$mid - 1] + $sortedScores[$mid]) / 2;
+            } else {
+                $median = $sortedScores[$mid];
+            }
+        } else {
+            $median = 0.0;
+        }
+        $median = round($median, 3);
+
+        // Pengurangan Dewan
+        $penalties = get_dewan_penalties_summary($targetUser, $arena, $partai);
+        $totalDewan = (float)($penalties['total_score'] ?? 0);
+
+        // Skor Akhir Resmi (Presisi minimal 2 digit, maksimal 3 digit desimal)
+        $finalScore = max(0, round($median - $totalDewan, 3));
+        $finalScoreFormatted = format_final_score_precision($finalScore);
+
+        // Deviasi Standar (Presisi penuh tanpa pembulatan pemotongan)
+        $deviation = 0.0;
+        if ($count > 0) {
+            $avg = array_sum($scoresPerJuri) / $count;
+            $variance = 0.0;
+            foreach ($scoresPerJuri as $sc) {
+                $variance += pow($sc - $avg, 2);
+            }
+            $deviation = sqrt($variance / $count);
+        }
+
+        // Waktu Pertandingan
+        $savedTime = $settingData->time 
+            ?? ($isMerah ? $jadwal->timer_merah : $jadwal->timer_biru) 
+            ?? $jadwal->kondisi 
+            ?? '00:00;00';
+        $timerParsed = parse_timer_display($savedTime);
+        $formattedTimer = $timerParsed['formatted'];
+
+        // Persist langsung ke jadwal_group
+        if ($isMerah) {
+            $jadwal->update([
+                'score_merah' => $finalScoreFormatted,
+                'deviasi_merah' => $deviation,
+                'timer_merah' => $formattedTimer,
+                'status' => 'finish',
+            ]);
+        } else {
+            $jadwal->update([
+                'score_biru' => $finalScoreFormatted,
+                'deviasi_biru' => $deviation,
+                'timer_biru' => $formattedTimer,
+                'status' => 'finish',
+            ]);
+        }
+
+        // Update Setting arena status menjadi finish
+        $settingData->update([
+            'status' => 'finish',
+            'time' => $formattedTimer,
+        ]);
+
+        // Cek medali pemasalan jika relevan
+        if ($jadwal->keterangan === 'pemasalan' && !empty($jadwal->id_poll)) {
+            \App\Http\Controllers\RekapController::checkAndAssignMedaliSeniPemasalan($jadwal->id_poll);
+        }
+
+        // Broadcast websocket agar monitor & score screen terupdate
+        $helper = new self();
+        if ($isTunggal) {
+            $helper->sendTunggalData($arena);
+        } else {
+            $helper->sendSoloData($arena);
+        }
+
+        return [
+            'final_score' => $finalScoreFormatted,
+            'median' => $median,
+            'deviation' => $deviation,
+            'dewan' => $totalDewan,
+            'timer' => $formattedTimer,
+            'selected' => $isMerah ? 'merah' : 'biru',
+            'scores_per_juri' => $scoresPerJuri,
+        ];
     }
 }

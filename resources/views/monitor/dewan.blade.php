@@ -5,22 +5,55 @@
         use App\arena;
         use App\PersertaModel;
         use App\kelas;
-        // --- Data Initialization (from controller) ---
-        $pending_scores = $datakp['data']; // Collection of all pending_tanding records
-        $currentRound = $datakp['babak'];
-        $teamBlue = $datakp['biru'];
-        $teamRed = $datakp['merah'];
-        $arena = $datakp['arena'];
-        $juriMap = $datakp['juri']; // Access the new Juri IDs: ['juri_1' => ID_A, 'juri_2' => ID_B, ...]
-        $arenaData = arena::where('id', $arena)->first();
+        use App\category;
+        use App\jadwal_group;
+        use App\Setting;
 
-        // Fetch Category/Class Info
-        $peserta = PersertaModel::where('id', $teamBlue['id'])->first();
-        $infoKategori = '';
-        if ($peserta) {
-            $kelasData = kelas::where('id', $peserta->kelas)->first();
-            $infoKategori = strtoupper(($peserta->gender ?? '') . ($kelasData ? "| Kelas " . $kelasData->name : ""));
+        // --- Data Initialization (from controller) ---
+        $pending_scores = $datakp['data'] ?? []; // Collection of all pending_tanding records
+        $currentRound = $datakp['babak'] ?? 1;
+        $teamBlue = $datakp['biru'] ?? [];
+        $teamRed = $datakp['merah'] ?? [];
+        $arena = $datakp['arena'] ?? 1;
+        $juriMap = $datakp['juri'] ?? []; // Access the new Juri IDs: ['juri_1' => ID_A, 'juri_2' => ID_B, ...]
+        $arenaData = arena::where('id', $arena)->first();
+        $partaiNomor = $datakp['partai'] ?? '-';
+
+        // Query Setting & Jadwal Group untuk sinkronisasi akurat dengan Halaman Dewan
+        $settingObj = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $jadwalData = null;
+        if ($settingObj && !empty($settingObj->jadwal)) {
+            $jadwalData = jadwal_group::where('id', $settingObj->jadwal)->first();
         }
+        if (!$jadwalData) {
+            $jadwalData = jadwal_group::where('arena', $arena)
+                ->where('partai', $partaiNomor)
+                ->when($datakp['sesi'] ?? null, function ($query, $sesi) {
+                    $query->where('id_sesi', $sesi);
+                }, function ($query) {
+                    $query->whereNull('id_sesi');
+                })->first();
+        }
+
+        // Keterangan Pertandingan (Babak Jadwal) - Tanding TIDAK PERNAH Pemasalan
+        $keteranganPertandingan = $datakp['keteranganPertandingan'] ?? ($jadwalData->keterangan ?? 'PENYISIHAN');
+        if (empty($keteranganPertandingan) || strtolower($keteranganPertandingan) === 'pemasalan') {
+            $keteranganPertandingan = ($jadwalData && $jadwalData->keterangan && strtolower($jadwalData->keterangan) !== 'pemasalan') 
+                ? $jadwalData->keterangan 
+                : 'PENYISIHAN';
+        }
+
+        // Ambil Data Peserta (Merah / Biru) untuk Kelas, Kategori, Gender
+        $pesertaBiru = PersertaModel::where('id', $teamBlue['id'] ?? null)->first();
+        $pesertaMerah = PersertaModel::where('id', $teamRed['id'] ?? null)->first();
+        $refPeserta = $pesertaMerah ?: $pesertaBiru;
+
+        $kelasData = ($refPeserta && $refPeserta->kelas) ? kelas::where('id', $refPeserta->kelas)->first() : null;
+        $kategoriData = ($refPeserta && $refPeserta->category) ? category::where('id', $refPeserta->category)->first() : null;
+
+        $namaKelas = $datakp['namaKelas'] ?? ($kelasData->name ?? '-');
+        $namaKategori = $datakp['namaKategori'] ?? ($kategoriData->name ?? '-');
+        $gender = $datakp['infoGender'] ?? ($refPeserta->gender ?? '-');
 
         $tim_biru_id = $teamBlue['id'] ?? '';
         $tim_merah_id = $teamRed['id'] ?? '';
@@ -112,22 +145,42 @@
         }
 
         .arena-name {
-            font-size: 1.5rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: #0d6efd;
+            letter-spacing: 0.5px;
         }
 
-        .match-number {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
+        .match-partai {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #d97706;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            margin-top: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-badge {
+            background-color: #6c757d;
+            color: #ffffff;
+            padding: 5px 14px;
+            border-radius: 50rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
         }
 
         /* --- Grid Layout for Scoring --- */
         .scoring-grid {
             display: grid;
-            grid-template-columns: 1fr 4fr 2fr 4fr 1fr;
-            /* Proportions: 1-4-2-4-1 */
+            grid-template-columns: 80px minmax(0, 1fr) 80px minmax(0, 1fr) 80px;
+            /* Proportions: Left 80px + 1fr, Center (Babak) 80px, Right 1fr + 80px (symmetric & compact center) */
             background: white;
             border-radius: 12px;
             overflow: hidden;
@@ -136,28 +189,44 @@
         }
 
         .grid-header {
-            background: #333;
-            color: white;
-            padding: 15px;
+            padding: 14px 10px;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             text-align: center;
-            border-bottom: 1px solid #444;
-            border-right: 1px solid #444;
+            border-bottom: 2px solid #333;
+            letter-spacing: 0.5px;
         }
 
-        .grid-header:last-child {
+        .grid-header.header-blue {
+            background: #0d6efd;
+            color: white;
+            border-right: 2px solid #333;
+        }
+
+        .grid-header.header-babak {
+            background: #212529;
+            color: white;
+            border-right: 2px solid #333;
+            font-size: 0.95rem;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+
+        .grid-header.header-red {
+            background: #dc3545;
+            color: white;
             border-right: none;
         }
 
         .grid-item {
-            padding: 12px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid #ddd;
             border-right: 1px solid #ddd;
             min-height: 60px;
+            box-sizing: border-box;
         }
 
         /* Remove right border for the last items in each virtual row (which is the 5th column usually, but grid-span complicates it) */
@@ -168,48 +237,47 @@
             font-weight: 700;
             color: #555;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .score-container {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap; /* Collapse kebawah jika point tidak mencukupi container */
             gap: 6px;
-            overflow: hidden;
             min-height: 40px;
             align-items: center;
-            overflow-x: auto;
+            align-content: center;
             width: 100%;
-            scrollbar-width: thin;
-        }
-
-        .score-container::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .score-container::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
+            padding: 2px 0;
         }
 
         .score-container div {
             background: #eee;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 1.1rem;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .babak-cell {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 900;
             background: #fff;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            border-left: 2.5px solid #333;
-            border-right: 2.5px solid #333;
+            border-left: 2px solid #333;
+            border-right: 2px solid #333;
             transition: all 0.3s;
             grid-column: 3;
+            padding: 0;
+            text-align: center;
         }
 
         .active-babak {
@@ -239,19 +307,15 @@
 
             <!-- Arena/Match Info -->
             <div class="arena-info">
-                <div class="arena-name text-uppercase">{{ $arenaData->name }}</div>
-                <div class="d-flex flex-wrap justify-content-center gap-1 mt-2 mb-2">
-                    <span class="badge bg-dark fs-6" id="partai">Partai {{ $datakp["partai"] ?? '-' }}</span>
-                    <span class="badge bg-success fs-6" id="info-keterangan">{{ $datakp["keteranganPertandingan"] ?? 'Pemasalan' }}</span>
-                    @php
-                        $parts = explode(' | ', $infoKategori);
-                        $gender = trim($parts[0] ?? '-');
-                        $kelas = trim(str_replace('Kelas', '', $parts[1] ?? '-'));
-                        $kategori = '-'; // We don't have this in initial dewan load easily, but JS will update it
-                    @endphp
-                    <span class="badge bg-primary fs-6" id="info-kelas">{{ $kelas }}</span>
-                    <span class="badge bg-info fs-6" id="info-kategori">{{ $kategori }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-gender">{{ $gender }}</span>
+                <div class="arena-name text-uppercase">{{ $arenaData->name ?? ('ARENA ' . $arena) }}</div>
+                <div class="match-partai text-uppercase">
+                    Partai <span id="partai-label"><span id="partai">{{ $partaiNomor }}</span></span>
+                </div>
+                <div class="d-flex flex-wrap justify-content-center gap-2 mt-1">
+                    <span class="info-badge" id="info-keterangan">{{ strtoupper($keteranganPertandingan) }}</span>
+                    <span class="info-badge" id="info-kelas">{{ strtoupper($namaKelas) }}</span>
+                    <span class="info-badge" id="info-kategori">{{ strtoupper($namaKategori) }}</span>
+                    <span class="info-badge" id="info-gender">{{ strtoupper($gender) }}</span>
                 </div>
             </div>
 
@@ -267,20 +331,21 @@
             </div>
         </div>
 
-        <!-- Main Scoring Grid (1-4-2-4-1) -->
+        <!-- Main Scoring Grid (Compact Center & Symmetric Blue-Red) -->
         <div class="scoring-grid">
-            <!-- Grid Headers -->
-            <div class="grid-header" style="grid-column: span 2;">RIWAYAT JURI (BIRU)</div>
-            <div class="grid-header">BABAK</div>
-            <div class="grid-header" style="grid-column: span 2;">RIWAYAT JURI (MERAH)</div>
+            <!-- Grid Headers with Team Colors -->
+            <div class="grid-header header-blue" style="grid-column: span 2;">RIWAYAT JURI (BIRU)</div>
+            <div class="grid-header header-babak">BABAK</div>
+            <div class="grid-header header-red" style="grid-column: span 2;">RIWAYAT JURI (MERAH)</div>
 
             @for ($babak = 1; $babak <= 3; $babak++)
                 @for ($jIdx = 1; $jIdx <= 3; $jIdx++)
+                    @php $isLastJuri = ($jIdx === 3); @endphp
                     <!-- Juri Label Label L -->
-                    <div class="grid-item juri-label-cell" style="grid-column: 1;">JURI {{ $jIdx }}</div>
+                    <div class="grid-item juri-label-cell" style="grid-column: 1; @if($isLastJuri) border-bottom: 2px solid #333; @endif">JURI {{ $jIdx }}</div>
 
                     <!-- Blue Scores -->
-                    <div class="grid-item" style="grid-column: 2;">
+                    <div class="grid-item" style="grid-column: 2; @if($isLastJuri) border-bottom: 2px solid #333; @endif">
                         <div id="data{{$babak}}b_{{$jIdx}}" class="score-container">
                             <!-- Populated by JS -->
                         </div>
@@ -295,14 +360,14 @@
                     @endif
 
                     <!-- Red Scores -->
-                    <div class="grid-item" style="grid-column: 4; justify-content: flex-end;">
+                    <div class="grid-item" style="grid-column: 4; justify-content: flex-end; @if($isLastJuri) border-bottom: 2px solid #333; @endif">
                         <div id="data{{$babak}}m_{{$jIdx}}" class="score-container" style="justify-content: flex-end;">
                             <!-- Populated by JS -->
                         </div>
                     </div>
 
                     <!-- Juri Label Label R -->
-                    <div class="grid-item juri-label-cell" style="grid-column: 5; border-right: none;">JURI {{ $jIdx }}</div>
+                    <div class="grid-item juri-label-cell" style="grid-column: 5; border-right: none; @if($isLastJuri) border-bottom: 2px solid #333; @endif">JURI {{ $jIdx }}</div>
                 @endfor
             @endfor
         </div>
@@ -333,14 +398,34 @@
             const info = dataPayload;
             const scores = dataPayload.data;
             const currentBabak = dataPayload.babak;
-            const placeholder = '<div>-</div>';
+            if (info.biru && info.biru.nama) $(`#namab`).text(info.biru.nama);
+            if (info.merah && info.merah.nama) $(`#namam`).text(info.merah.nama);
 
-            $(`#namab`).text(info.biru.nama);
-            $(`#namam`).text(info.merah.nama);
+            if (info.biru && info.biru.kontigen) $(`#kontigenb`).text(info.biru.kontigen);
+            if (info.merah && info.merah.kontigen) $(`#kontigenm`).text(info.merah.kontigen);
+            if (info.partai) {
+                $('#partai-label').text(info.partai);
+                $('#partai').text(info.partai);
+            }
 
-            $(`#kontigenb`).text(info.biru.kontigen);
-            $(`#kontigenm`).text(info.merah.kontigen);
-            $(`#partai`).text(`Partai ${info.partai}`);
+            if (info.keteranganPertandingan) {
+                let ket = info.keteranganPertandingan;
+                if (ket.toLowerCase() === 'pemasalan') ket = 'PENYISIHAN';
+                $('#info-keterangan').text(ket.toUpperCase());
+            }
+            if (info.namaKelas) {
+                $('#info-kelas').text(info.namaKelas.toUpperCase());
+            } else if (info.infoKelas) {
+                let parts = info.infoKelas.split(' | ');
+                if (parts[0]) $('#info-kelas').text(parts[0].replace(/kelas/i, '').trim().toUpperCase());
+                if (parts[1]) $('#info-kategori').text(parts[1].trim().toUpperCase());
+            }
+            if (info.namaKategori) {
+                $('#info-kategori').text(info.namaKategori.toUpperCase());
+            }
+            if (info.infoGender) {
+                $('#info-gender').text(info.infoGender.toUpperCase());
+            }
 
             // 1. Clear all existing score containers
             for (let i = 1; i <= JUMLAH_JURI; i++) {
@@ -457,19 +542,33 @@
                         for (let i = 1; i <= 3; i++) {
                             $(`#babak-${i}`).toggleClass('active-babak', i === currentBabak);
                         }
-                        $(`#partai`).text(`Partai ${data.partai}`);
-                        $(`#namab`).text(data.namaBiru);
-                        $(`#namam`).text(data.namaMerah);
-                        $(`#kontigenb`).text(data.kontigenBiru);
-                        $(`#kontigenm`).text(data.kontigenMerah);
-
-                        if (data.keteranganPertandingan) $('#info-keterangan').text(data.keteranganPertandingan);
-                        if (data.infoKelas) {
-                            var parts = data.infoKelas.split(' | ');
-                            if (parts[0]) $('#info-kelas').text(parts[0]);
-                            if (parts[1]) $('#info-kategori').text(parts[1]);
+                        if (data.partai) {
+                            $('#partai-label').text(data.partai);
+                            $('#partai').text(data.partai);
                         }
-                        if (data.infoGender) $('#info-gender').text(data.infoGender);
+                        if (data.namaBiru) $(`#namab`).text(data.namaBiru);
+                        if (data.namaMerah) $(`#namam`).text(data.namaMerah);
+                        if (data.kontigenBiru) $(`#kontigenb`).text(data.kontigenBiru);
+                        if (data.kontigenMerah) $(`#kontigenm`).text(data.kontigenMerah);
+
+                        if (data.keteranganPertandingan) {
+                            let ket = data.keteranganPertandingan;
+                            if (ket.toLowerCase() === 'pemasalan') ket = 'PENYISIHAN';
+                            $('#info-keterangan').text(ket.toUpperCase());
+                        }
+                        if (data.namaKelas) {
+                            $('#info-kelas').text(data.namaKelas.toUpperCase());
+                        } else if (data.infoKelas) {
+                            var parts = data.infoKelas.split(' | ');
+                            if (parts[0]) $('#info-kelas').text(parts[0].replace(/kelas/i, '').trim().toUpperCase());
+                            if (parts[1]) $('#info-kategori').text(parts[1].trim().toUpperCase());
+                        }
+                        if (data.namaKategori) {
+                            $('#info-kategori').text(data.namaKategori.toUpperCase());
+                        }
+                        if (data.infoGender) {
+                            $('#info-gender').text(data.infoGender.toUpperCase());
+                        }
                     });
 
                 // Listen for verification channel for modal updates (if needed)

@@ -34,31 +34,6 @@
     <!-- end common css -->
 
     <style>
-        /* Anti-Layout Shift (CLS) Critical Styles */
-        .sidebar {
-            width: 240px;
-            min-width: 240px;
-        }
-        .sidebar-header .sidebar-brand {
-            min-width: 130px;
-            display: inline-block;
-        }
-        .sidebar .link-icon, [data-feather] {
-            width: 20px;
-            height: 20px;
-            min-width: 20px;
-            min-height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .navbar .sidebar-toggler {
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
         .navbar .nav-link img {
             width: 30px;
             height: 30px;
@@ -86,13 +61,11 @@
     </div>
 
     <!-- base js -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.js') }}"></script>
+    <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/feather-icons/feather.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-
     <script src="{{ asset('assets/plugins/select2-4.1.0-rc.0/dist/js/select2.min.js') }}" defer></script>
-    <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.js') }}"></script>
 
     <!-- plugin js -->
     @stack('plugin-scripts')

@@ -5,18 +5,48 @@
         use App\arena;
         use App\PersertaModel;
         use App\kelas;
+        use App\category;
+        use App\jadwal_group;
+        use App\Setting;
 
         $data = $datakp;
-        $arenaData = arena::where('id', $data['arena'] ?? '')->first();
-        $currentRound = $data['babak'];
+        $arena = $data['arena'] ?? '';
+        $arenaData = arena::where('id', $arena)->first();
+        $currentRound = $data['babak'] ?? 1;
+        $partaiNomor = $data['partai'] ?? '-';
 
-        // Get Category info (consistent with dewan)
-        $peserta = PersertaModel::where('id', $data['idBiru'] ?? '')->first();
-        $infoKategori = '';
-        if ($peserta) {
-            $kelasData = kelas::where('id', $peserta->kelas)->first();
-            $infoKategori = strtoupper(($peserta->gender ?? '') . ($kelasData ? "| Kelas  " . $kelasData->name : ""));
+        $settingObj = Setting::where('arena', $arena)->whereNotNull('judul')->first();
+        $jadwalData = null;
+        if ($settingObj && !empty($settingObj->jadwal)) {
+            $jadwalData = jadwal_group::where('id', $settingObj->jadwal)->first();
         }
+        if (!$jadwalData) {
+            $jadwalData = jadwal_group::where('arena', $arena)
+                ->where('partai', $partaiNomor)
+                ->when($data['sesi'] ?? null, function ($query, $sesi) {
+                    $query->where('id_sesi', $sesi);
+                }, function ($query) {
+                    $query->whereNull('id_sesi');
+                })->first();
+        }
+
+        $keteranganPertandingan = $data['keteranganPertandingan'] ?? ($jadwalData->keterangan ?? 'PENYISIHAN');
+        if (empty($keteranganPertandingan) || strtolower($keteranganPertandingan) === 'pemasalan') {
+            $keteranganPertandingan = ($jadwalData && $jadwalData->keterangan && strtolower($jadwalData->keterangan) !== 'pemasalan')
+                ? $jadwalData->keterangan
+                : 'PENYISIHAN';
+        }
+
+        $pesertaBiru = PersertaModel::where('id', $data['idBiru'] ?? null)->first();
+        $pesertaMerah = PersertaModel::where('id', $data['idMerah'] ?? null)->first();
+        $refPeserta = $pesertaMerah ?: $pesertaBiru;
+
+        $kelasData = ($refPeserta && $refPeserta->kelas) ? kelas::where('id', $refPeserta->kelas)->first() : null;
+        $kategoriData = ($refPeserta && $refPeserta->category) ? category::where('id', $refPeserta->category)->first() : null;
+
+        $namaKelas = $data['namaKelas'] ?? ($kelasData->name ?? '-');
+        $namaKategori = $data['namaKategori'] ?? ($kategoriData->name ?? '-');
+        $gender = $data['infoGender'] ?? ($refPeserta->gender ?? '-');
     @endphp
 
     <style>
@@ -281,17 +311,11 @@
             <div class="arena-info">
                 <div class="arena-name text-uppercase">{{ $arenaData->name ?? 'ARENA' }}</div>
                 <div class="d-flex flex-wrap justify-content-center gap-1 mt-2 mb-2">
-                    <span class="badge bg-dark fs-6" id="partai">Partai {{ $data['partai'] ?? '-' }}</span>
-                    <span class="badge bg-success fs-6" id="info-keterangan">{{ $data['keteranganPertandingan'] ?? 'Pemasalan' }}</span>
-                    @php
-                        $parts = explode(' | ', $infoKategori);
-                        $gender = trim($parts[0] ?? '-');
-                        $kelas = trim(str_replace('Kelas', '', $parts[1] ?? '-'));
-                        $kategori = '-'; // We don't have this in initial kp load easily, but JS will update it
-                    @endphp
-                    <span class="badge bg-primary fs-6" id="info-kelas">{{ $kelas }}</span>
-                    <span class="badge bg-info fs-6" id="info-kategori">{{ $kategori }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-gender">{{ $gender }}</span>
+                    <span class="badge bg-dark fs-6" id="partai">Partai {{ $partaiNomor }}</span>
+                    <span class="badge bg-secondary fs-6" id="info-keterangan">{{ strtoupper($keteranganPertandingan) }}</span>
+                    <span class="badge bg-secondary fs-6" id="info-kelas">{{ strtoupper($namaKelas) }}</span>
+                    <span class="badge bg-secondary fs-6" id="info-kategori">{{ strtoupper($namaKategori) }}</span>
+                    <span class="badge bg-secondary fs-6" id="info-gender">{{ strtoupper($gender) }}</span>
                 </div>
                 <div class="round-indicator">BABAK <span id="babak">{{ $currentRound }}</span></div>
             </div>
@@ -446,13 +470,24 @@
             $('#kontigenb').text(data.kontigenBiru);
             $('#kontigenm').text(data.kontigenMerah);
 
-            if (data.keteranganPertandingan) $('#info-keterangan').text(data.keteranganPertandingan);
-            if (data.infoKelas) {
-                var parts = data.infoKelas.split(' | ');
-                if (parts[0]) $('#info-kelas').text(parts[0]);
-                if (parts[1]) $('#info-kategori').text(parts[1]);
+            if (data.keteranganPertandingan) {
+                let ket = data.keteranganPertandingan;
+                if (ket.toLowerCase() === 'pemasalan') ket = 'PENYISIHAN';
+                $('#info-keterangan').text(ket.toUpperCase());
             }
-            if (data.infoGender) $('#info-gender').text(data.infoGender);
+            if (data.namaKelas) {
+                $('#info-kelas').text(data.namaKelas.toUpperCase());
+            } else if (data.infoKelas) {
+                var parts = data.infoKelas.split(' | ');
+                if (parts[0]) $('#info-kelas').text(parts[0].replace(/kelas/i, '').trim().toUpperCase());
+                if (parts[1]) $('#info-kategori').text(parts[1].trim().toUpperCase());
+            }
+            if (data.namaKategori) {
+                $('#info-kategori').text(data.namaKategori.toUpperCase());
+            }
+            if (data.infoGender) {
+                $('#info-gender').text(data.infoGender.toUpperCase());
+            }
         }
 
         function websocket() {

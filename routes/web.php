@@ -79,6 +79,7 @@ Route::middleware(['auth.custom'])->group(function () {
             });
             Route::get('/rekap-medali', function () {
                 $status = 'admin';
+                \App\Http\Controllers\RekapController::syncAllSeniPemasalanMedali();
                 return view('admin.rekap-medali', compact('status'));
             });
             Route::get('/kontigen', function () {

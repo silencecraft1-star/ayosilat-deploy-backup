@@ -752,6 +752,18 @@ class JuriController extends Controller
 
                     }
 
+                    $pesertaBiru = PersertaModel::where('id', $setting->biru)->first();
+                    $pesertaMerah = PersertaModel::where('id', $setting->merah)->first();
+                    $wmpConfig = GlobalScoreHelper::getWmpConfigForMatch($setting, $pesertaBiru, $pesertaMerah);
+                    $wmpThreshold = $wmpConfig['threshold'];
+                    $isWmpActive = $wmpConfig['is_active'];
+                    $isWmp = $isWmpActive && (abs(($response['score1'] ?? 0) - ($response['score2'] ?? 0)) >= $wmpThreshold);
+
+                    $response['selisih_20'] = $isWmp;
+                    $response['is_wmp'] = $isWmp;
+                    $response['wmp_active'] = $isWmpActive;
+                    $response['wmp_threshold'] = $wmpThreshold;
+
                     return response()->json($response, 200);
                 }
 

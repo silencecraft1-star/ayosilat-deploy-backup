@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\jadwal_group;
 use App\score;
 use App\Setting;
+use App\PollingModel;
 
 class RekapController extends Controller
 {
@@ -51,22 +52,28 @@ class RekapController extends Controller
             $id_peserta = ($selected == "merah") ? $data->merah : $data->biru;
             $peserta = PersertaModel::where('id', $id_peserta)->first();
 
+            $formattedScore = format_final_score_precision($request->score);
+
             if ($selected == "merah") {
                 $data->update([
-                    'score_merah' => $request->score,
+                    'score_merah' => $formattedScore,
                     'deviasi_merah' => $request->deviation,
-                    'timer_merah' => $request->time
+                    'timer_merah' => $request->time,
+                    'status' => 'finish',
                 ]);
             } else {
                 $data->update([
-                    'score_biru' => $request->score,
+                    'score_biru' => $formattedScore,
                     'deviasi_biru' => $request->deviation,
-                    'timer_biru' => $request->time
+                    'timer_biru' => $request->time,
+                    'status' => 'finish',
                 ]);
             }
 
-            // Create Medali with safety checks
-            if ($peserta) {
+            // Evaluasi medali seni
+            if ($data && $data->keterangan == "pemasalan" && !empty($data->id_poll)) {
+                self::checkAndAssignMedaliSeniPemasalan($data->id_poll);
+            } else if ($data && $data->keterangan != "pemasalan" && $peserta) {
                 $medaliExists = Medali::where('id_peserta', $peserta->id)->exists();
                 if (!$medaliExists) {
                     Medali::create([
@@ -76,7 +83,7 @@ class RekapController extends Controller
                         'kelas' => $peserta->kelas,
                         'kelamin' => $peserta->gender,
                         'kategori' => $peserta->category,
-                        'point' => $request->score,
+                        'point' => $formattedScore,
                         'keterangan' => "seni",
                     ]);
                 }
@@ -181,14 +188,18 @@ class RekapController extends Controller
                     $medalis = '0';
                 }
 
+                $formattedScore = format_final_score_precision($request->score);
+
                 $data->update([
-                    'score_merah' => $request->score,
+                    'score_merah' => $formattedScore,
                     'deviasi_merah' => $request->deviation,
                     'timer_merah' => $request->time,
-                    'status' => $isDiskualified ? "diskualifikasi" : "selesai"
+                    'status' => $isDiskualified ? "diskualifikasi" : "finish"
                 ]);
 
-                if (!$isDiskualified) {
+                if ($data->keterangan == "pemasalan" && !empty($data->id_poll)) {
+                    self::checkAndAssignMedaliSeniPemasalan($data->id_poll);
+                } else if (!$isDiskualified) {
                     $peserta = PersertaModel::where('id', $selectedParticipant)->first();
                     if ($peserta) {
                         $existingMedali = Medali::where('id_peserta', $selectedParticipant)->first();
@@ -228,14 +239,18 @@ class RekapController extends Controller
                     $medalis = '0';
                 }
 
+                $formattedScore = format_final_score_precision($request->score);
+
                 $data->update([
-                    'score_biru' => $request->score,
+                    'score_biru' => $formattedScore,
                     'deviasi_biru' => $request->deviation,
                     'timer_biru' => $request->time,
-                    'status' => $isDiskualified ? "diskualifikasi" : "selesai"
+                    'status' => $isDiskualified ? "diskualifikasi" : "finish"
                 ]);
 
-                if (!$isDiskualified) {
+                if ($data->keterangan == "pemasalan" && !empty($data->id_poll)) {
+                    self::checkAndAssignMedaliSeniPemasalan($data->id_poll);
+                } else if (!$isDiskualified) {
                     $peserta = PersertaModel::where('id', $selectedParticipant)->first();
                     if ($peserta) {
                         $existingMedali = Medali::where('id_peserta', $selectedParticipant)->first();
@@ -284,64 +299,54 @@ class RekapController extends Controller
     {
         $arena = $request->arena;
 
-        $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first();
-        $jadwalData = \App\jadwal_group::where('id', $settingData->jadwal)->first();
+        $settingData = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+        $jadwalData = $settingData ? \App\jadwal_group::where('id', $settingData->jadwal)->first() : null;
 
-        if ($settingData->status != "finish") {
-            return response()->json([
-                'isDone' => false,
-                'time' => '00:00:00',
-                'status' => $settingData->status,
-                'jadwal_id' => $settingData->jadwal,
-                'partai' => $settingData->partai,
-                'active_id' => $settingData->biru,
-                'timer_biru' => $jadwalData->timer_biru ?? '00:00:00',
-                'timer_merah' => $jadwalData->timer_merah ?? '00:00:00',
-                'score_biru' => $jadwalData->score_biru ?? 0,
-                'score_merah' => $jadwalData->score_merah ?? 0,
-                'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
-                'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
-                'pemenang' => $jadwalData->pemenang ?? 'N/a',
-            ], 200);
-        } else {
-            $time = $settingData->time ?? "00:00:00";
-            $jadwal_id = $settingData->jadwal;
-            $partai = $settingData->partai;
-            $active_id = $settingData->biru;
-            $finalTime = [
-                'menit' => "00",
-                'detik' => "00",
-                'ms' => "00",
-            ];
-
-            if ($time) {
-                $arr = explode(':', $time);
-                $finalTime['menit'] = $arr[0] ?? '00';
-                $finalTime['detik'] = $arr[1] ?? '00';
-                $finalTime['ms'] = $arr[2] ?? '00';
+        // Ambil timer yang paling relevan dari Setting atau jadwal_group
+        $targetUser = $request->id_user ?? ($settingData ? $settingData->biru : null);
+        $timeRaw = $settingData ? $settingData->time : null;
+        if (empty($timeRaw) || $timeRaw === '00:00;00' || $timeRaw === '00:00:00') {
+            if ($jadwalData) {
+                if ($targetUser && $jadwalData->merah == $targetUser) {
+                    $timeRaw = $jadwalData->timer_merah;
+                } else if ($targetUser && $jadwalData->biru == $targetUser) {
+                    $timeRaw = $jadwalData->timer_biru;
+                } else {
+                    $timeRaw = $jadwalData->timer_biru ?: $jadwalData->timer_merah;
+                }
             }
-
-            $settingData->update([
-                'status' => null,
-                'time' => null,
-            ]);
-
-            return response()->json([
-                'isDone' => true,
-                'time' => $finalTime,
-                'status' => $settingData->status ?? "pending",
-                'jadwal_id' => $jadwal_id,
-                'partai' => $partai,
-                'active_id' => $active_id,
-                'timer_biru' => $jadwalData->timer_biru ?? '00:00:00',
-                'timer_merah' => $jadwalData->timer_merah ?? '00:00:00',
-                'score_biru' => $jadwalData->score_biru ?? 0,
-                'score_merah' => $jadwalData->score_merah ?? 0,
-                'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
-                'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
-                'pemenang' => $jadwalData->pemenang ?? 'N/a',
-            ], 200);
         }
+        if (empty($timeRaw)) {
+            $timeRaw = '00:00;00';
+        }
+
+        $parsed = parse_timer_display($timeRaw);
+        $finalTime = [
+            'menit' => $parsed['minute'],
+            'detik' => $parsed['second'],
+            'ms' => $parsed['ms'],
+            'formatted' => $parsed['formatted'],
+            'raw' => $parsed['raw']
+        ];
+
+        $isDone = ($settingData && $settingData->status == "finish");
+
+        return response()->json([
+            'isDone' => $isDone,
+            'time' => $finalTime,
+            'status' => $settingData->status ?? "pending",
+            'jadwal_id' => $settingData->jadwal ?? null,
+            'partai' => $settingData->partai ?? null,
+            'active_id' => $settingData->biru ?? null,
+            'timer_biru' => $jadwalData->timer_biru ?? '00:00;00',
+            'timer_merah' => $jadwalData->timer_merah ?? '00:00;00',
+            'score_biru' => $jadwalData->score_biru ?? 0,
+            'score_merah' => $jadwalData->score_merah ?? 0,
+            'deviasi_biru' => $jadwalData->deviasi_biru ?? 0,
+            'deviasi_merah' => $jadwalData->deviasi_merah ?? 0,
+            'pemenang' => $jadwalData->pemenang ?? 'N/a',
+        ], 200);
     }
 
     public function senidata(Request $request)
@@ -362,7 +367,7 @@ class RekapController extends Controller
         if ($request->has('menang') && $request->menang) {
             $jadwal->update([
                 'pemenang' => $request->menang,
-                'status' => 'selesai',
+                'status' => 'finish',
             ]);
 
             $nameParam = $request->has('name') && $request->name ? '&name=' . urlencode($request->name) : '';
@@ -375,15 +380,25 @@ class RekapController extends Controller
             }
         }
 
-        // Flow lama: dewan selesaikan pertandingan (tanpa penentuan pemenang manual)
-        if ($data->status != "finish") {
-            if ($request->status_pertandingan == "diskualifikasi") {
-                $data->update([
-                    'status' => 'diskualify',
-                ]);
-            } else {
-                $data->update(['status' => 'taking-time']);
-            }
+        // Simpan hasil pertandingan ke jadwal_group secara persisten & mandiri
+        if ($request->status_pertandingan == "diskualifikasi") {
+            $data->update([
+                'status' => 'diskualify',
+            ]);
+            $jadwal->update([
+                'status' => 'diskualifikasi',
+            ]);
+        } else {
+            // Kalkulasi dan simpan langsung ke jadwal_groups (score, deviasi, timer, status finish)
+            \App\Helpers\GlobalScoreHelper::calculateAndSaveSeniMatchResult(
+                $request->arena, 
+                $request->kategori ?? 'solo', 
+                $request->id_user
+            );
+        }
+
+        if ($jadwal && $jadwal->keterangan == "pemasalan" && !empty($jadwal->id_poll)) {
+            self::checkAndAssignMedaliSeniPemasalan($jadwal->id_poll);
         }
 
         if ($jadwal->keterangan == "prestasi") {
@@ -395,16 +410,156 @@ class RekapController extends Controller
             }
         }
 
+        $idJuriParam = $request->id_juri ?? request('name') ?? null;
         if ($request->kategori == "tunggal") {
             return view('seni.rekapTunggal', [
                 'id_user' => $request->id_user,
-                'arena' => $request->arena
+                'arena' => $request->arena,
+                'id_juri' => $idJuriParam
             ]);
         } else {
             return view('seni.rekapSolo', [
                 'id_user' => $request->id_user,
-                'arena' => $request->arena
+                'arena' => $request->arena,
+                'id_juri' => $idJuriParam
             ]);
+        }
+    }
+
+    /**
+     * Konfigurasi dan evaluasi pemberian medali seni pemasalan.
+     * Aturan:
+     * - Hanya diproses jika SEMUA pertandingan pada pool tersebut sudah dalam status selesai dan memiliki nilai.
+     * - Yang mendapat medali adalah ranking 1-4 dalam pool pemasalan:
+     *   Rank 1: Emas (point 5)
+     *   Rank 2: Perak (point 3)
+     *   Rank 3: Perunggu (point 2)
+     *   Rank 4: Perunggu (point 2)
+     *   Rank 5+: Tidak mendapat medali.
+     *
+     * @param int|string $id_poll
+     * @return bool
+     */
+    public static function checkAndAssignMedaliSeniPemasalan($id_poll)
+    {
+        if (empty($id_poll)) {
+            return false;
+        }
+
+        $poolMatches = jadwal_group::where('id_poll', $id_poll)
+            ->where('keterangan', 'pemasalan')
+            ->get();
+
+        if ($poolMatches->isEmpty()) {
+            return false;
+        }
+
+        // Kumpulkan semua ID peserta yang ada di pool ini
+        $pesertaIdsInPool = $poolMatches->map(function ($m) {
+            return ($m->biru != 'seni' && !empty($m->biru)) ? $m->biru : $m->merah;
+        })->filter()->unique()->values();
+
+        // 1. Verifikasi syarat: SEMUA pertandingan pada pool tersebut sudah dalam status selesai dan memiliki nilai
+        $allCompleted = true;
+        foreach ($poolMatches as $match) {
+            $status = strtolower($match->status ?? '');
+            $isStatusDone = in_array($status, ['selesai', 'finish', 'diskualifikasi']);
+            $score = floatval($match->score_biru ?? $match->score_merah ?? 0);
+            $hasScore = ($score > 0) || ($status === 'diskualifikasi');
+
+            if (!$isStatusDone || !$hasScore) {
+                $allCompleted = false;
+                break;
+            }
+        }
+
+        // Jika BELUM semua pertandingan berstatus selesai dan memiliki nilai:
+        // Medali baru akan diberikan jika SEMUA pertandingan sudah selesai dan bernilai.
+        // Hapus medali seni yang sempat terbuat secara prematur untuk peserta di pool ini.
+        if (!$allCompleted) {
+            Medali::whereIn('id_peserta', $pesertaIdsInPool)
+                ->where('keterangan', 'seni')
+                ->delete();
+            return false;
+        }
+
+        // 2. Jika SEMUA pertandingan sudah selesai dan bernilai:
+        // Urutkan peserta dari ranking tertinggi ke terendah
+        // Ranking: Skor tertinggi (DESC), tie-break Deviasi (DESC)
+        $validMatches = $poolMatches->filter(function ($m) {
+            return strtolower($m->status ?? '') !== 'diskualifikasi';
+        })->sort(function ($a, $b) {
+            $scoreA = floatval($a->score_biru ?? $a->score_merah ?? 0);
+            $scoreB = floatval($b->score_biru ?? $b->score_merah ?? 0);
+            if ($scoreA == $scoreB) {
+                $devA = floatval($a->deviasi_biru ?? $a->deviasi_merah ?? 0);
+                $devB = floatval($b->deviasi_biru ?? $b->deviasi_merah ?? 0);
+                return $devB <=> $devA;
+            }
+            return $scoreB <=> $scoreA;
+        })->values();
+
+        // Bersihkan data medali lama untuk peserta di pool ini agar sinkron & idempotent
+        Medali::whereIn('id_peserta', $pesertaIdsInPool)
+            ->where('keterangan', 'seni')
+            ->delete();
+
+        $pollData = PollingModel::where('id', $id_poll)->first();
+        $namaPoll = $pollData->name ?? ("Pool " . $id_poll);
+
+        // Alokasi medali:
+        // Rank 1: Emas (point 5)
+        // Rank 2: Perak (point 3)
+        // Rank 3: Perunggu (point 2)
+        // Rank 4: Perunggu (point 2)
+        $medalAllocation = [
+            0 => ['point' => '5', 'label' => 'Juara 1 (Emas)'],
+            1 => ['point' => '3', 'label' => 'Juara 2 (Perak)'],
+            2 => ['point' => '2', 'label' => 'Juara 3 (Perunggu)'],
+            3 => ['point' => '2', 'label' => 'Juara 3 Bersama (Perunggu)'],
+        ];
+
+        foreach ($validMatches as $idx => $match) {
+            if ($idx >= 4) {
+                // Ranking 5 ke atas tidak mendapatkan medali
+                break;
+            }
+
+            $idPeserta = ($match->biru != 'seni' && !empty($match->biru)) ? $match->biru : $match->merah;
+            $peserta = PersertaModel::where('id', $idPeserta)->first();
+            if (!$peserta) {
+                continue;
+            }
+
+            $arenaData = arena::where('id', $match->arena)->first();
+            $namaArena = $arenaData->name ?? ("Arena " . $match->arena);
+            $medaliInfo = $medalAllocation[$idx];
+
+            Medali::create([
+                'name' => "$namaArena - $namaPoll ({$medaliInfo['label']})",
+                'id_peserta' => $peserta->id,
+                'kontigen' => $peserta->id_kontigen,
+                'kelas' => $peserta->kelas,
+                'kelamin' => $peserta->gender,
+                'kategori' => $peserta->category,
+                'point' => $medaliInfo['point'],
+                'keterangan' => 'seni',
+                'status' => 'selesai',
+            ]);
+        }
+
+        return true;
+    }
+
+    public static function syncAllSeniPemasalanMedali()
+    {
+        $pollIds = jadwal_group::where('keterangan', 'pemasalan')
+            ->whereNotNull('id_poll')
+            ->distinct()
+            ->pluck('id_poll');
+
+        foreach ($pollIds as $pollId) {
+            self::checkAndAssignMedaliSeniPemasalan($pollId);
         }
     }
 }

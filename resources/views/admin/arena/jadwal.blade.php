@@ -377,7 +377,7 @@
                                                                     name=" keterangan:jadwal id:{{ $item->id }} sesi:{{ $sesi ?? null }} p:{{ $item->biru }} p1:{{ $item->merah }} partai:{{ $item->partai }} status:proses arena:{{ $arena }}"
                                                                     class="btn btn-data btn-warning px-3 shadow text-light">Proses</button>
                                                             @endif
-                                                            @if ($item->status === 'finish')
+                                                            @if ($item->status === 'finish' || $item->status === 'selesai')
                                                                 <button
                                                                     name="keterangan:jadwal id:{{ $item->id }} sesi:{{ $sesi ?? null }} p:{{ $item->biru }} p1:{{ $item->merah }} partai:{{ $item->partai }} status:finish arena:{{ $arena }}"
                                                                     class="btn btn-data btn-success px-3 shadow text-light">Selesai</button>
