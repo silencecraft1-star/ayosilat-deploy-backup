@@ -145,9 +145,7 @@
         $setting = Setting::where('arena', $arena)->first();
         $perserta = PersertaModel::where('id', $setting->biru)->first();
         if (empty($perserta)) {
-            echo '<script>
-                                                                                                                                                                                                window.history.back();
-                                                                                                                                                                                            </script>';
+            echo '<script>window.history.back();</script>';
             exit();
         }
 

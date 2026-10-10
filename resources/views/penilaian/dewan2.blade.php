@@ -695,8 +695,8 @@
                         class="{{ $isInitialWmp ? 'hidden' : '' }} bg-green-600 px-3 py-2 text-white rounded hover:bg-green-400 active:bg-green-800 transition-all duration-100">Tentukan
                         Pemenang</button>
                     <button id="btnSelesaikanPertandingan" type="button"
-                        class="{{ $isInitialWmp ? '' : 'hidden' }} bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-bold px-6 py-3 rounded-lg shadow-lg border-2 border-white animate-bounce transition-all duration-150 text-xl uppercase tracking-wider">
-                        Selesaikan Pertandingan
+                        class="{{ $isInitialWmp ? '' : 'hidden' }} bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-bold px-8 py-3 rounded-lg shadow-lg border-2 border-white animate-pulse transition-all duration-150 text-xl uppercase tracking-wider cursor-pointer">
+                        Selesaikan Pertandingan (W.M.P)
                     </button>
                 </div>
             </div>
@@ -992,7 +992,7 @@
                     actionButtons.prop('disabled', true);
                     actionButtons.addClass('opacity-50 cursor-not-allowed pointer-events-none');
                     $('#showPemenang').addClass('hidden');
-                    $('#btnSelesaikanPertandingan').removeClass('hidden');
+                    $('#btnSelesaikanPertandingan').removeClass('hidden pointer-events-none opacity-50').prop('disabled', false).text('Selesaikan Pertandingan (W.M.P)');
                     $('#wmp-alert-banner').removeClass('hidden');
                 } else {
                     actionButtons.removeClass('opacity-50 cursor-not-allowed pointer-events-none');
@@ -1005,17 +1005,57 @@
             }
 
             $('#btnSelesaikanPertandingan').on('click', function () {
-                let list = $('#listPemenang');
-                list.removeClass('hidden').addClass('block');
+                var $btn = $(this);
+                if ($btn.prop('disabled')) return;
+                $btn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed').text('Menyelesaikan Pertandingan...');
 
-                // Otomatis tandai W.M.P
-                $("#status-winner").text("W.M.P");
-                $(".btnmenang").removeClass('bg-amber-400 text-black font-bold').addClass('bg-slate-200');
-                $('.btnmenang[name="W.M.P"]').removeClass('bg-slate-200').addClass('bg-amber-400 text-black font-bold');
+                let s1 = parseFloat($('#score1').text()) || 0;
+                let s2 = parseFloat($('#score2').text()) || 0;
+                let idBiru = $('#id_biru').val() || '{{ $tim_biru }}';
+                let idMerah = $('#id_merah').val() || '{{ $tim_merah }}';
+                let idSesi = '{{ $jadwalData->id_sesi ?? '' }}';
+                let currentPartai = $('#partai-label').text().trim() || '{{ $setting->partai }}';
+                let arenaId = '{{ $id_arena }}';
 
-                $('html, body').animate({
-                    scrollTop: list.offset().top - 20
-                }, 400);
+                // Pemenang WMP adalah pesilat dengan skor lebih tinggi
+                let idMenang, idKalah;
+                if (s1 >= s2) {
+                    idMenang = idBiru;
+                    idKalah = idMerah;
+                } else {
+                    idMenang = idMerah;
+                    idKalah = idBiru;
+                }
+
+                var payload = {
+                    keterangan: 'jadwal',
+                    p: idBiru,
+                    p1: idMerah,
+                    sesi: idSesi || null,
+                    partai: currentPartai,
+                    status: 'finish',
+                    arena: arenaId,
+                    kalah: idKalah,
+                    menang: idMenang,
+                    statusmenang: 'W.M.P'
+                };
+
+                fetch('{{ route('dewan.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    jadwal();
+                })
+                .catch(error => {
+                    console.error('Error menyelesaikan WMP:', error);
+                    jadwal();
+                });
             });
 
             function WebSocket() {
@@ -1348,7 +1388,8 @@
             }
 
             function jadwal() {
-                window.location.href = pathurl;
+                var activePartai = $('#partai-label').text().trim() || id_partai;
+                window.location.href = `/redirect?arena=${id_arenas}&partai=${activePartai}&role=rekapTanding&isDewan=true`;
             }
 
             btnShowmenang.on('click', () => {
