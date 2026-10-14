@@ -35,38 +35,33 @@
         use App\arena;
         use App\juri;
         use App\jadwal_group;
-        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first();
-        $jadwal = jadwal_group::where('id', $setting->jadwal)->first() ?? null;
-        $partai = $setting->partai;
-        $perserta = PersertaModel::where('id', $setting->biru)->first();
-        $id_perserta = $perserta->id;
-        $kelas = kelas::where('id', $jadwal->kelas)->first();
-        $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
-        $category = category::where('id', $perserta->category)->value('name');
+        $setting = Setting::where('arena', $arena)->whereNotNull('judul')->first()
+            ?? Setting::where('arena', $arena)->first();
+        $jadwal = $setting ? (jadwal_group::where('id', $setting->jadwal)->first() ?? null) : null;
+        $partai = $setting ? $setting->partai : null;
+        $perserta = ($setting && $setting->biru) ? PersertaModel::where('id', $setting->biru)->first() : null;
+        $id_perserta = $perserta ? $perserta->id : 0;
+        $kelas = ($jadwal && $jadwal->kelas) ? kelas::where('id', $jadwal->kelas)->first() : null;
+        $kontigen = ($perserta && $perserta->id_kontigen) ? KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen') : '-';
+        $category = ($perserta && $perserta->category) ? category::where('id', $perserta->category)->value('name') : '-';
         $number = 1;
         $dataJuri = juri::where('id', $id_juri)->first();
         $dataArena = arena::where('id', $arena)->first();
-        $scores = score::where('id_perserta', $id_perserta)
+
+        $scores = ($perserta && $setting) ? score::where('id_perserta', $id_perserta)
             ->where('partai', $partai)
             ->where('arena', $setting->arena)
             ->where('id_juri', $id_juri)
             ->where('status', 'point_tunggal')
-            ->get();
-        $scs = score::where('id_perserta', $id_perserta)
+            ->get() : collect();
+
+        $scs = ($perserta && $setting) ? score::where('id_perserta', $id_perserta)
             ->where('arena', $setting->arena)
             ->where('partai', $partai)
             ->where('id_juri', $id_juri)
             ->where('keterangan', 'next')
             ->where('status', 'point_tunggal')
-            ->first() ?? (object) [
-                'babak' => 0
-            ];
-        $score = 100;
-        $total_score = 0;
-        $max = 100;
-        $dewan = 0;
-        $babak = 0;
-        $selectedJurus = null;
+            ->first() : null;
 
         $jurus = [
             'Jurus 1 (7 Gerakan)',
@@ -94,19 +89,6 @@
             'Jurus 6 (8 Gerakan)',
             'Jurus 7 (11 Gerakan)',
         ];
-
-        // $jurusTanganKosong = [
-        //     'Jurus 1 (7 Gerakan)',
-        //     'Jurus 2 (6 Gerakan)',
-        //     'Jurus 3 (5 Gerakan)',
-        //     'Jurus 4 (7 Gerakan)',
-        //     'Jurus 5 (6 Gerakan)',
-        //     'Jurus 6 (8 Gerakan)',
-        //     'Jurus 7 (11 Gerakan)',
-        //     'Jurus 8 (7 Gerakan)',
-        //     'Jurus 9 (6 Gerakan)',
-        //     'Jurus 10 (12 Gerakan)',
-        // ];
 
         $jurusSenjata = [
             'Jurus 8 (7 Gerakan)',
@@ -164,128 +146,60 @@
             'Jurus 12 (7 Gerakan)',
         ];
 
-        // $name_jurus = null;
-        // if ($scs != null || $scs != '') {
-        if (
-            $kelas->name == 'SENI TUNGGAL' ||
-            $kelas->name == 'TUNGGAL' ||
-            $kelas->name == 'Tunggal' ||
-            $kelas->name == 'Tunggal Full' ||
-            $kelas->name == 'T.FULL' ||
-            $kelas->name == 'T. FULL'
-        ) {
-            $scs = $scs->babak;
+        $kelasName = strtoupper(trim($kelas->name ?? ''));
+        $selectedJurus = $jurus;
 
-            $countTunggal = count($jurus) - 1;
-            $selectedJurus = $jurus;
-            $finalName = $scs > $countTunggal ? "$jurus[$countTunggal]" : "$jurus[$scs]";
-
-            $name_jurus = $finalName;
-        } elseif ($kelas->name == 'SENI REGU' || $kelas->name == 'BEREGU' || $kelas->name == 'REGU') {
-            $scs = $scs->babak;
-
-            $countRegu = count($jurusRegu) - 1;
-            $selectedJurus = $jurusRegu;
-            $finalName = $scs > $countRegu ? "$jurusRegu[$countRegu]" : $jurusRegu[$scs];
-
-            $name_jurus = $finalName;
-        } elseif ($kelas->name == 'BEREGU 1-6') {
-            $scs = $scs->babak;
-
-            $countRegu = count($jurusRegu16) - 1;
+        if (str_contains($kelasName, 'REGU 1-6') || str_contains($kelasName, 'BEREGU 1-6')) {
             $selectedJurus = $jurusRegu16;
-            $finalName = $scs > $countRegu ? "$jurusRegu16[$countRegu]" : $jurusRegu16[$scs];
-
-            $name_jurus = $finalName;
-        } elseif ($kelas->name == 'BEREGU 7-12' || $kelas->name == 'REGU 7-12') {
-            $scs = $scs->babak;
-
-            $countRegu = count($jurusRegu712) - 1;
+        } elseif (str_contains($kelasName, 'REGU 7-12') || str_contains($kelasName, 'BEREGU 7-12')) {
             $selectedJurus = $jurusRegu712;
-            $finalName = $scs > $countRegu ? "$jurusRegu712[$countRegu]" : $jurusRegu712[$scs];
-
-            $name_jurus = $finalName;
-        } elseif ($kelas->name === 'T.GOLOK' || $kelas->name == 'TUNGGAL SENJATA') {
-            $max = 75;
-            $scs = $scs->babak;
-
-            $countTunggal = count($jurusSenjata) - 1;
-            $finalName = $scs > $countTunggal ? "$jurusSenjata[$countTunggal]" : "$jurusSenjata[$scs]";
-            $selectedJurus = $jurusSenjata;
-            $name_jurus = $finalName;
+        } elseif (str_contains($kelasName, 'REGU') || str_contains($kelasName, 'BEREGU')) {
+            $selectedJurus = $jurusRegu;
         } elseif (
-            $kelas->name === 'T.KOSONG & GOLOK' ||
-            $kelas->name == 'T. TANGKOS + GOLOK' ||
-            $kelas->name == 'T. TANGKOS-GOLOK' ||
-            $kelas->name == 'T.TANGKOS-GOLOK' ||
-            $kelas->name == 'TK DAN SENJATA' ||
-            $kelas->name == 'GANDA TK DAN SENJATA'
+            (str_contains($kelasName, 'KOSONG') && (str_contains($kelasName, 'GOLOK') || str_contains($kelasName, 'SENJATA') || str_contains($kelasName, '+'))) ||
+            str_contains($kelasName, 'TK DAN SENJATA') ||
+            str_contains($kelasName, 'T.KOSONG & GOLOK')
         ) {
-            $max = 75;
-            $scs = $scs->babak;
             $selectedJurus = $jurusSenjataTanganKosong;
-
-            $countTunggal = count($jurusSenjataTanganKosong) - 1;
-            $finalName =
-                $scs > $countTunggal
-                ? "$jurusSenjataTanganKosong[$countTunggal]"
-                : "$jurusSenjataTanganKosong[$scs]";
-
-            $name_jurus = $finalName;
-        } elseif (
-            $kelas->name == 'Tunggal T.Kosong' ||
-            $kelas->name == 'TANGAN KOSONG' ||
-            $kelas->name == 'T.TANGKOS' ||
-            $kelas->name == 'T. TANGKOS' ||
-            $kelas->name == 'Tungal T.Kosong' ||
-            $kelas->name == 'TUNGGAL-TANGAN-KOSONG'
-        ) {
-            $max = 50;
-            $scs = $scs->babak;
-            echo $scs;
-            $countTunggal = count($jurusTanganKosong) - 1;
-            $finalName = $scs > $countTunggal ? "$jurusTanganKosong[$countTunggal]" : "$jurusTanganKosong[$scs]";
+        } elseif (str_contains($kelasName, 'GOLOK') || str_contains($kelasName, 'SENJATA') || str_contains($kelasName, 'TOYA')) {
+            $selectedJurus = $jurusSenjata;
+        } elseif (str_contains($kelasName, 'TANGKOS') || str_contains($kelasName, 'T.KOSONG') || str_contains($kelasName, 'TANGAN KOSONG')) {
             $selectedJurus = $jurusTanganKosong;
-
-            $name_jurus = $finalName;
+        } else {
+            $selectedJurus = $jurus;
         }
-        // }
 
-        if (!empty($scores)) {
-            // dd($scores);
+        $max = count($selectedJurus) - 1;
+        $wrongScore = 0;
+        $flowScore = 0;
+        $rawBabak = 0;
+
+        if ($scs && isset($scs->babak)) {
+            $rawBabak = (int)$scs->babak;
+        }
+
+        if (!empty($scores) && count($scores) > 0) {
             foreach ($scores as $item) {
                 if ($item->keterangan === 'next') {
-                    $score -= $item->score;
-                    $babak = $item->babak;
+                    $wrongScore = (float)$item->score;
+                    $rawBabak = (int)$item->babak;
                 } elseif ($item->keterangan === 'flwo') {
-                    $dewan = $item->score;
-                    $total_score += $item->score;
+                    $flowScore = (float)$item->score;
                 }
             }
-        } else {
-            $score = 0;
         }
-        $numbers = 9.0; // Ini adalah angka 9 dengan dua angka di belakang koma
 
-        if ($score === 0) {
-            $sc = number_format($score / 100, 2);
-            $score_actual = $numbers + $sc; // Ini seharusnya 9,00 + 0,00 = 9,00
-        } else {
-            $sc = number_format(($score - 10) / 100, 2); // Ini akan menjadi 0,19 karena ($score - 10) adalah 19
-            $score_actual = $numbers + $sc; // Ini seharusnya 9,00 + 0,19 = 9,19
-        }
-        $total_score = number_format($total_score);
-        $total_score = $total_score + $score_actual + $dewan;
-        $dewan = number_format($dewan, 2);
+        $currentBabak = max(0, min($max, $rawBabak));
+        $name_jurus = $selectedJurus[$currentBabak] ?? $selectedJurus[0];
 
-        $namaJuri = explode(' ', $dataJuri->name);
-        $namaJuri = "$namaJuri[0] $namaJuri[2]";
-        $arenaNama = explode('||', $setting->judul);
+        $score = max(0, 100 - $wrongScore);
+        $score_actual = number_format(max(0, 9.90 - ($wrongScore / 100)), 2);
+        $dewan = number_format($flowScore, 2);
+        $total_score = number_format((float)$score_actual + $flowScore, 2);
 
-        if (!$selectedJurus) {
-            $selectedJurus = $jurus;
-            $scs = $scs->babak;
-        }
+        $juriNameParts = explode(' ', $dataJuri->name ?? 'Juri');
+        $namaJuri = count($juriNameParts) >= 3 ? "{$juriNameParts[0]} {$juriNameParts[2]}" : ($dataJuri->name ?? 'Juri');
+        $arenaNama = explode('||', $setting->judul ?? 'ARENA');
     @endphp
     <!-- Match Info Section -->
     <div class="d-flex flex-column align-items-center mt-3">
@@ -329,8 +243,8 @@
         </div>
         <div class="row text-center mt-4" style="height: 200px;">
             <div class="col-md-5">
-                <button @if ($babak == $max) disabled @endif
-                    name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:next p:{{ $number }} keterangan:seni_tunggal"
+                <button id="btnWrongMove"
+                    name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:next p:1 keterangan:seni_tunggal"
                     class="btn btn-danger btn-lg custom-button shadow w-100 h-100 btn-data">
                     Wrong Move
                     <i class="fa fa-xmark"></i>
@@ -355,7 +269,7 @@
                 </div>
             </div>
             <div class="col-md-5">
-                <button @if ($babak == $max) disabled @endif
+                <button id="btnNextMove" @if ($currentBabak >= $max) disabled @endif
                     class="btn btn-primary btn-lg custom-button shadow w-100 h-100 btn-data"
                     name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:next p:0 keterangan:seni_tunggal">Next
                     Move <i class="fa-regular fa-circle"></i></button>
@@ -377,14 +291,14 @@
                             <td scope="row">
                                 Flow of Movement/Stamina (Range Score : 0,01 - 0,10)
                                 <div></div>
-                                <!-- Increment 0,01 jadi 10 button 0,01 sampai 0,10 -->
                                 @for ($i = 1; $i <= 10; $i++)
                                     @php
-                                        $number = number_format($i * 0.01, 2);
-
+                                        $flowVal = number_format($i * 0.01, 2);
+                                        $isActiveFlow = ((float)$flowVal == (float)$flowScore);
                                     @endphp
-                                    <button class="btn btn-outline-primary btn-lg mx-1 btn-data"
-                                        name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:flwo p:{{ $number }} keterangan:seni_tunggal">{{ $number }}</button>
+                                    <button class="btn {{ $isActiveFlow ? 'btn-primary' : 'btn-outline-primary' }} btn-lg mx-1 btn-data btn-flow"
+                                        data-flow="{{ $flowVal }}"
+                                        name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:flwo p:{{ $flowVal }} keterangan:seni_tunggal">{{ $flowVal }}</button>
                                 @endfor
                             </td>
                             <td class="text-center align-middle text-primary fw-bold" id="flwo">
@@ -404,44 +318,85 @@
     <script src="{{ asset('assets/plugins/select2/select2.min.js') }}"></script>
     <!-- Laravel Echo -->
     <script src="{{ asset('js/app.js') }}"></script>
-    <input type="hidden" name="{{ $scs }}" id="selected">
-    <input type="hidden" name="{{ $arena }}" id="arenaId">
-    <input type="hidden" name="{{ $id_juri }}" id="juriId">
-    <input type="hidden" name="{{ $id_perserta }}" id="pesertaId">
+    <input type="hidden" value="{{ $currentBabak }}" id="selected">
+    <input type="hidden" value="{{ $arena }}" id="arenaId">
+    <input type="hidden" value="{{ $id_juri }}" id="juriId">
+    <input type="hidden" value="{{ $id_perserta }}" id="pesertaId">
     <script>
-        let id = $('#selected').attr('name');
-        let arena = $('#arenaId').attr('name');
-        let juri = $('#juriId').attr('name');
-        let peserta = $('#pesertaId').attr('name');
-        let isProgrammaticChange = false; // Flag to prevent infinite loop
-        let isInitialLoad = true; // Flag for initial page load
+        let currentBabak = {{ $currentBabak }};
+        const maxBabak = {{ $max }};
+        let wrongMoves = {{ $wrongScore }};
+        let currentFlow = {{ $flowScore }};
+        let arena = "{{ $arena }}";
+        let juri = "{{ $id_juri }}";
+        let peserta = "{{ $id_perserta }}";
+        let isProgrammaticChange = false;
+        let isInitialLoad = true;
+
+        function updateScoreDisplay() {
+            let accuracy = 9.90 - (wrongMoves / 100);
+            if (accuracy < 0) accuracy = 0;
+            let total = accuracy + currentFlow;
+
+            $('#totalScore').text(Math.max(0, 100 - wrongMoves));
+            $('#actualScoreBefore').text(accuracy.toFixed(2));
+            $('#flwo').text(currentFlow.toFixed(2));
+            $('#actualScore').text(total.toFixed(2));
+
+            if (currentBabak >= maxBabak) {
+                $('#btnNextMove').prop('disabled', true);
+            } else {
+                $('#btnNextMove').prop('disabled', false);
+            }
+        }
+
+        function updateJurusDisplay(newBabak) {
+            currentBabak = Math.max(0, Math.min(maxBabak, parseInt(newBabak) || 0));
+            isProgrammaticChange = true;
+            $('#jurusSelect').val(currentBabak).trigger('change.select2');
+            let selectedText = $('#jurusSelect').find('option[value="' + currentBabak + '"]').text() || $('#jurusSelect').find(':selected').text();
+            if (selectedText) {
+                $('#nameJurus').text(selectedText);
+            }
+            setTimeout(function () {
+                isProgrammaticChange = false;
+            }, 50);
+
+            if (currentBabak >= maxBabak) {
+                $('#btnNextMove').prop('disabled', true);
+            } else {
+                $('#btnNextMove').prop('disabled', false);
+            }
+        }
 
         $(document).ready(function () {
             $('.plain-select2').select2();
 
-            // Set initial value and update nameJurus
-            $('#jurusSelect').val(id);
-            $('#nameJurus').text($('#jurusSelect').find(':selected').text());
+            // Set initial jurus display
+            updateJurusDisplay(currentBabak);
 
-            // Update Select2 display without triggering change handler
-            $('#jurusSelect').trigger('change.select2');
-
-            // Reset flag after a short delay
             setTimeout(function () {
                 isInitialLoad = false;
-            }, 100);
+            }, 150);
 
             $('#jurusSelect').on('change', function () {
-                // Update nameJurus for all changes
-                $('#nameJurus').text($(this).find(':selected').text());
+                let selectedText = $(this).find(':selected').text();
+                if (selectedText) {
+                    $('#nameJurus').text(selectedText);
+                }
 
-                // Skip if this is a programmatic change from websocket or initial load
                 if (isProgrammaticChange || isInitialLoad) {
-                    isProgrammaticChange = false;
                     return;
                 }
 
-                let newId = $(this).val();
+                let newId = parseInt($(this).val()) || 0;
+                currentBabak = newId;
+
+                if (currentBabak >= maxBabak) {
+                    $('#btnNextMove').prop('disabled', true);
+                } else {
+                    $('#btnNextMove').prop('disabled', false);
+                }
 
                 fetch('{{ route('juri.store') }}', {
                     method: 'POST',
@@ -458,102 +413,102 @@
                         status: "next",
                         p: newId,
                     })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        // console.log(data);
-                        // window.location.reload();
-                    });
-            })
-        });
+                });
+            });
 
-        // function updateData(item) {
-        //     if(item.keterangan == 'next') {
+            // Score button clicks: Instant local DOM update without page reload
+            $('.btn-data').on('click', function () {
+                var nameAttribute = $(this).attr('name');
+                if (!nameAttribute) return;
 
-        //     }
-        // }
+                var data = {};
+                nameAttribute.split(' ').forEach(function (item) {
+                    var parts = item.split(':');
+                    if (parts.length === 2) {
+                        data[parts[0]] = parts[1];
+                    }
+                });
 
-        function websocket() {
-            // var arena_id = document.getElementById('arenaId').getAttribute('name');
+                // Optimistic instant UI update
+                if (data.status === 'next') {
+                    var pVal = parseFloat(data.p) || 0;
+                    if (pVal === 0) {
+                        // Next Move: advance jurus
+                        if (currentBabak < maxBabak) {
+                            updateJurusDisplay(currentBabak + 1);
+                        }
+                    } else {
+                        // Wrong Move: increment deductions
+                        wrongMoves += pVal;
+                        updateScoreDisplay();
+                    }
+                } else if (data.status === 'flwo') {
+                    currentFlow = parseFloat(data.p) || 0;
+                    $('.btn-flow').removeClass('btn-primary').addClass('btn-outline-primary');
+                    $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+                    updateScoreDisplay();
+                }
+
+                // Submit asynchronously via AyoSilatJudge queue
+                AyoSilatJudge.submitScore(data, function (res) {
+                    if (res && res.score !== undefined) {
+                        wrongMoves = parseFloat(res.score) || 0;
+                    }
+                    if (res && res.babak !== undefined && data.status === 'next' && parseFloat(data.p) === 0) {
+                        updateJurusDisplay(res.babak);
+                    }
+                    updateScoreDisplay();
+                }, function (err, isQueued) {
+                    // Handled gracefully in offline queue
+                });
+            });
+
+            // WebSocket live synchronization
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
                     console.log("Terhubung ke Layanan Notif!");
                 });
+
                 Echo.channel('tunggal-channel')
-                    .listen('TunggalEvent', (datas) => {
-                        const data = datas.message;
-                        var totalScore = 100;
-                        var actualScore = 9.9;
-                        var actualScoreBefore = 9.9;
-                        var flwo = 0;
-                        var jurus = 0;
-                        // console.log(data);
-                        if (arena == data.arena && data.tipe == 'data') {
-                            data.data.forEach((item, index) => {
+                    .listen('TunggalEvent', function (datas) {
+                        const data = datas.message || datas;
+                        if (!data || arena != data.arena) return;
 
-                                if (item.id_juri == juri) {
-                                    console.log(item);
-
-                                    if (item.keterangan == 'next') {
-                                        var scoreDecimal = parseFloat(item.score) || 0;
-                                        totalScore -= scoreDecimal;
-                                        actualScore -= scoreDecimal / 100;
-                                        actualScoreBefore -= scoreDecimal / 100;
-                                        jurus = parseFloat(item.babak);
+                        if (data.tipe == 'data') {
+                            const rawScores = data.data || data.scores;
+                            if (Array.isArray(rawScores)) {
+                                rawScores.forEach(function (item) {
+                                    if (item.id_juri == juri) {
+                                        if (item.keterangan == 'next') {
+                                            wrongMoves = parseFloat(item.score) || 0;
+                                            var newBabak = parseFloat(item.babak);
+                                            if (!isNaN(newBabak) && newBabak !== currentBabak) {
+                                                updateJurusDisplay(newBabak);
+                                            }
+                                        }
+                                        if (item.keterangan == 'flwo') {
+                                            currentFlow = parseFloat(item.score) || 0;
+                                            $('.btn-flow').each(function () {
+                                                if (parseFloat($(this).data('flow')) === currentFlow) {
+                                                    $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+                                                } else {
+                                                    $(this).removeClass('btn-primary').addClass('btn-outline-primary');
+                                                }
+                                            });
+                                        }
                                     }
-
-                                    if (item.keterangan == 'flwo') {
-                                        var scoreDecimal = parseFloat(item.score) || 0;
-                                        actualScore += scoreDecimal;
-                                        flwo = scoreDecimal;
-                                    }
-                                }
-                            });
-
-                            // Format numbers to remove trailing zeros and limit decimal places
-                            $('#actualScoreBefore').text(parseFloat(actualScoreBefore.toFixed(2)));
-                            $('#actualScore').text(parseFloat(actualScore.toFixed(2)));
-                            $('#flwo').text(parseFloat(flwo.toFixed(2)));
-                            $('#totalScore').text(parseFloat(totalScore.toFixed(2)));
-                            //alert('aa');
-                            // Only update select if value actually changed
-                            var currentJurus = $('#jurusSelect').val();
-                            if (String(currentJurus) != String(jurus)) {
-                                isProgrammaticChange = true;
-                                $('#jurusSelect').val(jurus).trigger('change');
-                                // nameJurus will be updated in the change handler
+                                });
+                                updateScoreDisplay();
                             }
-                        } else if (arena == data.arena && data.tipe == 'update') {
-                            window.location.reload();
+                        } else if (data.tipe == 'update') {
+                            // Only reload if match participant changed
+                            if (data.data && data.data.id && data.data.id != peserta) {
+                                window.location.reload();
+                            }
                         }
                     });
-            } else {
-                console.error('Laravel Echo is not initialized.');
             }
-        }
-        // end function untuk websoket
-
-        var tombolDenganKelas = document.querySelectorAll('.btn-data');
-        tombolDenganKelas.forEach(function (tombol) {
-            tombol.addEventListener('click', function () {
-                var nameAttribute = this.getAttribute('name'); // Mendapatkan nilai atribut "name"
-
-                // Membagi nilai atribut "name" menjadi objek JavaScript
-                var data = {};
-                nameAttribute.split(' ').forEach(function (item) {
-                    var parts = item.split(':');
-                    data[parts[0]] = parts[1];
-                });
-
-                AyoSilatJudge.submitScore(data, function (res) {
-                    // Berhasil dikirim ke server
-                }, function (err, isQueued) {
-                    // Tersimpan dalam antrean offline jika koneksi putus
-                });
-            });
         });
-
-        websocket();
     </script>
     <script src="{{ asset('assets/js/score-queue.js') }}"></script>
     <script>

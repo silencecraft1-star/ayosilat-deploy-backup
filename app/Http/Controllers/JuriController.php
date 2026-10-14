@@ -23,7 +23,7 @@ class JuriController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -33,7 +33,7 @@ class JuriController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
@@ -43,7 +43,7 @@ class JuriController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
@@ -279,12 +279,13 @@ class JuriController extends Controller
                 'partai' => $settingData->partai ?? null,
                 'arena' => $arena
             ];
+            $initialBabak = ($status === 'next' && (float)$p == 0.0) ? 1 : 0;
             $data = [
                 'score' => $p,
                 'keterangan' => $status,
                 'id_perserta' => $id_perserta,
                 'id_juri' => $id_juri,
-                'babak' => 0,
+                'babak' => $initialBabak,
                 'status' => 'point_tunggal',
                 'arena' => $arena,
                 'partai' => $settingData->partai ?? null,
@@ -292,29 +293,24 @@ class JuriController extends Controller
             $datas = score::where($check)->first();
             if ($datas) {
                 if ($status == 'next' && !empty($request->info) && $request->info == "change") {
-                    // dd($request->all());
                     $datas->update([
                         'babak' => $request->p,
                     ]);
-
-                    $helper2->sendTunggalData($arena);
-                } else if ($status == 'next' && $p != 0) {
+                } else if ($status == 'next' && (float)$p != 0.0) {
                     $data = [
                         'score' => $datas->score + $p,
                         'keterangan' => $status,
                         'id_perserta' => $id_perserta,
                         'id_juri' => $id_juri,
                         'status' => 'point_tunggal',
-                        // 'babak' => $datas->babak + 1,
                         'arena' => $arena,
                         'partai' => $settingData->partai ?? null,
                     ];
                     $helper2->sendSeniIndicator($arena, $settingData->sesi ?? null, $settingData->partai ?? null, $id_juri, "wrong", "tunggal");
                     $datas->update($data);
-                    $helper2->sendTunggalData($arena);
-                } elseif ($status == 'next' && $p == 0) {
+                } elseif ($status == 'next' && (float)$p == 0.0) {
                     $data = [
-                        'score' => $datas->score + $p,
+                        'score' => $datas->score,
                         'keterangan' => $status,
                         'id_perserta' => $id_perserta,
                         'id_juri' => $id_juri,
@@ -325,7 +321,6 @@ class JuriController extends Controller
                     ];
                     $helper2->sendSeniIndicator($arena, $settingData->sesi ?? null, $settingData->partai ?? null, $id_juri, "next", "tunggal");
                     $datas->update($data);
-                    $helper2->sendTunggalData($arena);
                 } elseif ($status == 'flwo') {
                     $data = [
                         'score' => $p,
@@ -338,14 +333,25 @@ class JuriController extends Controller
                     ];
                     $helper2->sendSeniIndicator($arena, $settingData->sesi ?? null, $settingData->partai ?? null, $id_juri, "flow", "tunggal");
                     $datas->update($data);
-                    $helper2->sendTunggalData($arena);
                 }
-
             } else {
-                score::create($data);
+                $datas = score::create($data);
+                if ($status == 'next') {
+                    $indicatorType = ((float)$p == 0.0) ? "next" : "wrong";
+                    $helper2->sendSeniIndicator($arena, $settingData->sesi ?? null, $settingData->partai ?? null, $id_juri, $indicatorType, "tunggal");
+                } elseif ($status == 'flwo') {
+                    $helper2->sendSeniIndicator($arena, $settingData->sesi ?? null, $settingData->partai ?? null, $id_juri, "flow", "tunggal");
+                }
             }
             $helper2->sendTunggalData($arena);
-            return response()->json(['message' => 'Data berhasil disimpan']);
+            $datas->refresh();
+            return response()->json([
+                'message' => 'Data berhasil disimpan',
+                'status' => $status,
+                'score' => $datas->score,
+                'babak' => $datas->babak,
+                'p' => $p,
+            ]);
         }
         return response()->json(['message' => 'Invalid status'], 400);
     }
@@ -356,18 +362,23 @@ class JuriController extends Controller
         header('Cache-Control: no-cache');
 
         while (true) {
-            $last = score::latest('created_at')->first();
-            $last = $last->created_at;
-            $last = $last->subSeconds(10);
-            $newData = score::where('created_at', '>', $last)->exists(); // Fungsi untuk memeriksa data baru
-
-            if ($newData) {
-                echo "data: newData\n\n";
-                ob_flush();
-                flush();
+            if (connection_aborted()) {
+                break;
             }
 
-            sleep(10); // Polling setiap 5 detik (sesuaikan sesuai kebutuhan)
+            $last = score::latest('created_at')->first();
+            if ($last && $last->created_at) {
+                $checkTime = $last->created_at->copy()->subSeconds(10);
+                $newData = score::where('created_at', '>', $checkTime)->exists();
+
+                if ($newData) {
+                    echo "data: newData\n\n";
+                    ob_flush();
+                    flush();
+                }
+            }
+
+            sleep(10);
         }
     }
 
@@ -1017,7 +1028,7 @@ class JuriController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -1028,7 +1039,7 @@ class JuriController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit($id)
     {
@@ -1038,9 +1049,9 @@ class JuriController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -1051,7 +1062,7 @@ class JuriController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
@@ -1061,7 +1072,7 @@ class JuriController extends Controller
     /**
      * Heartbeat presence ping from judge tablets
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function ping(Request $request)

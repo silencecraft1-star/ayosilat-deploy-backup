@@ -1008,12 +1008,20 @@ class GlobalScoreHelper
 
         $response = $this->getTunggalData($arena);
 
+        $pesertaBiru = $setting->biru ? PersertaModel::where('id', $setting->biru)->first() : null;
+        $scores = $pesertaBiru ? score::where('id_perserta', $pesertaBiru->id)
+            ->where('partai', $setting->partai)
+            ->where('arena', $arena)
+            ->where('status', 'point_tunggal')
+            ->get() : [];
+
         $datas = [
             'arena' => $arena,
             'partai' => $setting->partai,
             'sesi' => $setting->sesi ?? null,
             'tipe' => 'data',
-            'response' => $response
+            'response' => $response,
+            'data' => $scores
         ];
 
         event(new TunggalEvent($datas));

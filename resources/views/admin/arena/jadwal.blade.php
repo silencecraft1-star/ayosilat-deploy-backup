@@ -81,7 +81,7 @@
             });
         }
 
-        $data_perserta = $tandingQuery->paginate($perPage)->withQueryString();
+        $data_perserta = $tandingQuery->paginate($perPage)->appends(request()->query());
 
         //$kelasall = kelas::get();
         $PesertaAll = PersertaModel::take(30)->get();
@@ -700,9 +700,20 @@
                         <div class="modal-body">
                             <div class="container-fluid">
                                 <div class="row mb-3">
-                                    <div class="col">
-                                        <label for="partaiId">Partai</label>
-                                        <input type="number" name="partai" id="partaiId" class="form-control">
+                                    <div class="col-md-6">
+                                        <label for="partaiId" class="form-label">Partai <span class="text-danger">*</span></label>
+                                        <input type="number" name="partai" id="partaiId" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sesiTandingId" class="form-label">Sesi</label>
+                                        <select class="form-control" name="sesi" id="sesiTandingId">
+                                            <option value="">-- Tanpa Sesi --</option>
+                                            @foreach ($dataSesi as $s)
+                                                <option value="{{ $s->id }}" {{ ($sesi && $sesi == $s->id) ? 'selected' : '' }}>
+                                                    {{ $s->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row mb-3">

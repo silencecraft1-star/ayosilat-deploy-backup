@@ -38,3 +38,9 @@ public/css
 
 AGENTS.md
 GEMINI.md
+
+/.agents
+/.claude
+/.cursor
+
+CLAUDE.md

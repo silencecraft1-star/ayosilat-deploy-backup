@@ -160,18 +160,18 @@ class AdminController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        return response()->json(['message' => 'Method not implemented'], 501);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(Request $request)
     {
@@ -373,6 +373,9 @@ class AdminController extends Controller
         $biru = Trim(explode('||', $biru)[0]);
         $merah = Trim(explode('||', $merah)[0]);
         $sesi = $request->input('sesi');
+        if (empty($sesi) || $sesi === '0') {
+            $sesi = null;
+        }
         $kelas = $request->input('kelas');
         $partaiInput = $request->input('partai');
 
@@ -1299,7 +1302,7 @@ class AdminController extends Controller
             $kategori = category::where('id', $item->category)->first()->name ?? "Non";
 
             // Determine Medali
-            $medali = \App\Medali::where('id_peserta', $item->id)->first();
+            $medali = Medali::where('id_peserta', $item->id)->first();
             $medaliText = 'Belum/Tidak Ada';
             if ($medali) {
                 if ($medali->point == 5) {
@@ -1339,7 +1342,7 @@ class AdminController extends Controller
         $filterKelas = $request->input('filter_kelas');
         $filterKontigen = $request->input('filter_kontigen');
 
-        $query = \App\Medali::query();
+        $query = Medali::query();
 
         if ($filterKategori) {
             $query->where('kategori', $filterKategori);
@@ -1358,7 +1361,7 @@ class AdminController extends Controller
             });
         }
 
-        $totalRecords = \App\Medali::count();
+        $totalRecords = Medali::count();
         $filteredRecords = $query->count();
 
         $searchResult = $query->skip($start)->take($length)->get();
@@ -1404,44 +1407,44 @@ class AdminController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
-        //
+        return response()->json(['message' => 'Method not implemented'], 501);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit($id)
     {
-        //
+        return response()->json(['message' => 'Method not implemented'], 501);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        return response()->json(['message' => 'Method not implemented'], 501);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        //
+        return response()->json(['message' => 'Method not implemented'], 501);
     }
 }
