@@ -183,87 +183,58 @@
                 </div>
             </div>
             <!-- Point Table -->
-            <table class="table table-bordered my-5 f-cent fs-3 border-dark-subtle">
-                <thead>
-                    <tr style="height: 70px;" class="fs-2">
-                        @for ($i = 1; $i <= $juriSeni; $i++)
-                            <th scope="col" class="bg-dark" style=" color: #f5f5f5;">JURI
-                                {{ $i }}
-                            </th>
-                        @endfor
-                    </tr>
-                </thead>
-                <tbody>
-                    {{-- <tr style="height: 70px;">
-                        @for ($i = 1; $i <= $juriSeni; $i++) <td class="fw-semibold" id="attack{{ $i }}">
-                            </td>
+            <div class="container-fluid" style="margin-bottom: 50px; margin-top:50px;">
+                <table name="scoreTable" class="table table-bordered border-dark-subtle">
+                    <thead class="text-center align-middle">
+                        <tr>
+                            @for ($i = 1; $i <= $juriSeni; $i++)
+                                <th class="bg-dark text-white fs-2">Juri {{ $i }}</th>
                             @endfor
-                    </tr> --}}
-                    {{-- <tr style="height: 70px;">
-                        @for ($i = 1; $i <= $juriSeni; $i++) <td class="fw-semibold" id="firmness{{ $i }}">
-                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center align-middle">
+                        <tr>
+                            @for ($i = 1; $i <= $juriSeni; $i++)
+                                @php
+                                    $juri = $setting->{'juri_' . $i};
+                                @endphp
+                                <td name="{{ $juri }}" class="bg-green-2 change-bg change-text">
+                                    <div id="total{{ $i }}" style="font-size: 8em;">
+
+                                    </div>
+                                </td>
                             @endfor
-                    </tr> --}}
-                    {{-- <tr style="height: 70px;">
-                        @for ($i = 1; $i <= $juriSeni; $i++) <td class="fw-semibold" id="soulfullness{{ $i }}">
-                            </td>
-                            @endfor
-                    </tr> --}}
-                    <tr style="height: 70px;">
-                        @for ($i = 1; $i <= $juriSeni; $i++)
-                            @php
-                                $juri = $setting->{'juri_' . $i};
-                            @endphp
-                            <td class="fw-semibold bg-green-2 change-bg text-white" style="font-size: 5em;" name="{{ $juri }}"
-                                id="total{{ $i }}"></td>
-                        @endfor
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Time and Score info -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Final Score Section -->
             <div class="container-fluid">
                 <div class="row flex-grow-1 h-full">
-                    <!-- Time Section  -->
-                    <div class="col h-full px-0">
-                        <div class="w-100">
-                            <div class="w-100">
-                                <table class="table table-responsive table-bordered border-black">
-                                    <thead class="text-center align-middle">
-                                        <tr class="text-center">
-                                            <th class="bg-green-2 change-bg text-light py-2 fs-2">
-                                                Median
-                                            </th>
-                                            <th class="bg-green-2 change-bg text-light py-2 fs-2">
-                                                Penalty
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-center align-middle">
-                                        <tr class="text-center">
-                                            <td id="medianscore" class="change-text py-3 fw-bold"
-                                                style="font-size: 4em; overflow:hidden; max-width: 7em;">
-                                                0
-                                            </td>
-                                            <td class="text-danger py-3 fw-bold" style="font-size: 4em;"
-                                                id="dewan_pinalti">
-                                                0
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" class="bg-green-2 change-bg text-light py-2 fs-2">
-                                                Standard Deviation
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" class="fs-2" style="padding: 1em 0px;" id="deviationscore">0
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="col h-full">
+                        <table class="table table-responsive table-bordered border-black">
+                            <thead class="text-center align-middle">
+                                <tr>
+                                    <th class="bg-green-2 change-bg text-light py-2 fs-2">Median</th>
+                                    <th class="bg-green-2 change-bg text-light py-2 fs-2">Penalty</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center align-middle">
+                                <tr>
+                                    <td class="py-3 fw-bold" style="font-size: 4em; overflow:hidden; max-width: 7em;"
+                                        id="medianscore">0</td>
+                                    <td class="py-3 fw-bold text-danger" style="font-size: 4em;" id="dewan_pinalti">0</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="bg-green-2 change-bg text-light py-2 fs-2">Standard Deviation
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="fs-2" style="padding: 1em 0px;" id="deviationscore">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <!-- Point Section -->
                     <div class="col-8">
                         <div class="row justify-content-center items-center">
                             <div class="col">
@@ -277,8 +248,9 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <div class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
-                                    Score
+                                <div
+                                    class="border border-black container shadow-lg bg-green-2 change-bg text-light border-3 rounded text-center px-5 py-3 fs-2">
+                                    Total Score
                                 </div>
                                 <div id="total_score" class="change-text container text-green fw-bold text-center align-middle"
                                     style="font-size: 10em;">
@@ -533,6 +505,7 @@
                     medianIndices = [sorted[mid].idx];
                 }
                 for (var j = 1; j <= jumlahJuri; j++) {
+                    $('#total' + j).closest('td').removeClass('median-highlight').addClass('text-white');
                     $('#total' + j).removeClass('median-highlight').addClass('text-white');
                 }
 
@@ -546,6 +519,7 @@
 
                 if (hasScore) {
                     medianIndices.forEach(function(idx) {
+                        $('#total' + idx).closest('td').addClass('median-highlight').removeClass('text-white');
                         $('#total' + idx).addClass('median-highlight').removeClass('text-white');
                     });
                 }

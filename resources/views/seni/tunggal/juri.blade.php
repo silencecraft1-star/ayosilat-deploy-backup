@@ -207,12 +207,12 @@
             {{$arenaNama[0]}}
         </div>
 
-        <div class="d-flex justify-content-center flex-wrap gap-2 text-center mb-3">
-            <span class="badge bg-dark fs-6 px-3 py-2">Partai {{ $partai }}</span>
-            <span class="badge bg-success fs-6 px-3 py-2">{{ ucfirst($jadwal->keterangan ?? 'Pemasalan') }}</span>
-            <span class="badge bg-primary fs-6 px-3 py-2">{{ $kelas->name ?? '-' }}</span>
-            <span class="badge bg-info fs-6 px-3 py-2">{{ $category ?? '-' }}</span>
-            <span class="badge bg-secondary fs-6 px-3 py-2">{{ ucfirst($perserta->gender ?? '-') }}</span>
+        <div class="d-flex flex-row flex-nowrap align-items-center justify-content-center gap-2 text-center text-uppercase text-nowrap mb-3">
+            <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">Partai {{ $partai }}</span>
+            <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ ucfirst($jadwal->keterangan ?? 'Pemasalan') }}</span>
+            <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ $kelas->name ?? '-' }}</span>
+            <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ $category ?? '-' }}</span>
+            <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ ucfirst($perserta->gender ?? '-') }}</span>
         </div>
     </div>
     <!-- Player Info Section -->

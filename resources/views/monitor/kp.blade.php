@@ -310,12 +310,12 @@
             <!-- Arena/Match Info -->
             <div class="arena-info">
                 <div class="arena-name text-uppercase">{{ $arenaData->name ?? 'ARENA' }}</div>
-                <div class="d-flex flex-wrap justify-content-center gap-1 mt-2 mb-2">
-                    <span class="badge bg-dark fs-6" id="partai">Partai {{ $partaiNomor }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-keterangan">{{ strtoupper($keteranganPertandingan) }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-kelas">{{ strtoupper($namaKelas) }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-kategori">{{ strtoupper($namaKategori) }}</span>
-                    <span class="badge bg-secondary fs-6" id="info-gender">{{ strtoupper($gender) }}</span>
+                <div class="d-flex flex-row flex-nowrap align-items-center justify-content-center gap-2 mt-2 mb-2 text-nowrap text-uppercase">
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="partai">Partai {{ $partaiNomor }}</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-keterangan">{{ strtoupper($keteranganPertandingan) }}</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-kelas">{{ strtoupper($namaKelas) }}</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-kategori">{{ strtoupper($namaKategori) }}</span>
+                    <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-gender">{{ strtoupper($gender) }}</span>
                 </div>
                 <div class="round-indicator">BABAK <span id="babak">{{ $currentRound }}</span></div>
             </div>

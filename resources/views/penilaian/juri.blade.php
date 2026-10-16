@@ -85,14 +85,14 @@
                 </div>
             </div>
             <div class="col">
-                <div class="mx-5 mt-2 mb-2">
-                    <div class="d-flex text-uppercase justify-content-center flex-wrap gap-2 text-center">
-                        <span class="badge bg-dark fs-6 px-3 py-2" id="info-partai">Partai {{ $setting->partai }}</span>
-                        <span class="badge bg-success fs-6 px-3 py-2"
+                <div class="mx-2 mt-2 mb-2">
+                    <div class="d-flex flex-row flex-nowrap align-items-center justify-content-center gap-2 text-center text-uppercase text-nowrap">
+                        <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-partai">Partai {{ $setting->partai }}</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold"
                             id="info-keterangan">{{ucfirst($infoKeterangan) }}</span>
-                        <span class="badge bg-primary fs-6 px-3 py-2" id="info-kelas">{{ $infoKelas }}</span>
-                        <span class="badge bg-info fs-6 px-3 py-2" id="info-kategori">{{ $infoKategori }}</span>
-                        <span class="badge bg-secondary fs-6 px-3 py-2"
+                        <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-kelas">{{ $infoKelas }}</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold" id="info-kategori">{{ $infoKategori }}</span>
+                        <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold"
                             id="info-gender">{{ ucfirst($infoGender) }}</span>
                     </div>
                 </div>
@@ -244,14 +244,14 @@
                 <div class="d-flex justify-content-start align-items-center">
                     <button style="height: 5em;"
                         name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_biru}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_biru:{{$tim_biru}}"
-                        class="btnSkill1 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-5 px-lg-5 px-md-5 me-1 shadow border-black">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                        class="btnSkill1 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-4 px-lg-5 px-md-5 me-1 shadow border-black">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="me-2 flex-shrink-0">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             <line x1="10" y1="11" x2="10" y2="17"></line>
                             <line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
-                        <span class="ms-1">Hapus Nilai Terakhir</span>
+                        <span class="ms-1 fw-semibold">Hapus Nilai Terakhir</span>
                     </button>
                 </div>
             </div>
@@ -635,14 +635,14 @@
                         <button
                             name="nj:{{$nomorjuri}} arena:{{$id_arena}} juri:{{$id_juri}} id:{{$tim_merah}} babak:{{$setting->babak}} status:hapus p:2 keterangan:plus id_merah:{{$tim_merah}}"
                             style="width: 100%; height: 5em;"
-                            class="btnSkill2 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-0 px-lg-5 px-md-5 shadow border-black">
-                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                            class="btnSkill2 d-flex align-items-center justify-content-center btn btn-secondary fs-5 py-2 px-3 px-lg-5 px-md-5 shadow border-black">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="me-2 flex-shrink-0">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                 <line x1="10" y1="11" x2="10" y2="17"></line>
                                 <line x1="14" y1="11" x2="14" y2="17"></line>
                             </svg>
-                            <span class="ms-1">Hapus Nilai Terakhir</span>
+                            <span class="ms-1 fw-semibold">Hapus Nilai Terakhir</span>
                         </button>
                     </div>
                     <div class="d-flex flex-column gap-2">

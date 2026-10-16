@@ -120,87 +120,65 @@
                 </div>
             </div>
             <!-- Point Table -->
-            <table class="table table-bordered mt-3 f-cent fs-3 border-black">
-                <thead>
-                    <tr style="height: 70px;" class="fs-2">
+            <table class="table table-bordered border-dark-subtle mt-3">
+                <thead class="text-center align-middle">
+                    <tr>
                         @for ($i = 1; $i <= $juriSeni; $i++)
-                            <th scope="col" class="bg-green-2" style=" color: #f5f5f5;">JURI
-                                {{ $i }}
-                            </th>
+                            <th class="bg-light fs-6">Juri {{ $i }}</th>
                         @endfor
                     </tr>
                 </thead>
-                <tbody>
-                    <tr style="height: 70px;">
+                <tbody class="text-center align-middle">
+                    <tr>
                         @for ($i = 1; $i <= $juriSeni; $i++)
-                            <td class="fw-semibold" id="attack{{ $i }}"></td>
+                            <td class="fw-semibold" style="font-size: 3em;" id="attack{{ $i }}"></td>
                         @endfor
                     </tr>
-                    <tr style="height: 70px;">
+                    <tr>
                         @for ($i = 1; $i <= $juriSeni; $i++)
-                            <td class="fw-semibold" id="firmness{{ $i }}"></td>
+                            <td class="fw-semibold" style="font-size: 3em;" id="firmness{{ $i }}"></td>
                         @endfor
                     </tr>
-                    <tr style="height: 70px;">
+                    <tr>
                         @for ($i = 1; $i <= $juriSeni; $i++)
-                            <td class="fw-semibold" id="soulfullness{{ $i }}"></td>
+                            <td class="fw-semibold" style="font-size: 3em;" id="soulfullness{{ $i }}"></td>
                         @endfor
                     </tr>
-                    <tr style="height: 70px;">
+                    <tr>
                         @for ($i = 1; $i <= $juriSeni; $i++)
-                            <td class="fw-semibold text-success" id="total{{ $i }}"></td>
+                            <td class="bg-light text-success fw-bold" style="font-size: 3em;" id="total{{ $i }}"></td>
                         @endfor
                     </tr>
                 </tbody>
             </table>
-            <!-- Time and Score info -->
-            <div class="container-fluid h100 mb-5">
+            <!-- Final Score Section -->
+            <div class="container-fluid px-0 mb-5">
                 <div class="row">
-                    <!-- Time Section  -->
-                    <div class="col d-flex justify-content-center w-100 flex-wrap gap-0">
-                        <div class="w-100">
-                            <div class="w-100">
-                                <table class="table table-bordered rounded border-dark w-100">
-                                    <thead>
-                                        <tr class="text-center">
-                                            <th class=" text-light bg-green-2 fs-2">
-                                                Median
-                                            </th>
-                                            <th class=" text-light bg-green-2 fs-2">
-                                                Penalty
-                                            </th>
-                                            {{-- <th class="text-light bg-green-2 fs-2">
-                                                Score
-                                            </th> --}}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="text-center">
-                                            <td id="medianscore" class="fs-2 text-success fw-bold" id="dewan_median">
-                                                0
-                                            </td>
-                                            <td class="fs-2 text-danger fw-bold" id="dewan_pinalti">
-
-                                            </td>
-                                            {{-- <td class="fs-2 text-success fw-bold" id="total_score">
-
-                                            </td> --}}
-                                        </tr>
-                                        <tr class="text-center">
-                                            <td class="fs-2 bg-green-2 text-light" colspan="3">Standard Deviation
-                                            </td>
-                                        </tr>
-                                        <tr class="text-center">
-                                            <td id="deviationscore" class="fs-2 text-success    " colspan="3">0</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <!-- Score Stats Table -->
+                    <div class="col">
+                        <table class="table table-responsive table-bordered border-black">
+                            <thead class="text-center align-middle">
+                                <tr>
+                                    <th class="bg-green-2 text-light py-3 fs-2">Median</th>
+                                    <th class="bg-green-2 text-light py-3 fs-2">Penalty</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center align-middle">
+                                <tr>
+                                    <td class="py-3 fw-bold fs-2 text-success" id="medianscore">0</td>
+                                    <td class="py-3 fw-bold fs-2 text-danger" id="dewan_pinalti"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="bg-green-2 text-light py-3 fs-2">Standard Deviation</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="py-3 fs-2 text-success" id="deviationscore">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <!-- mid section -->
-                    <!-- Point Section -->
-                    <div class="col-8">
+                    <!-- Cards Section -->
+                    <div class="col-6">
                         <div class="row">
                             <div class="col">
                                 <div

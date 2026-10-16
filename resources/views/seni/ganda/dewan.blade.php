@@ -35,13 +35,17 @@
             use App\KontigenModel;
             use App\juri;
             use App\jadwal_group;
+            use App\kelas;
+            use App\category;
             // peraturan
             $setting = Setting::where('arena', $arena)->first();
             $jadwal = jadwal_group::where('id', $setting->jadwal)->first();
             $partai = $setting->partai;
             $perserta = PersertaModel::where('id', $setting->biru)->first();
+            $kelas = ($perserta && $perserta->kelas) ? (kelas::where('id', $perserta->kelas)->value('name') ?? '-') : '-';
+            $category = ($perserta && $perserta->category) ? (category::where('id', $perserta->category)->value('name') ?? '-') : '-';
 
-            if ($jadwal->keterangan == "prestasi") {
+            if ($jadwal && $jadwal->keterangan == "prestasi") {
                 $pesertaBiru = PersertaModel::where('id', $jadwal->biru)->first();
                 $pesertaMerah = PersertaModel::where('id', $jadwal->merah)->first();
             }
@@ -52,17 +56,23 @@
             $d = 'PESERTA BERHENTI DALAM 1 GERAKAN LEBIH DARI 5 DETIK';
             $e = 'PESILAT MELEBIHI BATAS WAKTU TOLERANSI';
             $minus = '0.50';
-            // $setting = Setting::where('arena', $arena)->first();
-            // $partai = $setting->partai;
-            // $perserta = PersertaModel::where('id', $setting->biru)->first();
-            $id_perserta = $perserta->id;
-            $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
-            $arenaNama = explode('||', $setting->judul);
+            $id_perserta = $perserta->id ?? 0;
+            $kontigen = ($perserta && $perserta->id_kontigen) ? KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen') : '-';
+            $arenaNama = explode('||', $setting->judul ?? 'ARENA');
             $dataJuri = juri::where('id', $id_juri)->first();
         @endphp
-        <div class="my-2">
-            {{$arenaNama[0]}} <br />
-            {{$arenaNama[1]}} <br />
+        <div class="d-flex flex-column align-items-center mt-2 mb-3">
+            <div class="fs-5 fw-bold text-center mb-2">
+                {{$arenaNama[0]}}
+            </div>
+
+            <div class="d-flex flex-row flex-nowrap align-items-center justify-content-center gap-2 text-center text-uppercase text-nowrap">
+                <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">Partai {{ $partai ?? '-' }}</span>
+                <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ ucfirst($jadwal->keterangan ?? 'Pemasalan') }}</span>
+                <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ $kelas }}</span>
+                <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ $category }}</span>
+                <span class="badge bg-secondary rounded-pill px-3 py-1 fs-6 fw-bold">{{ ucfirst($perserta->gender ?? '-') }}</span>
+            </div>
         </div>
         <!-- Player Info Section -->
         <div class="container-fluid px-4">

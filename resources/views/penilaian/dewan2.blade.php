@@ -188,7 +188,7 @@
                         $kelasInfo = \App\kelas::where('id', $tim_merahs->kelas)->first();
                         $kategoriInfo = \App\category::where('id', $tim_merahs->category)->first();
                     @endphp
-                    <div class="flex uppercase text-uppercase flex-wrap justify-center gap-2">
+                    <div class="flex flex-row flex-nowrap items-center justify-center gap-2 uppercase text-uppercase whitespace-nowrap">
                         <span id="info-keterangan"
                             class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-bold">{{ ucfirst($infoKeterangan) }}</span>
                         <span id="info-kelas"

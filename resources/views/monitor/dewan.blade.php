@@ -311,7 +311,7 @@
                 <div class="match-partai text-uppercase">
                     Partai <span id="partai-label"><span id="partai">{{ $partaiNomor }}</span></span>
                 </div>
-                <div class="d-flex flex-wrap justify-content-center gap-2 mt-1">
+                <div class="d-flex flex-row flex-nowrap align-items-center justify-content-center gap-2 mt-1 text-nowrap text-uppercase">
                     <span class="info-badge" id="info-keterangan">{{ strtoupper($keteranganPertandingan) }}</span>
                     <span class="info-badge" id="info-kelas">{{ strtoupper($namaKelas) }}</span>
                     <span class="info-badge" id="info-kategori">{{ strtoupper($namaKategori) }}</span>
