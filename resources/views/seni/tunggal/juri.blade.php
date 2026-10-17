@@ -452,7 +452,11 @@
                 // Submit asynchronously via AyoSilatJudge queue
                 AyoSilatJudge.submitScore(data, function (res) {
                     if (res && res.score !== undefined) {
-                        wrongMoves = parseFloat(res.score) || 0;
+                        if (data.status === 'next' || res.status === 'next') {
+                            wrongMoves = parseFloat(res.score) || 0;
+                        } else if (data.status === 'flwo' || res.status === 'flwo') {
+                            currentFlow = parseFloat(res.score) || 0;
+                        }
                     }
                     if (res && res.babak !== undefined && data.status === 'next' && parseFloat(data.p) === 0) {
                         updateJurusDisplay(res.babak);

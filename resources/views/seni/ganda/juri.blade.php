@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap-5.3.7/css/bootstrap.min.css') }}">
 
-
     <title>Solo & Ganda</title>
     @php
         use App\score;
@@ -22,14 +21,25 @@
         $dataKelas = kelas::where('id', $perserta->kelas)->first();
         $dataJuri = juri::where('id', $id_juri)->first();
         $kontigen = KontigenModel::where('id', $perserta->id_kontigen)->value('kontigen');
-        $scores = score::where('id_perserta', $id_perserta)->get();
+
+        $scores = score::where('id_perserta', $id_perserta)
+            ->where('partai', $setting->partai)
+            ->where('arena', $setting->arena)
+            ->where('id_juri', $id_juri)
+            ->where('status', 'point_solo')
+            ->get();
+
+        $attackScore = $scores->where('keterangan', 'attack')->value('score') ?? 0;
+        $firmnessScore = $scores->where('keterangan', 'firmness')->value('score') ?? 0;
+        $soulfullnessScore = $scores->where('keterangan', 'soulfullness')->value('score') ?? 0;
+        $totalScore = number_format(9.10 + (float)$attackScore + (float)$firmnessScore + (float)$soulfullnessScore, 2);
 
         $jadwalData = \App\jadwal_group::where('id', $setting->jadwal)->first();
         $categoryData = \App\category::where('id', $perserta->category)->first();
 
-        $namaJuri = explode(' ', $dataJuri->name);
-        $namaJuri = "$namaJuri[0] $namaJuri[2]";
-        $arenaNama = explode('||', $setting->judul);
+        $namaJuriParts = explode(' ', $dataJuri->name ?? 'Juri');
+        $namaJuri = count($namaJuriParts) >= 3 ? "{$namaJuriParts[0]} {$namaJuriParts[2]}" : ($dataJuri->name ?? 'Juri');
+        $arenaNama = explode('||', $setting->judul ?? 'ARENA');
     @endphp
 </head>
 
@@ -88,47 +98,30 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="px-2  align-middle">
+                    <td class="px-2 align-middle">
                         Teknik Serang-Bela
                         (0,01-0,30)
                     </td>
                     <td>
-                        <!-- LOOP SAMPAI 0,30 -->
                         @for ($i = 1; $i <= 30; $i++)
                             @php
                                 $number = number_format($i * 0.01, 2);
+                                $isActive = ((float)$attackScore == (float)$number);
                             @endphp
-                            <button class="btn btn-light border-black px-2 py-1 mx-1 btn-data"
-                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:attack p:{{ $number }} keterangan:pointseni partai:1">{{ $number }}</button>
+                            <button class="btn {{ $isActive ? 'btn-primary text-white' : 'btn-light' }} border-black px-2 py-1 mx-1 btn-data"
+                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:attack p:{{ $number }} keterangan:pointseni partai:{{ $setting->partai ?? 1 }}">{{ $number }}</button>
                         @endfor
                     </td>
                     <td class="w-5 text-center align-middle fw-bold fs-5">
                         SCORE <br>
-                        @php
-                            $check = [
-                                'id_perserta' => $id_perserta,
-                                'keterangan' => 'attack',
-                                'id_juri' => $id_juri,
-                            ];
-                            $data = score::where($check)->first();
-                        @endphp
-                        @if ($data)
-                            <span class="text-primary">{{ $data->score }}</span>
-                        @else
-                            <span class="text-primary">0</span>
-                        @endif
+                        <span class="text-primary" id="score_attack">{{ number_format((float)$attackScore, 2) }}</span>
                     </td>
                     <td rowspan="3" class="w-10 text-center align-middle">
                         <span class="fs-4">Total Score</span> <br>
                         -Teknik <br>
                         -Ketegasan <br>
                         -Penjiwaan <br>
-                        @php
-                            $score = $scores->where('status', 'point_solo')->where('id_juri', $id_juri)->sum('score');
-                            $score = number_format($score, 2);
-                            $score = 9.1 + $score;
-                        @endphp
-                        <span class="text-primary fs-4 fw-bold">{{ $score }}</span>
+                        <span class="text-primary fs-4 fw-bold" id="total_score">{{ $totalScore }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -137,31 +130,18 @@
                         (0,01-0,30)
                     </td>
                     <td>
-                        <!-- LOOP SAMPAI 0,03 -->
                         @for ($i = 1; $i <= 30; $i++)
                             @php
                                 $number = number_format($i * 0.01, 2);
+                                $isActive = ((float)$firmnessScore == (float)$number);
                             @endphp
-                            <button class="btn btn-light border-black  px-2 py-1 mx-1 btn-data"
-                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:firmness p:{{ $number }} keterangan:pointseni">{{ $number }}</button>
+                            <button class="btn {{ $isActive ? 'btn-primary text-white' : 'btn-light' }} border-black px-2 py-1 mx-1 btn-data"
+                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:firmness p:{{ $number }} keterangan:pointseni partai:{{ $setting->partai ?? 1 }}">{{ $number }}</button>
                         @endfor
-
                     </td>
                     <td class="w-5 text-center align-middle fw-bold fs-5">
                         SCORE <br>
-                        @php
-                            $check = [
-                                'id_perserta' => $id_perserta,
-                                'keterangan' => 'firmness',
-                                'id_juri' => $id_juri,
-                            ];
-                            $data = score::where($check)->first();
-                        @endphp
-                        @if ($data)
-                            <span class="text-primary">{{ $data->score }}</span>
-                        @else
-                            <span class="text-primary">0</span>
-                        @endif
+                        <span class="text-primary" id="score_firmness">{{ number_format((float)$firmnessScore, 2) }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -170,32 +150,18 @@
                         (0,01-0,30)
                     </td>
                     <td>
-                        <!-- LOOP SAMPAI 0,03 -->
                         @for ($i = 1; $i <= 30; $i++)
                             @php
                                 $number = number_format($i * 0.01, 2);
-
+                                $isActive = ((float)$soulfullnessScore == (float)$number);
                             @endphp
-                            <button class="btn btn-light border-black  px-2 py-1 mx-1 btn-data"
-                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:soulfullness p:{{ $number }} keterangan:pointseni">{{ $number }}</button>
+                            <button class="btn {{ $isActive ? 'btn-primary text-white' : 'btn-light' }} border-black px-2 py-1 mx-1 btn-data"
+                                name="arena:{{ $arena }} juri:{{ $id_juri }} id:{{ $id_perserta }} status:soulfullness p:{{ $number }} keterangan:pointseni partai:{{ $setting->partai ?? 1 }}">{{ $number }}</button>
                         @endfor
-
                     </td>
                     <td class="w-5 text-center align-middle fw-bold fs-5">
                         SCORE <br>
-                        @php
-                            $check = [
-                                'id_perserta' => $id_perserta,
-                                'keterangan' => 'soulfullness',
-                                'id_juri' => $id_juri,
-                            ];
-                            $data = score::where($check)->first();
-                        @endphp
-                        @if ($data)
-                            <span class="text-primary">{{ $data->score }}</span>
-                        @else
-                            <span class="text-primary">0</span>
-                        @endif
+                        <span class="text-primary" id="score_soulfullness">{{ number_format((float)$soulfullnessScore, 2) }}</span>
                     </td>
                 </tr>
             </tbody>
@@ -205,12 +171,17 @@
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.min.js') }}"></script>
     <input type="text" hidden value="{{$setting->arena}}" name="arena" id="arena_id">
     <script>
-        // Temukan semua tombol dengan kelas "button-blue" atau "button-blue-delete"
-        var tombolDenganKelas = document.querySelectorAll('.btn-data');
         var arena = $('#arena_id').val();
+        let currentAttack = parseFloat("{{ $attackScore }}") || 0;
+        let currentFirmness = parseFloat("{{ $firmnessScore }}") || 0;
+        let currentSoulfullness = parseFloat("{{ $soulfullnessScore }}") || 0;
+
+        function updateTotalScore() {
+            let total = 9.10 + currentAttack + currentFirmness + currentSoulfullness;
+            $('#total_score').text(total.toFixed(2));
+        }
 
         function websocket() {
-            // var arena_id = document.getElementById('arenaId').getAttribute('name');
             if (window.Echo) {
                 window.Echo.connector.pusher.connection.bind('connected', function () {
                     console.log("Terhubung ke Layanan Notif!");
@@ -219,7 +190,9 @@
                     .listen('SoloEvent', (datas) => {
                         const data = datas.message;
                         if (arena == data.arena && data.tipe == 'update') {
-                            window.location.reload();
+                            if (data.data && data.data.id && data.data.id != "{{ $id_perserta }}") {
+                                window.location.reload();
+                            }
                         }
                     });
             } else {
@@ -227,29 +200,42 @@
             }
         }
 
-        // Loop melalui semua tombol dan tambahkan event listener
-        tombolDenganKelas.forEach(function (tombol) {
-            tombol.addEventListener('click', function () {
-                var nameAttribute = this.getAttribute('name'); // Mendapatkan nilai atribut "name"
+        $('.btn-data').on('click', function () {
+            var nameAttribute = $(this).attr('name');
+            if (!nameAttribute) return;
 
-                // Membagi nilai atribut "name" menjadi objek JavaScript
-                var data = {};
-                nameAttribute.split(' ').forEach(function (item) {
-                    var parts = item.split(':');
+            var data = {};
+            nameAttribute.split(' ').forEach(function (item) {
+                var parts = item.split(':');
+                if (parts.length === 2) {
                     data[parts[0]] = parts[1];
-                });
-
-                // Sekarang, Anda memiliki data dalam bentuk objek
-                AyoSilatJudge.submitScore(data, function (res) {
-                    console.log(res);
-                    reload();
-                }, function (err, isQueued) {
-                    // Tersimpan dalam antrean offline jika koneksi putus
-                });
-
-                function reload() {
-                    window.location.reload();
                 }
+            });
+
+            var val = parseFloat(data.p) || 0;
+            var status = data.status;
+
+            // Highlight selected button in this row only
+            $(this).closest('td').find('.btn-data').removeClass('btn-primary text-white').addClass('btn-light');
+            $(this).removeClass('btn-light').addClass('btn-primary text-white');
+
+            if (status === 'attack') {
+                currentAttack = val;
+                $('#score_attack').text(val.toFixed(2));
+            } else if (status === 'firmness') {
+                currentFirmness = val;
+                $('#score_firmness').text(val.toFixed(2));
+            } else if (status === 'soulfullness') {
+                currentSoulfullness = val;
+                $('#score_soulfullness').text(val.toFixed(2));
+            }
+            updateTotalScore();
+
+            // Submit asynchronously without page reload to maintain fullscreen
+            AyoSilatJudge.submitScore(data, function (res) {
+                console.log('Score saved:', res);
+            }, function (err, isQueued) {
+                // Tersimpan dalam antrean offline jika koneksi putus
             });
         });
 
@@ -266,8 +252,23 @@
     </script>
     <script src="{{ asset('assets/plugins/bootstrap-5.3.7/js/bootstrap.bundle.min.js') }}"></script>
 
-
-    <script>function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }</script>
+    <script>
+        function toggleFullScreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

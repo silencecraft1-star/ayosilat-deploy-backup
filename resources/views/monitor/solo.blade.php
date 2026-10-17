@@ -165,8 +165,8 @@
                             </thead>
                             <tbody class="text-center align-middle">
                                 <tr>
-                                    <td class="py-3 fw-bold fs-2 text-success" id="medianscore">0</td>
-                                    <td class="py-3 fw-bold fs-2 text-danger" id="dewan_pinalti"></td>
+                                    <td class="py-3 fw-bold fs-2 text-success" id="medianscore">0.00</td>
+                                    <td class="py-3 fw-bold fs-2 text-danger" id="dewan_pinalti">0.00</td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="bg-green-2 text-light py-3 fs-2">Standard Deviation</td>
@@ -187,7 +187,7 @@
                                 </div>
                                 <div id="timer1" class="container text-green fw-bold text-center align-middle mt-2"
                                     style="font-size: 8em;">
-                                    03:00
+                                    00:00:00
                                 </div>
                             </div>
                             <div class="col">
@@ -197,7 +197,7 @@
                                 </div>
                                 <div id="total_score" class="container text-green fw-bold text-center align-middle mt-2"
                                     style="font-size: 8em;">
-                                    9.2
+                                    0.00
                                 </div>
                             </div>
                         </div>
@@ -228,27 +228,27 @@
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.js') }}"></script>
     <script>
-        $('#timer1').text('00:00');
+        $('#timer1').text('00:00:00');
         var partai = document.getElementById("partai").getAttribute("name");
         let timerInterval;
-        let currentTime = 0; // Simpan waktu dalam detik
+        let currentTime = 0; // Simpan waktu dalam centiseconds (1/100 detik)
         let timeSaveStatus = false;
         let isPaused = false;
         let StatusCondition = '';
         let intervalId; // Simpan referensi interval
         // function untuk websoket
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        function formatTime(centiseconds) {
+            const minutes = Math.floor(centiseconds / 6000);
+            const secs = Math.floor((centiseconds % 6000) / 100);
+            const ms = centiseconds % 100;
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}:${String(ms).padStart(2, '0')}`;
         }
         function startTimer() {
             if (!isPaused) {
-                currentTime = 0; // Reset waktu ke 00:00 saat start
+                currentTime = 0; // Reset waktu ke 00:00:00 saat start
             }
 
-            currentTime++;
             //$('#timer1').removeClass('text-green');
             $('#timer1').text(formatTime(currentTime));
 
@@ -258,7 +258,7 @@
                 currentTime++;
                 var Timers = formatTime(currentTime);
                 $('#timer1').text(Timers);
-            }, 1000);
+            }, 10);
         }
 
         function pauseTimer() {
@@ -273,7 +273,7 @@
                     currentTime++;
                     var Timers = formatTime(currentTime);
                     $('#timer1').text(Timers);
-                }, 1000);
+                }, 10);
             }
         }
         function resetTimer() {
@@ -376,7 +376,7 @@
             $('#total_score').text(formatScore(total_score));
             $('#dewan_pinalti').text(formatScore(dewanPenalty));
             $('#medianscore').text(formatScore(rawMedian));
-            $('#deviationscore').text(formatScore(deviation));
+            $('#deviationscore').text(deviation);
 
             StatusCondition = response.status;
             if (response.status == "finish") {
@@ -385,7 +385,7 @@
                     arena: arena,
                     time: formatTime(currentTime),
                     score: formatScore(total_score),
-                    deviation: formatScore(deviation)
+                    deviation: deviation
                 };
                 rekap(send);
             }
@@ -395,7 +395,7 @@
                 timeSaveStatus = true;
                 console.log('timer save initialized');
                 $.ajax({
-                    url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${formatScore(total_score)}&deviation=${formatScore(deviation)}`,
+                    url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${formatScore(total_score)}&deviation=${deviation}`,
                     method: 'GET',
                     success: function (res) {
                         console.log(res);

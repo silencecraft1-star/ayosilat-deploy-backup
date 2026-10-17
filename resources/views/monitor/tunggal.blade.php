@@ -293,9 +293,8 @@
                     </thead>
                     <tbody class="text-center align-middle ">
                         <tr>
-                            <td class="py-3 fw-bold fs-2" id="median"></td>
-                            <td class="py-3 fw-bold fs-2 text-danger" id="dewan"></td>
-                            {{-- <td class="py-3 fw-bold fs-2 text-primary" id="total"></td> --}}
+                            <td class="py-3 fw-bold fs-2" id="median">0.00</td>
+                            <td class="py-3 fw-bold fs-2 text-danger" id="dewan">0.00</td>
                         </tr>
                         <tr>
                             <td colspan="3" class="bg-green-2 text-light py-3 fs-2">Standard Deviation</td>
@@ -314,7 +313,7 @@
                         </div>
                         <div id="timer1" class="container text-green fw-bold text-center align-middle mt-2"
                             style="font-size: 8em;">
-                            03:00
+                            00:00:00
                         </div>
                     </div>
                     <div class="col">
@@ -323,7 +322,7 @@
                         </div>
                         <div id="total" class="container text-green fw-bold text-center align-middle mt-2"
                             style="font-size: 8em;">
-                            9.2
+                            0.00
                         </div>
                     </div>
                 </div>
@@ -354,28 +353,28 @@
     <script src="{{ asset('assets/plugins/jquery/jquery-3.7.1.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        $('#timer1').text('00:00');
+        $('#timer1').text('00:00:00');
         var partai = document.getElementById("partai").getAttribute("name");
         let timerInterval;
         let timeSaveStatus = false;
-        let lastSavedTime = '00:00';
-        let currentTime = 0; // Simpan waktu dalam detik
+        let lastSavedTime = '00:00:00';
+        let currentTime = 0; // Simpan waktu dalam centiseconds (1/100 detik)
         let isPaused = false;
         let StatusCondition = '';
         let intervalId; // Simpan referensi interval
         // function untuk websoket
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        function formatTime(centiseconds) {
+            const minutes = Math.floor(centiseconds / 6000);
+            const secs = Math.floor((centiseconds % 6000) / 100);
+            const ms = centiseconds % 100;
+            return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}:${String(ms).padStart(2, '0')}`;
         }
         function startTimer() {
             if (!isPaused) {
-                currentTime = 0; // Reset waktu ke 00:00 saat start
+                currentTime = 0; // Reset waktu ke 00:00:00 saat start
             }
 
-            currentTime++;
             //$('#timer1').removeClass('text-green');
             $('#timer1').text(formatTime(currentTime));
 
@@ -385,7 +384,7 @@
                 currentTime++;
                 var Timers = formatTime(currentTime);
                 $('#timer1').text(Timers);
-            }, 1000);
+            }, 10);
         }
 
         function pauseTimer() {
@@ -400,7 +399,7 @@
                     currentTime++;
                     var Timers = formatTime(currentTime);
                     $('#timer1').text(Timers);
-                }, 1000);
+                }, 10);
             }
         }
         function resetTimer() {
@@ -519,7 +518,7 @@
             $('#total').text(formatScore(total_score));
             $('#dewan').text(dewanPenalty > 0 ? ('-' + formatScore(dewanPenalty)) : formatScore(0));
             $('#median').text(formatScore(rawMedian));
-            $('#deviation').text(formatScore(deviation));
+            $('#deviation').text(deviation);
 
             if (response.status == "finish") {
                 const send = {
@@ -527,7 +526,7 @@
                     arena: arena,
                     time: formatTime(currentTime),
                     score: formatScore(total_score),
-                    deviation: formatScore(deviation)
+                    deviation: deviation
                 };
                 rekap(send);
             }
@@ -537,7 +536,7 @@
                 timeSaveStatus = true;
                 console.log('timer save initialized');
                 $.ajax({
-                    url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${formatScore(total_score)}&deviation=${formatScore(deviation)}`,
+                    url: `/save-time?id_user=${id}&time=${currentRunningTime}&arena=${arena}&partai=${partai}&score=${formatScore(total_score)}&deviation=${deviation}`,
                     method: 'GET',
                     success: function (res) {
                         console.log(res);
