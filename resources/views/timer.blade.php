@@ -197,7 +197,7 @@
                 </span>
                 <span id="sync-indicator" class="badge bg-success-subtle text-success border border-success-subtle d-inline-flex align-items-center gap-1">
                     <span class="spinner-grow spinner-grow-sm text-success" role="status" style="width: 0.5rem; height: 0.5rem;"></span>
-                    Socket Terhubung
+                    Notif Terhubung
                 </span>
             </div>
         </div>
@@ -567,11 +567,11 @@
             function initWebSocket() {
                 if (window.Echo) {
                     window.Echo.connector.pusher.connection.bind('connected', function () {
-                        $('#sync-indicator').html('<span class="spinner-grow spinner-grow-sm text-success" role="status" style="width: 0.5rem; height: 0.5rem;"></span> Socket Terhubung');
+                        $('#sync-indicator').html('<span class="spinner-grow spinner-grow-sm text-success" role="status" style="width: 0.5rem; height: 0.5rem;"></span> Notif Terhubung');
                     });
 
                     window.Echo.connector.pusher.connection.bind('disconnected', function () {
-                        $('#sync-indicator').html('<span class="badge bg-danger">Socket Terputus</span>');
+                        $('#sync-indicator').html('<span class="badge bg-danger">Notif Terputus</span>');
                     });
 
                     // Channel Timer
